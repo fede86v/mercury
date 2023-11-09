@@ -34,30 +34,37 @@ import { useFirestore } from '../utils/useFirestore';
 import BgrImage from '../images/felicidades.png';
 import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserProvider';
-import { DocumentTypes, ActivityTypes } from '../utils/enums';
+import { DocumentTypes } from '../utils/enums';
+import Alerts from '../components/common/alerts'
+import { useForm } from '../utils';
+
+const DEFAULT_USER = {
+    uid: "",
+    company: '',
+    password: '',
+    repassword: '',
+    email: '',
+    nombre: "",
+    apellido: "",
+    fechaNacimiento: Date.now(),
+    genero: "Femenino",
+    tipoDocumento: "DNI",
+    numeroDocumento: "",
+};
 
 const Register = () => {
-    const steps = ["Cuenta", "Usuario", "Actividad"];
+    const steps = ["Cuenta", "Usuario"];
 
     const [activeStep, setActiveStep] = useState(0);
     const [error, setError] = useState(null);
     const [alert, setAlert] = useState(null);
-    const [values, setValues] = useState({
-        uid: "",
-        password: '',
-        repassword: '',
-        email: '',
-        showPassword: false,
-        nombre: "",
-        apellido: "",
-        fechaNacimiento: Date.now(),
-        genero: "Femenino",
-        tipoDocumento: "DNI",
-        numeroDocumento: "",
-    });
-
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepassword, setShowRepassword] = useState(false);
+    const [companies, setCompanies] = useState([]);
     const { error: authError, user, signInWithGoogle, createUserWithEmail, updateUser } = useContext(UserContext);
     const { error: firebaseError, loading, validateCodigoAcceso } = useFirestore();
+    const { formState: usuario, onInputChange, onInputDateChange, setFormState: setUsuario } = useForm(DEFAULT_USER)
+    const { compania, password, repassword, email, nombre, apellido, fechaNacimiento, genero, tipoDocumento, numeroDocumento } = usuario;
 
     useEffect(() => {
         setError(null);
@@ -69,8 +76,8 @@ const Register = () => {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             }
             else {
-                if (values.uid === "") {
-                    setValues((v) => ({
+                if (usuario.uid === "") {
+                    setUsuario((v) => ({
                         ...v,
                         "uid": user.uid,
                         "email": user.email,
@@ -106,31 +113,31 @@ const Register = () => {
         e.preventDefault()
         console.log(activeStep);
         if (activeStep === 0) {
-            if (values.email.trim().length === 0) {
+            if (email.trim().length === 0) {
                 setAlert(`Debe ingresar un email valido`);
                 return;
             }
-            if (!values.password.trim()) {
+            if (!password.trim()) {
                 setAlert('Password es requerido!')
                 return
             }
-            if (values.password.length < 6) {
+            if (password.length < 6) {
                 setAlert('Contraseña muy debil - minimo 6 caracteres!')
                 return
             }
-            if (values.password.trim() !== values.repassword.trim()) {
+            if (password.trim() !== repassword.trim()) {
                 setAlert('Contraseñas no coinciden, por favor verifiquelas')
                 return
             }
-            createUserWithEmail(values.email, values.password);
+            createUserWithEmail(email, password);
         }
         if (activeStep === 1) {
-            if (values.nombre.trim() === "") {
+            if (nombre.trim() === "") {
 
                 setAlert(`Debe ingresar un Nombre`);
                 return;
             }
-            if (values.apellido.trim() === "") {
+            if (apellido.trim() === "") {
                 setAlert(`Debe ingresar un Apellido`);
                 return;
             }
@@ -143,20 +150,20 @@ const Register = () => {
     };
 
     const actualizarUsuario = React.useCallback(async () => {
-        let user = {
-            uid: values.uid,
-            email: values.email,
+        const user = {
+            uid: usuario.uid,
+            email: usuario.email,
             persona: {
-                nombre: values.nombre,
-                apellido: values.apellido,
-                fechaNacimiento: values.fechaNacimiento.toString(),
-                genero: values.genero,
-                tipoDocumento: values.tipoDocumento,
-                numeroDocumento: values.numeroDocumento,
+                nombre: usuario.nombre,
+                apellido: usuario.apellido,
+                fechaNacimiento: usuario.fechaNacimiento.toString(),
+                genero: usuario.genero,
+                tipoDocumento: usuario.tipoDocumento,
+                numeroDocumento: usuario.numeroDocumento,
             },
         };
-        user = await updateUser(user);
-    }, [values, updateUser]);
+        await updateUser(user);
+    }, [usuario, updateUser]);
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -164,35 +171,12 @@ const Register = () => {
         setAlert(null);
     };
 
-    const handleChange = (prop) => (event) => {
-        setValues({ ...values, [prop]: event.target.value });
-    };
-
-    const handleDateChange = (newValue) => {
-        //setValues({ ...values, "fechaNacimiento": moment(newValue, "DD/MM/YYYY"), });
-    };
-
-    const handleActividadesChange = (event) => {
-        const {
-            target: { value },
-        } = event;
-        const newActividad = typeof value === 'string' ? value.split(',') : value;
-
-        setValues({ ...values, "actividades": newActividad, });
-    };
-
     const handleClickShowPassword = () => {
-        setValues({
-            ...values,
-            showPassword: !values.showPassword,
-        });
+        setShowPassword(!showPassword);
     };
 
     const handleClickShowRepassword = () => {
-        setValues({
-            ...values,
-            showRepassword: !values.showRepassword,
-        });
+        setShowRepassword(!showRepassword);
     };
 
     const handleMouseDown = (event) => {
@@ -228,35 +212,30 @@ const Register = () => {
                                 );
                             })}
                         </Stepper>
-                        {/* Alerts */
-                            alert ? (
-                                <Alert sx={{ my: 2 }} severity="warning">
-                                    <AlertTitle>
-                                        Atención!
-                                    </AlertTitle>
-                                    {alert}
-                                </Alert>
-                            )
-                                : null
-                        }
-                        {/* Errors */
-                            error ? (
-                                <Alert sx={{ my: 2 }} severity="error">
-                                    <AlertTitle>
-                                        Error!
-                                    </AlertTitle>
-                                    {error}
-                                </Alert>
-                            )
-                                : null
-                        }
+                        <Alerts alert={alert} error={error} />
                         {/* Cuenta */
                             activeStep === 0 ? (
 
                                 <Box sx={{ my: 2 }} >
                                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                                         <Grid item xs={12} sm={12}>
-
+                                            <Grid item xs={12} sm={12}>
+                                                {/* Text */}
+                                                <FormControl variant="standard" fullWidth >
+                                                    <InputLabel id="company-label">Compania</InputLabel>
+                                                    <Select
+                                                        labelId="compania-label"
+                                                        id="compania" name='compania'
+                                                        value={compania}
+                                                        onChange={onInputChange}>
+                                                        {companies.sort().map((dt) => (
+                                                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid item xs={12} sm={12}>
                                             {/* Text */}
                                             <Typography >Puede registrarse utilizando Usuario y Contraseña o puede elegir registrarse directamente con su cuenta de google.</Typography>
                                         </Grid>
@@ -264,7 +243,7 @@ const Register = () => {
 
                                             {/* Email */}
                                             <TextField label='Email' placeholder='Email' margin='normal' type='email'
-                                                onChange={handleChange('email')} value={values.email} required sx={{ width: "100%" }}
+                                                onChange={onInputChange} value={email} name='email' required sx={{ width: "100%" }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
@@ -274,9 +253,9 @@ const Register = () => {
                                                 <InputLabel htmlFor="lbl-password">Contraseña</InputLabel>
                                                 <OutlinedInput
                                                     id="outlined-adornment-password"
-                                                    type={values.showPassword ? 'text' : 'password'}
-                                                    value={values.password}
-                                                    onChange={handleChange('password')}
+                                                    type={showPassword ? 'text' : 'password'}
+                                                    value={password} name='password'
+                                                    onChange={onInputChange}
                                                     endAdornment={
                                                         <InputAdornment position="end">
                                                             <IconButton
@@ -284,7 +263,7 @@ const Register = () => {
                                                                 onClick={handleClickShowPassword}
                                                                 onMouseDown={handleMouseDown}
                                                                 edge="end" >
-                                                                {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     }
@@ -298,9 +277,9 @@ const Register = () => {
                                                 <InputLabel htmlFor="lbl-repassword">Repetir Contraseña</InputLabel>
                                                 <OutlinedInput
                                                     id="outlined-adornment-repassword"
-                                                    type={values.showRepassword ? 'text' : 'password'}
-                                                    value={values.repassword}
-                                                    onChange={handleChange('repassword')}
+                                                    type={showRepassword ? 'text' : 'password'}
+                                                    value={repassword} name='repassword'
+                                                    onChange={onInputChange}
                                                     endAdornment={
                                                         <InputAdornment position="end">
                                                             <IconButton
@@ -308,7 +287,7 @@ const Register = () => {
                                                                 onClick={handleClickShowRepassword}
                                                                 onMouseDown={handleMouseDown}
                                                                 edge="end" >
-                                                                {values.showRepassword ? <VisibilityOff /> : <Visibility />}
+                                                                {showRepassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     }
@@ -339,15 +318,15 @@ const Register = () => {
                                     {/* Nombre */}
                                     <Grid item xs={12} sm={6}>
                                         <TextField id="txt-name" label="Nombre" variant="standard"
-                                            value={values.nombre}
-                                            onChange={handleChange("nombre")}
+                                            value={nombre} name='nombre'
+                                            onChange={onInputChange}
                                             sx={{ width: '100%' }} />
                                     </Grid>
                                     {/* Apellido */}
                                     <Grid item xs={12} sm={6}>
                                         <TextField id="txt-lastName" label="Apellido" variant="standard"
-                                            value={values.apellido}
-                                            onChange={handleChange("apellido")}
+                                            value={apellido} name='apellido'
+                                            onChange={onInputChange}
                                             sx={{ width: '100%' }} />
                                     </Grid>
                                     {/* Fecha de Nacimiento */}
@@ -356,8 +335,8 @@ const Register = () => {
                                             label="Fecha de Nacimiento"
                                             inputFormat="DD/MM/yyyy"
                                             disableMaskedInput
-                                            value={values.fechaNacimiento}
-                                            onChange={handleDateChange}
+                                            value={fechaNacimiento} name='fechaNacimiento'
+                                            onChange={onInputDateChange}
                                             renderInput={(params) => <TextField variant="standard" {...params} sx={{ width: '100%' }} />}
                                         />
                                     </Grid>
@@ -368,8 +347,8 @@ const Register = () => {
                                             <Select
                                                 labelId="tipo-dni-select-item-label"
                                                 id="tipo-dni-select-item"
-                                                value={values.tipoDocumento}
-                                                onChange={handleChange("tipoDocumento")}
+                                                value={tipoDocumento} name='tipoDocumento'
+                                                onChange={onInputChange}
                                                 label="Tipo Documento" >
                                                 {DocumentTypes.sort().map((dt) => (
                                                     <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
@@ -381,8 +360,7 @@ const Register = () => {
                                     <Grid item xs={12} sm={6}>
                                         <TextField id="txt-dni" label="Numero de Documento"
                                             variant="standard" sx={{ width: '100%' }}
-                                            value={values.numeroDocumento}
-                                            onChange={handleChange("numeroDocumento")}
+                                            value={numeroDocumento} name='numeroDocumento' onChange={onInputChange}
                                         />
                                     </Grid>
                                     {/* Genero */}
@@ -391,7 +369,7 @@ const Register = () => {
                                             <FormLabel id="lbl-genero">Genero</FormLabel>
                                             <RadioGroup row
                                                 aria-labelledby="lbl-genero"
-                                                value={values.genero} onChange={handleChange("genero")} >
+                                                value={genero} name='genero' onChange={onInputChange} >
                                                 <FormControlLabel value="Femenino" control={<Radio />} label="Femenino" />
                                                 <FormControlLabel value="Masculino" control={<Radio />} label="Masculino" />
                                                 <FormControlLabel value="Otro" control={<Radio />} label="Otro" />
@@ -399,44 +377,6 @@ const Register = () => {
                                         </FormControl>
                                     </Grid>
                                 </Grid>
-                            ) : null}
-                        {
-                            /* Actividad */
-                            activeStep === 2 ? (
-                                <Box sx={{ my: 2 }} >
-                                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-                                        <Grid item xs={12} sm={6}>
-                                            {/* Actividades */}
-                                            <FormControl required sx={{ width: 300 }}>
-                                                <InputLabel id="actividades-select-item-label">Actividades</InputLabel>
-                                                <Select
-                                                    labelId="actividades-select-item-label"
-                                                    id="actividades-multiple-checkbox"
-                                                    multiple
-                                                    value={values.actividades}
-                                                    onChange={handleActividadesChange}
-                                                    input={<OutlinedInput label="Actividades" />}
-                                                    renderValue={(selected) => selected.join(', ')}
-                                                >
-                                                    {ActivityTypes.sort().map((dt) => (
-                                                        <MenuItem key={dt.key} value={dt.key}>
-                                                            <Checkbox checked={values.actividades.indexOf(dt.key) > -1} />
-                                                            <ListItemText primary={dt.value} />
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                                <FormHelperText>Elija al menos una opción</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-                                        {/* Nombre */}
-                                        <Grid item xs={12} sm={6}>
-                                            <TextField id="txt-name" label="Codigo de Acceso" variant="standard"
-                                                value={values.codigoAcceso} required
-                                                onChange={handleChange("codigoAcceso")}
-                                                sx={{ width: '100%' }} />
-                                        </Grid>
-                                    </Grid>
-                                </Box>
                             ) : null}
 
                         { /* Buttons */

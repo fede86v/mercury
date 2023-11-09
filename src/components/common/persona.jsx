@@ -10,7 +10,6 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
             {/* Email */}
             <Grid item xs={12} sm={12}>
-
                 <TextField label='Email' placeholder='Email' margin='normal' type='email' variant="standard"
                     onChange={handleChange} value={email} name="email" required sx={{ width: "100%" }} />
             </Grid>

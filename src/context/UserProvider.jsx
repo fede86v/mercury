@@ -53,6 +53,7 @@ const UserProvider = ({ children }) => {
                         telefono: userg.phoneNumber,
                     }
                 };
+                console.log()
                 getUsuarioFull(user.email).then((res) => {
                     if (res === undefined) {
                         createUsuarioFull(user);
