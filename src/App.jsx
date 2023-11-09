@@ -17,6 +17,17 @@ import MySpinner from './components/MySpinner';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useFirestore } from './utils/useFirestore';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+      queries: {
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
+          retry: 3
+      },
+  },
+});
 
 const App = () => {
   const [open, setOpen] = useState(false);
@@ -29,6 +40,7 @@ const App = () => {
 
   return user !== false ? (
     <>
+    <QueryClientProvider client={queryClient}>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -62,6 +74,7 @@ const App = () => {
 
         </Routes>
       </BrowserRouter >
+      </QueryClientProvider>
     </>
 
   ) : (<MySpinner />);

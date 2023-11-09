@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, where, query, getDocs, getDoc, doc, setDoc, document, addDoc } from "firebase/firestore"
+import { collection, where, query, getDocs, getDoc, doc, setDoc, addDoc } from "firebase/firestore"
 
 class DatabaseService {
     currentCollection;
@@ -13,9 +13,8 @@ class DatabaseService {
     // This returns a list of documents
     getAll = async () => {
         const snapshot = await getDocs(query(this.currentCollection));
-
         return snapshot.empty
-            ? null
+            ? []
             : snapshot.docs.map((doc) => {
                 return {
                     ...doc.data(),
@@ -142,9 +141,10 @@ class DatabaseService {
 }
 
 // Create services for each entity type
-export const UserService = new DatabaseService("usuarios");
-export const PeopleService = new DatabaseService("personas");
-export const MemberService = new DatabaseService("socios");
 export const TrainerService = new DatabaseService("entrenadores");
-export const PriceService = new DatabaseService("precios");
+export const CompanyService = new DatabaseService("empresa");
 export const PaymentService = new DatabaseService("pagos");
+export const PeopleService = new DatabaseService("personas");
+export const PriceService = new DatabaseService("precios");
+export const MemberService = new DatabaseService("socios");
+export const UserService = new DatabaseService("usuarios");

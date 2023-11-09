@@ -2,22 +2,9 @@ import React, { useState } from 'react'
 import { Box, Toolbar } from '@mui/material'
 import { Outlet } from 'react-router-dom';
 import { CircularProgress, Backdrop } from '@mui/material';
-
 import MyAppBar from './MyAppBar'
 import MySideBar from './MySideBar'
-
 import { useFirestore } from '../utils/useFirestore.js';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            retry: 3
-        },
-    },
-});
 
 const drawerWidth = 240;
 
@@ -31,10 +18,10 @@ const Main = (props) => {
         setOpen(!open)
     }
     const container = window !== undefined ? () => window().document.body : undefined;
-    const title = "Go-4-IT";
+    const title = "Mercury";
 
     return (
-        <QueryClientProvider client={queryClient}>
+        
             <Box sx={{ display: 'flex' }}>
                 <MyAppBar openCloseDrawer={openCloseDrawer} title={title} drawerWidth={drawerWidth} />
                 <MySideBar container={container} open={open} openCloseDrawer={openCloseDrawer} drawerWidth={drawerWidth} title={title} />
@@ -52,7 +39,6 @@ const Main = (props) => {
                     <Outlet />
                 </Box>
             </Box>
-        </QueryClientProvider>
     )
 }
 
