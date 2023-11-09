@@ -44,7 +44,7 @@ const MyNavBar = ({ title }) => {
             setEnlaces(tmpEnlaces);
         }
         else {
-            if (user.esAdmin || user.esEntrenador) {
+            if (user.esAdmin) {
                 tmpEnlaces.push({
                     id: 1,
                     nombre: 'Socios',

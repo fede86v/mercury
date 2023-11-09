@@ -47,13 +47,10 @@ const UserProvider = ({ children }) => {
                     fechaInactivo: null,
                     fotoURL: userg.photoURL,
                     activado: false,
-                    persona: {
-                        nombre: userInfo.firstName,
-                        apellido: userInfo.lastName,
-                        telefono: userg.phoneNumber,
-                    }
+                    nombre: userInfo.firstName,
+                    apellido: userInfo.lastName,
+                    telefono: userg.phoneNumber
                 };
-                console.log()
                 getUsuarioFull(user.email).then((res) => {
                     if (res === undefined) {
                         createUsuarioFull(user);
@@ -72,10 +69,8 @@ const UserProvider = ({ children }) => {
                     email,
                     fechaInactivo: null,
                     activado: false,
-                    persona: {
-                        nombre: "",
-                        apellido: ""
-                    }
+                    nombre: "",
+                    apellido: ""
                 };
                 createUsuarioFull(u);
             })

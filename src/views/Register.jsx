@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react'
 import {
-    Alert,
     Box,
     TextField,
     Typography,
@@ -8,7 +7,6 @@ import {
     InputLabel,
     OutlinedInput,
     Button,
-    AlertTitle,
     Stepper, Step, StepLabel, Select,
     MenuItem,
     Divider,
@@ -18,10 +16,7 @@ import {
     FormControlLabel,
     Radio,
     InputAdornment,
-    IconButton,
-    Checkbox,
-    ListItemText,
-    FormHelperText,
+    IconButton
 } from '@mui/material'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
@@ -35,26 +30,28 @@ import BgrImage from '../images/felicidades.png';
 import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserProvider';
 import { DocumentTypes } from '../utils/enums';
+import { CompanyService } from '../utils/databaseService';
 import Alerts from '../components/common/alerts'
 import { useForm } from '../utils';
+import { useQuery } from '@tanstack/react-query'
 
 const DEFAULT_USER = {
     uid: "",
-    company: '',
+    empresa: '',
     password: '',
     repassword: '',
     email: '',
     nombre: "",
     apellido: "",
+    activado: false,
     fechaNacimiento: Date.now(),
     genero: "Femenino",
     tipoDocumento: "DNI",
     numeroDocumento: "",
 };
+const STEPS = ["Cuenta", "Usuario"];
 
 const Register = () => {
-    const steps = ["Cuenta", "Usuario"];
-
     const [activeStep, setActiveStep] = useState(0);
     const [error, setError] = useState(null);
     const [alert, setAlert] = useState(null);
@@ -64,10 +61,19 @@ const Register = () => {
     const { error: authError, user, signInWithGoogle, createUserWithEmail, updateUser } = useContext(UserContext);
     const { error: firebaseError, loading, validateCodigoAcceso } = useFirestore();
     const { formState: usuario, onInputChange, onInputDateChange, setFormState: setUsuario } = useForm(DEFAULT_USER)
-    const { compania, password, repassword, email, nombre, apellido, fechaNacimiento, genero, tipoDocumento, numeroDocumento } = usuario;
+    const { empresa, password, repassword, email, nombre, apellido, fechaNacimiento, genero, tipoDocumento, numeroDocumento } = usuario;
+
+    const getCompanies = async ()=>{
+        const data = await CompanyService.getAll();
+        setCompanies(data);
+        return data;        
+    };
+
+    const query = useQuery(['companies'], getCompanies);
 
     useEffect(() => {
         setError(null);
+        query.refetch();
     }, []);
 
     useEffect(() => {
@@ -81,8 +87,9 @@ const Register = () => {
                         ...v,
                         "uid": user.uid,
                         "email": user.email,
-                        "nombre": user.persona.nombre,
-                        "apellido": user.persona.apellido
+                        "nombre": user.nombre,
+                        "apellido": user.apellido,
+                        "activado": user.activado
                     }));
                     setActiveStep(1);
                 }
@@ -111,7 +118,7 @@ const Register = () => {
 
     const handleNext = e => {
         e.preventDefault()
-        console.log(activeStep);
+        console.log(usuario);
         if (activeStep === 0) {
             if (email.trim().length === 0) {
                 setAlert(`Debe ingresar un email valido`);
@@ -153,14 +160,13 @@ const Register = () => {
         const user = {
             uid: usuario.uid,
             email: usuario.email,
-            persona: {
-                nombre: usuario.nombre,
-                apellido: usuario.apellido,
-                fechaNacimiento: usuario.fechaNacimiento.toString(),
-                genero: usuario.genero,
-                tipoDocumento: usuario.tipoDocumento,
-                numeroDocumento: usuario.numeroDocumento,
-            },
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            fechaNacimiento: usuario.fechaNacimiento.toString(),
+            genero: usuario.genero,
+            tipoDocumento: usuario.tipoDocumento,
+            numeroDocumento: usuario.numeroDocumento,
+            activado: true
         };
         await updateUser(user);
     }, [usuario, updateUser]);
@@ -202,7 +208,7 @@ const Register = () => {
                     {/* Steps */}
                     <Box sx={{ width: '100%' }}>
                         <Stepper activeStep={activeStep}>
-                            {steps.map((label, index) => {
+                            {STEPS.map((label, index) => {
                                 const stepProps = {};
                                 const labelProps = {};
                                 return (
@@ -222,14 +228,14 @@ const Register = () => {
                                             <Grid item xs={12} sm={12}>
                                                 {/* Text */}
                                                 <FormControl variant="standard" fullWidth >
-                                                    <InputLabel id="company-label">Compania</InputLabel>
+                                                    <InputLabel id="company-label">empresa</InputLabel>
                                                     <Select
-                                                        labelId="compania-label"
-                                                        id="compania" name='compania'
-                                                        value={compania}
+                                                        labelId="empresa-label"
+                                                        id="empresa" name='empresa'
+                                                        value={empresa}
                                                         onChange={onInputChange}>
                                                         {companies.sort().map((dt) => (
-                                                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
+                                                            <MenuItem key={dt.id} value={dt.id}>{dt.nombre}</MenuItem>
                                                         ))}
                                                     </Select>
                                                 </FormControl>
@@ -300,7 +306,7 @@ const Register = () => {
                                         </Grid>
                                         <Grid item xs={12} sm={12}>
                                             <Button height={20}
-                                                startIcon={<GoogleIcon />}
+                                                startIcon={<GoogleIcon />} disabled={!empresa}
                                                 onClick={signInWithGoogle}
                                                 color="secondary"
                                                 variant="contained"
@@ -333,10 +339,14 @@ const Register = () => {
                                     <Grid item xs={12} sm={12}>
                                         <DesktopDatePicker
                                             label="Fecha de Nacimiento"
-                                            inputFormat="DD/MM/yyyy"
+                                            inputFormat="DD/MM/YYYY"
                                             disableMaskedInput
-                                            value={fechaNacimiento} name='fechaNacimiento'
-                                            onChange={onInputDateChange}
+                                            value={fechaNacimiento} 
+                                            onChange={(newValue) => {
+                                                const target = { name: "fechaNacimiento", value: newValue };
+                                                onInputDateChange({ target })
+                                                }
+                                            }
                                             renderInput={(params) => <TextField variant="standard" {...params} sx={{ width: '100%' }} />}
                                         />
                                     </Grid>
@@ -380,7 +390,7 @@ const Register = () => {
                             ) : null}
 
                         { /* Buttons */
-                            activeStep === steps.length ? (
+                            activeStep === STEPS.length ? (
                                 <>
                                     <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }} >
                                         <Box sx={{ flex: '1 1 auto' }} >
@@ -414,8 +424,10 @@ const Register = () => {
                                         </Button>
                                         <Box sx={{ flex: '1 1 auto' }} />
 
-                                        <Button type="submit" onClick={handleNext} endIcon={activeStep === steps.length - 1 ? < SendIcon /> : < ArrowRightIcon />} >
-                                            {activeStep === steps.length - 1 ? 'Terminar' : 'Siguiente'}
+                                        <Button type="submit" onClick={handleNext} 
+                                            disabled={activeStep === 0 && !empresa}
+                                            endIcon={activeStep === STEPS.length - 1 ? < SendIcon /> : < ArrowRightIcon />} >
+                                            {activeStep === STEPS.length - 1 ? 'Terminar' : 'Siguiente'}
                                         </Button>
                                     </Box>
                                 </>

@@ -4,7 +4,6 @@ import { collection, where, query, getDocs, getDoc, doc, setDoc, runTransaction,
 
 export const useFirestore = () => {
   const [usuario, setUsuario] = useState(false);
-  const [especialidades, setEspecialidades] = useState(false);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -37,17 +36,7 @@ export const useFirestore = () => {
       let dataDB = querySnapshot.data();
 
       const personaDB = await getPersona(dataDB.uid);
-      dataDB = { ...dataDB, persona: personaDB };
-
-      if (dataDB.esSocio) {
-        const socioDB = await getSocio(dataDB.uid);
-        dataDB = { ...dataDB, socio: socioDB };
-      }
-
-      if (dataDB.esEntrenador) {
-        const entrenadorDB = await getEntrenador(dataDB.uid);
-        dataDB = { ...dataDB, entrenador: entrenadorDB };
-      }
+      dataDB = { ...dataDB, ...personaDB };
 
       setUsuario(dataDB);
       return dataDB;
@@ -79,30 +68,6 @@ export const useFirestore = () => {
       setLoading(false);
     }
   };
-  const getUsuarioByPin = async (pin) => {
-    try {
-      setLoading(true);
-      const userRef = collection(db, "usuarios");
-      const q = query(userRef, where("codigoAcceso", "==", pin));
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty) {
-        return null;
-      }
-      else {
-        let usuario = querySnapshot.docs[0].data();
-        const personaDB = await getPersona(usuario.uid);
-        usuario = { ...usuario, persona: personaDB };
-
-        setLoading(false);
-        return usuario;
-      }
-    }
-    catch (error) {
-      setError(error.code);
-      setLoading(false);
-      return null;
-    }
-  };
   const createUsuario = async (us) => {
     setLoading(true);
     const usuarioFlat = {
@@ -123,7 +88,7 @@ export const useFirestore = () => {
       })
       .catch(error => {
         hasError = true;
-        console.log(error);
+        console.log("createUsuario"+error);
         setError(error.code);
         setLoading(false);
       });
@@ -143,8 +108,8 @@ export const useFirestore = () => {
     };
     const personaFlat = {
       uid: us.uid,
-      nombre: us.persona.nombre,
-      apellido: us.persona.apellido,
+      nombre: us.nombre,
+      apellido: us.apellido,
       email: us.email,
       fechaCreacion: Date.now(),
       fechaActualizacion: Date.now(),
@@ -162,7 +127,8 @@ export const useFirestore = () => {
       setUsuario(us);
     }
     catch (error) {
-      console.log(error)
+      
+      console.log("createUsuarioFull" + error);
       hasError = true;
       setError(error.code);
       setLoading(false);
@@ -174,9 +140,6 @@ export const useFirestore = () => {
       fechaActualizacion: Date.now(),
       fotoURL: us.fotoURL === undefined ? null : us.fotoURL,
       activado: us.activado,
-      esEntrenador: us.esEntrenador,
-      esSocio: us.esSocio,
-      codigoAcceso: us.codigoAcceso,
     };
 
     setLoading(true);
@@ -200,22 +163,19 @@ export const useFirestore = () => {
       fechaActualizacion: Date.now(),
       fechaCreacion: Date.now(),
       fotoURL: us.fotoURL === undefined ? null : us.fotoURL,
-      activado: us.activado,
-      esEntrenador: us.esEntrenador,
-      esSocio: us.esSocio,
-      codigoAcceso: us.codigoAcceso,
+      activado: us.activado
     };
     const personaFlat = {
       uid: us.uid,
       email: us.email,
-      nombre: us.persona.nombre,
-      apellido: us.persona.apellido,
-      fechaNacimiento: us.persona.fechaNacimiento,
+      nombre: us.nombre,
+      apellido: us.apellido,
+      fechaNacimiento: us.fechaNacimiento,
       fechaActualizacion: Date.now(),
       fechaCreacion: Date.now(),
-      genero: us.persona.genero,
-      tipoDocumento: us.persona.tipoDocumento,
-      numeroDocumento: us.persona.numeroDocumento
+      genero: us.genero,
+      tipoDocumento: us.tipoDocumento,
+      numeroDocumento: us.numeroDocumento
     };
 
     const usuarioRef = doc(db, "usuarios", us.email);
@@ -224,39 +184,11 @@ export const useFirestore = () => {
     await runTransaction(db, async (transaction) => {
       transaction.set(usuarioRef, usuarioFlat, { merge: true });
       transaction.set(personaRef, personaFlat, { merge: true });
-      if (us.esEntrenador) {
-        const entrenadorFlat = {
-          uid: us.uid,
-          email: us.email,
-          nombre: us.persona.nombre,
-          apellido: us.persona.apellido,
-          fechaActualizacion: Date.now(),
-          fechaCreacion: Date.now(),
-          fechaDeshabilitado: null,
-          activado: false
-        };
-        const entrenadorRef = doc(db, "entrenadores", us.uid);
-        transaction.set(entrenadorRef, entrenadorFlat);
-      };
-      if (us.esSocio) {
-        const socioFlat = {
-          uid: us.uid,
-          actividades: us.socio.actividades,
-          nombre: us.persona.nombre,
-          apellido: us.persona.apellido,
-          fechaNacimiento: us.persona.fechaNacimiento,
-          fechaActualizacion: Date.now(),
-          fechaCreacion: Date.now(),
-          genero: us.persona.genero,
-        };
-        const socioRef = doc(db, "socios", us.uid);
-        transaction.set(socioRef, socioFlat);
-      };
     }).then(() => {
       setUsuario(us);
       setLoading(false);
     }).catch((error) => {
-      console.log(error);
+      console.log("updateUsuarioFull" + error);
       hasError = true;
       setError(error.code);
       setLoading(false);
@@ -856,13 +788,11 @@ export const useFirestore = () => {
   };
 
   return {
-    especialidades,
     usuario,
     error,
     loading,
     getUsuario,
     getUsuarioFull,
-    getUsuarioByPin,
     getPersona,
     getSocio,
     getSocios,

@@ -8,11 +8,6 @@ const RequireAuth = ({ children }) => {
     if (!user) {
         return <Navigate to="/Login" />
     }
-
-    console.log(user);
-    if (user.esEntrenador && !user.entrenador.activado) {
-        return <Navigate to="/PendingActivation" />
-    }
     return children
 }
 
