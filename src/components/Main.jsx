@@ -22,7 +22,7 @@ const Main = (props) => {
 
     return (
 
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex' }} >
             <MyAppBar openCloseDrawer={openCloseDrawer} title={title} drawerWidth={drawerWidth} />
             <MySideBar container={container} open={open} openCloseDrawer={openCloseDrawer} drawerWidth={drawerWidth} title={title} />
             <Box

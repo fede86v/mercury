@@ -11,6 +11,11 @@ const MyColorContext = ({ children }) => {
               },
             ...(mode === 'light' ?
                 {
+                    background:
+                    {
+                        default: '#FCF0F0',
+                        paper: '#FDFDFD'
+                    },
                     primary: {
                         // light: will be calculated from palette.primary.main,
                         main: '#FF4841',
