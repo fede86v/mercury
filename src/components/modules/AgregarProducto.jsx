@@ -14,10 +14,7 @@ import Producto from '../common/Producto';
 
 const DEFAULT_PRODUCT = {
     descripcion: "", 
-    tipo: "", 
-    cantidad: 0, 
-    precioVenta: 0, 
-    precioCompra: 0
+    tipo: ""
 };
 
 const AgregarProducto = (props) => {
