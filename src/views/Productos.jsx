@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useFirestore } from '../utils/useFirestore';
 import { NavLink } from "react-router-dom";
-import AgregarCliente from '../components/modules/AgregarCliente'
+// import AgregarProducto from '../components/modules/AgregarProducto'
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
@@ -10,10 +10,9 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const Productos = () => {
-    const [socios, setSocios] = useState([]);
-    const [openSocio, setOpenSocio] = useState(false);
+    const [productos, setProductos] = useState([]);
+    const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
-
 
     const { getSocios: fb_getSocios } = useFirestore();
 
@@ -24,22 +23,18 @@ const Productos = () => {
     const getData = async () => {
         const res = await fb_getSocios();
         if (res !== null)
-            setSocios(res);
+            setProductos(res);
     };
 
     const handleNewSocio = () => {
-        setOpenSocio(true);
+        setOpenProducto(true);
     };
-    const handleCloseSocio = () => {
-        setOpenSocio(!openSocio);
+    const handleCloseProducto = () => {
+        setOpenProducto(!openProducto);
         getData();
     };
 
     const handleDeleteSocio = async (uid, activo) => {
-        /* const currentSocio = activo
-            ? entrenadores.find(e => e.uid === uid)
-            : entrenadoresInactivos.find(e => e.uid === uid);
-        setCurrentSocio(currentSocio);*/
         setDialogRemoveConfirmOpen(true);
     };
 
@@ -50,15 +45,13 @@ const Productos = () => {
 
     return (
         <>
-            <AgregarCliente open={openSocio} handleClose={handleCloseSocio} />
+            {/* <AgregarProducto open={openProducto} handleClose={handleCloseProducto} /> */}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-
-                <Grid item sm={12}>
+                <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewSocio(); }}>Crear</Button>
                 </Grid>
-
-                <Grid item sm={12}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
+                <Grid item sm={10}>
+                    <Typography variant="h4" padding={3} textAlign="center" >Productos</Typography>
                 </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
@@ -74,7 +67,7 @@ const Productos = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {socios.map(({ uid, apellido, nombre, fechaVencimiento, clasesRestantes, actividades }) => (
+                                {productos.map(({ uid, apellido, nombre, fechaVencimiento, clasesRestantes, actividades }) => (
                                     <TableRow
                                         key={uid}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
