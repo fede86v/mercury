@@ -2,8 +2,8 @@ import React from 'react'
 import { Grid, FormControl, Select, TextField, InputAdornment, InputLabel, MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
 
-const Producto = ({ producto, onInputChange, tipoProductos }) => {
-    const { descripcion, tipo, cantidad, precioVenta, precioCompra, imagen } = producto;
+const Producto = ({ producto, onInputChange, tipoProductos, marcas }) => {
+    const { descripcion, tipo, cantidad, precioVenta, precioCompra, marca, imagen } = producto;
 
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
@@ -29,22 +29,25 @@ const Producto = ({ producto, onInputChange, tipoProductos }) => {
                 </FormControl>
             </Grid>
 
+            {/* tipo */}
+            <Grid item xs={12} sm={12}>
+                <FormControl variant="standard" fullWidth >
+                    <InputLabel id="marca-label">Marca</InputLabel>
+                    <Select
+                        labelId="marca-label"
+                        id="marca" name='marca' value={marca}
+                        onChange={onInputChange}>
+                        {marcas.sort().map((dt) => (
+                            <MenuItem key={dt.id} value={dt.nombre}>{dt.nombre}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Grid>
             {/* cantidad */}
             <Grid item xs={6} sm={6}>
                 <TextField id="txt-cantidad" label="Cantidad" variant="standard"
                     value={cantidad} name="cantidad" required type="number"
                     onChange={onInputChange}
-                    sx={{ width: '100%' }} />
-            </Grid>
-
-            {/* Precio */}
-            <Grid item xs={6} sm={6}>
-                <TextField id="txt-precio" label="Precio" variant="standard"
-                    value={precioVenta} name="precio" required
-                    onChange={onInputChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">$</InputAdornment>
-                    }}
                     sx={{ width: '100%' }} />
             </Grid>
 
@@ -58,6 +61,18 @@ const Producto = ({ producto, onInputChange, tipoProductos }) => {
                     }}
                     sx={{ width: '100%' }} />
             </Grid>
+
+            {/* Precio */}
+            <Grid item xs={6} sm={6}>
+                <TextField id="txt-precio" label="Precio" variant="standard"
+                    value={precioVenta} name="precioVenta" required
+                    onChange={onInputChange}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>
+                    }}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
         </Grid>
     )
 }
@@ -65,6 +80,7 @@ const Producto = ({ producto, onInputChange, tipoProductos }) => {
 Producto.propTypes = {
     producto: PropTypes.object.isRequired,
     tipoProductos: PropTypes.array.isRequired,
+    marcas: PropTypes.array.isRequired,
     onInputChange: PropTypes.func.isRequired,
     onInputDateChange: PropTypes.func.isRequired,
 }

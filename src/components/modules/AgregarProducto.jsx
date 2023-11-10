@@ -13,13 +13,11 @@ import Alerts from '../common/Alerts';
 import Producto from '../common/Producto';
 
 const DEFAULT_PRODUCT = {
-    id: null, 
     descripcion: "", 
     tipo: "", 
     cantidad: 0, 
     precioVenta: 0, 
-    precioCompra: 0, 
-    imagen: ""
+    precioCompra: 0
 };
 
 const AgregarProducto = (props) => {
@@ -43,7 +41,7 @@ const AgregarProducto = (props) => {
                 <DialogContentText>
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />
-                <Producto producto={producto} tipoProductos={props.tipoProductos} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
+                <Producto producto={producto} tipoProductos={props.tipoProductos} marcas={props.marcas} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.handleClose()}>Cancelar</Button>
@@ -55,6 +53,7 @@ const AgregarProducto = (props) => {
 
 AgregarProducto.propTypes = {
     tipoProductos: PropTypes.array.isRequired,
+    marcas: PropTypes.array.isRequired,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired
 };

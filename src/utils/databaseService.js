@@ -142,6 +142,7 @@ class DatabaseService {
 
 // Create services for each entity type
 export const ClientService = new DatabaseService("clientes");
+export const BrandService = new DatabaseService("marcas");
 export const PeopleService = new DatabaseService("personas");
 export const CompanyService = new DatabaseService("empresas");
 export const EmployeeService = new DatabaseService("vendedores");

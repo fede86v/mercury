@@ -12,7 +12,7 @@ export const useProduct = () => {
     const saveData = (data) => {
         setAlert(null);
         const product = {...data, empresaId:user.empresaId}
-        return ProductService.create(data, product);
+        return ProductService.create(product, user);
     }
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
