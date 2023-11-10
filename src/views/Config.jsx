@@ -1,11 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { NavLink } from "react-router-dom";
 import {
     Grid, Typography, TableContainer, Paper, Table, TableHead, 
     TableRow, TableCell, TableBody, IconButton, Button
 } from '@mui/material';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import dayjs from 'dayjs';
 import { UserContext } from '../context/UserProvider';
 import { ProductTypeService } from '../utils';
@@ -14,13 +13,23 @@ import AgregarTipoProducto from '../components/modules/AgregarTipoProducto';
 
 const Config = () => {
     const [tipoProductos, setTipoProductos] = useState([]);
+    const [tipoProducto, setTipoProducto] = useState(null);
     const [openTipo, setOpenTipo] = useState(false);
     const { user } = useContext(UserContext);
 
     const getProductTypeList = async () => {
-        const data = await ProductTypeService.getQueryry("empresa", "==", user.empresaId);
-        setTipoProductos(data);
-        return data;
+        const data = await ProductTypeService.getQuery("empresaId", "==", user.empresaId);
+        const sortedData = data.sort((a, b) => {
+            if (a.nombre < b.nombre) {
+              return -1;
+            }
+            if (a.nombre > b.nombre) {
+              return 1;
+            }
+            return 0;
+          });
+        setTipoProductos(sortedData);
+        return sortedData;
     };
 
     const queryProdTypes = useQuery(['productTypes'], getProductTypeList);
@@ -30,11 +39,16 @@ const Config = () => {
     };
     const handleCloseProducto = () => {
         setOpenTipo(false);
-    };
+        queryProdTypes.refetch();
+    };    
     
+    useEffect(() => {
+        queryProdTypes.refetch();
+    }, []);
+
     return (
         <>
-            <AgregarTipoProducto open={openTipo} handleClose={handleCloseProducto} />
+            {openTipo ? <AgregarTipoProducto open={openTipo} handleClose={handleCloseProducto} tipoProducto={tipoProducto} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
@@ -53,16 +67,19 @@ const Config = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {tipoProductos.map(({ uid, nombre, fechaActualizacion }) => (
+                                {tipoProductos.map((tp) => (
                                     <TableRow
-                                        key={uid}
+                                        key={tp.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{nombre}</TableCell>
-                                        <TableCell align="left">{dayjs(fechaActualizacion).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{tp.nombre}</TableCell>
+                                        <TableCell align="left">{dayjs(tp.fechaActualizacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="right">
                                             <>
-                                                <IconButton aria-label="edit" component={NavLink} to={"/Productos/" + uid} >
+                                                <IconButton aria-label="edit" onClick={()=>{
+                                                    setTipoProducto(tp);
+                                                    setOpenTipo(true);
+                                                }}  >
                                                     <ModeEditIcon color="secondary" />
                                                 </ IconButton>
                                             </>

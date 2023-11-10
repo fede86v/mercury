@@ -13,26 +13,26 @@ import PropTypes from 'prop-types'
 import { useForm, useConfig } from '../../utils';
 import Alerts from '../common/Alerts';
 
-const DEFAULT_PRODUCT = {
-    id: null, 
-    descripcion: "", 
-    tipo: "", 
-    cantidad: 0, 
-    precioVenta: 0, 
-    precioCompra: 0, 
-    imagen: ""
+const DEFAULT_PRODUCT_TYPE = {
+    nombre: ""
 };
 
 const AgregarTipoProducto = (props) => {
-    const { formState: tipoProducto, onInputChange, } = useForm(DEFAULT_PRODUCT)
+    const { formState: tipoProducto, onInputChange, setFormState } = useForm(props.tipoProducto ?? DEFAULT_PRODUCT_TYPE)
     const { error, alert, onSaveTipoProducto, success } = useConfig();
     
     const handleSave = () => {
         onSaveTipoProducto(tipoProducto);
         };
 
+    const handleClose = () => {
+        setFormState(DEFAULT_PRODUCT_TYPE);
+            props.handleClose();
+        };
+
     useEffect(() => {
         if (success) {
+            setFormState(DEFAULT_PRODUCT_TYPE);
             props.handleClose();
         }
     }, [success]);
@@ -53,7 +53,7 @@ const AgregarTipoProducto = (props) => {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => props.handleClose()}>Cancelar</Button>
+                <Button color="primary" onClick={handleClose}>Cancelar</Button>
                 <Button color="primary" variant="contained" onClick={handleSave} >Guardar</Button>
             </DialogActions>
         </Dialog>

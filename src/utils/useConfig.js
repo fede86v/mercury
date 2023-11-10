@@ -11,8 +11,15 @@ export const useConfig = () => {
 
     const saveTipoProducto = (data) => {
         setAlert(null);
-        const tipoProducto = {...data, empresaId: user.empresaId};
-        return ProductTypeService.create(tipoProducto, user);
+        if (!data.id)
+        { 
+            const tipoProducto = {nombre: data.nombre, empresaId: user.empresaId};
+            return ProductTypeService.create(tipoProducto, user);
+        }
+        else
+        {
+            return ProductTypeService.update(data.id, data, user);
+        }
     }
 
     // create mutation
@@ -23,7 +30,7 @@ export const useConfig = () => {
 
     const onSaveTipoProducto = (data) => {
         // 1. Validate
-        if (data)
+        if (!data.nombre)
         {
             setAlert(`Tipo de producto es requerido`);
             return;
