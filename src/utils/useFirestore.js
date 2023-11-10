@@ -73,6 +73,8 @@ export const useFirestore = () => {
     const usuarioFlat = {
       uid: us.uid === undefined ? null : us.uid,
       email: us.email,
+      empresaId: us.empresaId,
+      empresa: us.empresa,
       fotoURL: us.fotoURL === undefined ? null : us.fotoURL,
       fechaCreacion: Date.now(),
       fechaActualizacion: Date.now(),
@@ -88,7 +90,7 @@ export const useFirestore = () => {
       })
       .catch(error => {
         hasError = true;
-        console.log("createUsuario"+error);
+        console.log("createUsuario" + error);
         setError(error.code);
         setLoading(false);
       });
@@ -100,6 +102,8 @@ export const useFirestore = () => {
     const usuarioFlat = {
       uid: us.uid,
       email: us.email,
+      empresaId: us.empresaId,
+      empresa: us.empresa,
       fotoURL: us.fotoURL === undefined ? null : us.fotoURL,
       fechaCreacion: Date.now(),
       fechaActualizacion: Date.now(),
@@ -127,7 +131,7 @@ export const useFirestore = () => {
       setUsuario(us);
     }
     catch (error) {
-      
+
       console.log("createUsuarioFull" + error);
       hasError = true;
       setError(error.code);
@@ -157,12 +161,13 @@ export const useFirestore = () => {
   };
   const updateUsuarioFull = async (us) => {
     setLoading(true);
-
     const usuarioFlat = {
       email: us.email,
       fechaActualizacion: Date.now(),
       fechaCreacion: Date.now(),
       fotoURL: us.fotoURL === undefined ? null : us.fotoURL,
+      empresaId: us.empresaId,
+      empresa: us.empresa,
       activado: us.activado
     };
     const personaFlat = {

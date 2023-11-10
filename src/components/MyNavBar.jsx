@@ -10,16 +10,12 @@ import {
 } from "@mui/material";
 import {
     People,
-    MedicalInformation,
-    AddCircle,
     MiscellaneousServicesSharp,
     Home,
-    EventAvailable
+    EventAvailable, Store, LocalGroceryStore, LocalMall
 } from '@mui/icons-material';
 import { NavLink } from "react-router-dom";
-import AgregarSocio from './modules/AgregarCliente'
 import { UserContext } from '../context/UserProvider';
-import AgregarEntrenador from './modules/AgregarEntrenador';
 
 const MyListItem = ({ id, nombre, icon, link, action, itemStyle }) => {
     return link === '' ?
@@ -44,68 +40,45 @@ const MyNavBar = ({ title }) => {
             setEnlaces(tmpEnlaces);
         }
         else {
-            if (user.esAdmin) {
-                tmpEnlaces.push({
-                    id: 1,
-                    nombre: 'Socios',
-                    children: [
-                        { id: 11, nombre: 'Nuevo', icon: <AddCircle />, link: '', action: handleNewSocio },
-                        { id: 12, nombre: 'Socios', icon: <People />, link: '/Socios' },
-                    ],
-                });
-            }
+            tmpEnlaces.push({
+                id: 1,
+                nombre: 'Productos',
+                children: [
+                    { id: 12, nombre: 'Stock', icon: <Store />, link: '/Productos' },
+                ],
+            });
 
-            if (user.esAdmin) {
-                tmpEnlaces.push({
-                    id: 2,
-                    nombre: 'Entrenadores',
-                    children: [
-                        { id: 21, nombre: 'Nuevo', icon: <AddCircle />, link: '', action: handleNewEntrenador },
-                        { id: 22, nombre: 'Entrenadores', icon: <MedicalInformation />, link: '/Entrenadores' },
-                    ],
-                });
+            tmpEnlaces.push({
+                id: 2,
+                nombre: 'Ventas',
+                children: [
+                    { id: 22, nombre: 'Ventas', icon: <LocalGroceryStore />, link: '/Stock' },
+                ],
+            });
 
-                tmpEnlaces.push({
-                    id: 3,
-                    nombre: 'Productos',
-                    children: [
-                        { id: 21, nombre: 'Nuevo', icon: <AddCircle />, link: '', action: handleNewProducto },
-                        { id: 22, nombre: 'Stock', icon: <MedicalInformation />, link: '/Stock' },
-                    ],
-                });
-            }
-            if (user.esSocio) {
-                // no hace nada por ahora
-            }
+            tmpEnlaces.push({
+                id: 3,
+                nombre: 'Clientes',
+                children: [
+                    { id: 32, nombre: 'Socios', icon: <People />, link: '/Clientes' },
+                ],
+            });
+
+            tmpEnlaces.push({
+                id: 4,
+                nombre: 'Vendedores',
+                children: [
+                    { id: 42, nombre: 'Vendedores', icon: <LocalMall />, link: '/Vendedores' },
+                ],
+            });
+
         }
-
         setEnlaces(tmpEnlaces);
 
     }, []);
 
     const { user } = useContext(UserContext);
-    const [openSocio, setOpenSocio] = useState(false);
-    const [openEntrenador, setOpenEntrenador] = useState(false);
     const [enlaces, setEnlaces] = useState([]);
-
-    //Socio
-    const handleNewSocio = () => {
-        setOpenSocio(true);
-    };
-    const handleCloseSocio = () => {
-        setOpenSocio(false);
-    };
-
-    //Entrenador
-    const handleNewEntrenador = () => {
-        setOpenEntrenador(true);
-    };
-    const handleCloseEntrenador = () => {
-        setOpenEntrenador(false);
-    };
-
-    const handleNewProducto = () => {
-    };
 
     const item = {
         py: '2px',
@@ -119,9 +92,7 @@ const MyNavBar = ({ title }) => {
     };
 
     return (
-        <div>
-            <AgregarSocio open={openSocio} handleClose={handleCloseSocio} />
-            <AgregarEntrenador open={openEntrenador} handleClose={handleCloseEntrenador} />
+        <div sx={{ m2: 2 }}>
             <List disablePadding>
                 <ListItem key="titleId" sx={{ ...item, ...itemCategory, fontSize: 22 }}>
                     {title}
@@ -133,17 +104,6 @@ const MyNavBar = ({ title }) => {
                         <Home />
                     </ListItemIcon>
                     <ListItemText>Home</ListItemText>
-                </ListItemButton>
-
-                <Divider sx={{ mt: 2 }} />
-
-                <ListItemButton sx={{
-                    ...item, ...itemCategory
-                }} component={NavLink} to="/Asistencia" >
-                    <ListItemIcon sx={{ minWidth: '30px' }}>
-                        <EventAvailable />
-                    </ListItemIcon>
-                    <ListItemText>Asistencia</ListItemText>
                 </ListItemButton>
 
                 <Divider sx={{ mt: 2 }} />

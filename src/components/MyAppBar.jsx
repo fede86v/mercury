@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { UserContext } from '../context/UserProvider';
 
 
-function MyAppBar({ title, openCloseDrawer, drawerWidth }) {
+function MyAppBar({ title, openCloseDrawer, drawerWidth, drawerOpen }) {
 
     const { user, signOutUser } = useContext(UserContext);
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -37,8 +37,8 @@ function MyAppBar({ title, openCloseDrawer, drawerWidth }) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }} >
-                        {title}
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingLeft: 30 }}>
+                        {user.empresa}
                     </Typography>
                     {
                         (user !== null && user !== false)

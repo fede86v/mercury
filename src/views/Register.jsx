@@ -38,6 +38,7 @@ import { useQuery } from '@tanstack/react-query'
 const DEFAULT_USER = {
     uid: "",
     empresa: '',
+    empresaId: null,
     password: '',
     repassword: '',
     email: '',
@@ -63,10 +64,10 @@ const Register = () => {
     const { formState: usuario, onInputChange, onInputDateChange, setFormState: setUsuario } = useForm(DEFAULT_USER)
     const { empresa, password, repassword, email, nombre, apellido, fechaNacimiento, genero, tipoDocumento, numeroDocumento } = usuario;
 
-    const getCompanies = async ()=>{
+    const getCompanies = async () => {
         const data = await CompanyService.getAll();
         setCompanies(data);
-        return data;        
+        return data;
     };
 
     const query = useQuery(['companies'], getCompanies);
@@ -75,6 +76,14 @@ const Register = () => {
         setError(null);
         query.refetch();
     }, []);
+
+    useEffect(() => {
+        if (!empresa) return;
+        const value = companies.filter(c => c.nombre === empresa)[0].id
+        const target = { name: "empresaId", value: value };
+        onInputChange({ target });
+
+    }, [empresa]);
 
     useEffect(() => {
         if (user) {
@@ -136,7 +145,7 @@ const Register = () => {
                 setAlert('Contraseñas no coinciden, por favor verifiquelas')
                 return
             }
-            createUserWithEmail(email, password);
+            createUserWithEmail(email, password, empresa, usuario.empresaId);
         }
         if (activeStep === 1) {
             if (nombre.trim() === "") {
@@ -162,6 +171,8 @@ const Register = () => {
             email: usuario.email,
             nombre: usuario.nombre,
             apellido: usuario.apellido,
+            empresaId: usuario.empresaId,
+            empresa: usuario.empresa,
             fechaNacimiento: usuario.fechaNacimiento.toString(),
             genero: usuario.genero,
             tipoDocumento: usuario.tipoDocumento,
@@ -235,7 +246,7 @@ const Register = () => {
                                                         value={empresa}
                                                         onChange={onInputChange}>
                                                         {companies.sort().map((dt) => (
-                                                            <MenuItem key={dt.id} value={dt.id}>{dt.nombre}</MenuItem>
+                                                            <MenuItem key={dt.id} value={dt.nombre}>{dt.nombre}</MenuItem>
                                                         ))}
                                                     </Select>
                                                 </FormControl>
@@ -307,7 +318,7 @@ const Register = () => {
                                         <Grid item xs={12} sm={12}>
                                             <Button height={20}
                                                 startIcon={<GoogleIcon />} disabled={!empresa}
-                                                onClick={signInWithGoogle}
+                                                onClick={() => signInWithGoogle(usuario)}
                                                 color="secondary"
                                                 variant="contained"
                                                 sx={{ width: '100%' }}
@@ -341,11 +352,11 @@ const Register = () => {
                                             label="Fecha de Nacimiento"
                                             inputFormat="DD/MM/YYYY"
                                             disableMaskedInput
-                                            value={fechaNacimiento} 
+                                            value={fechaNacimiento}
                                             onChange={(newValue) => {
                                                 const target = { name: "fechaNacimiento", value: newValue };
                                                 onInputDateChange({ target })
-                                                }
+                                            }
                                             }
                                             renderInput={(params) => <TextField variant="standard" {...params} sx={{ width: '100%' }} />}
                                         />
@@ -424,7 +435,7 @@ const Register = () => {
                                         </Button>
                                         <Box sx={{ flex: '1 1 auto' }} />
 
-                                        <Button type="submit" onClick={handleNext} 
+                                        <Button type="submit" onClick={handleNext}
                                             disabled={activeStep === 0 && !empresa}
                                             endIcon={activeStep === STEPS.length - 1 ? < SendIcon /> : < ArrowRightIcon />} >
                                             {activeStep === STEPS.length - 1 ? 'Terminar' : 'Siguiente'}
@@ -434,7 +445,7 @@ const Register = () => {
                             )}
                     </Box>
                 </Box>
-            </form>
+            </form >
         </>
     )
 }

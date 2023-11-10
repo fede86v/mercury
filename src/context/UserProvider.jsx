@@ -33,7 +33,7 @@ const UserProvider = ({ children }) => {
             });
     };
 
-    const signInWithGoogle = () => {
+    const signInWithGoogle = (u) => {
         setError(null);
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider)
@@ -49,6 +49,8 @@ const UserProvider = ({ children }) => {
                     activado: false,
                     nombre: userInfo.firstName,
                     apellido: userInfo.lastName,
+                    empresaId: u.empresaId,
+                    empresa: u.empresa,
                     telefono: userg.phoneNumber
                 };
                 getUsuarioFull(user.email).then((res) => {
@@ -61,7 +63,7 @@ const UserProvider = ({ children }) => {
             });
     };
 
-    const createUserWithEmail = (email, password) => {
+    const createUserWithEmail = (email, password, empresa, empresaId) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((result) => {
                 const u = {
@@ -70,7 +72,9 @@ const UserProvider = ({ children }) => {
                     fechaInactivo: null,
                     activado: false,
                     nombre: "",
-                    apellido: ""
+                    apellido: "",
+                    empresaId: empresaId,
+                    empresa: empresa
                 };
                 createUsuarioFull(u);
             })
