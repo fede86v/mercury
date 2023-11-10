@@ -60,7 +60,7 @@ const Register = () => {
     const [showRepassword, setShowRepassword] = useState(false);
     const [companies, setCompanies] = useState([]);
     const { error: authError, user, signInWithGoogle, createUserWithEmail, updateUser } = useContext(UserContext);
-    const { error: firebaseError, loading, validateCodigoAcceso } = useFirestore();
+    const { error: firebaseError } = useFirestore();
     const { formState: usuario, onInputChange, onInputDateChange, setFormState: setUsuario } = useForm(DEFAULT_USER)
     const { empresa, password, repassword, email, nombre, apellido, fechaNacimiento, genero, tipoDocumento, numeroDocumento } = usuario;
 

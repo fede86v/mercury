@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { PaymentService } from './databaseService'
+import { TransactionService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
 
@@ -12,7 +12,7 @@ export const usePayment = () => {
     const saveData = (data) => {
         console.log(data);
         setAlert(null);
-        return PaymentService.create(data, user);
+        return TransactionService.create(data, user);
     }
 
     // create mutation

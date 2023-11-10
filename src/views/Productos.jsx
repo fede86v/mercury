@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useFirestore } from '../utils/useFirestore';
+ import React, { useState } from 'react';
 import { NavLink } from "react-router-dom";
 // import AgregarProducto from '../components/modules/AgregarProducto'
 import {
@@ -8,33 +7,34 @@ import {
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import {ProductService} from '../utils'
+import { useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
 
-    const { getSocios: fb_getSocios } = useFirestore();
-
-    useEffect(() => {
-        getData();
-    }, []);
-
-    const getData = async () => {
-        const res = await fb_getSocios();
-        if (res !== null)
-            setProductos(res);
+    const getProductList = async () => {
+        const data = await ProductService.getAll();
+        return data;
     };
 
-    const handleNewSocio = () => {
+    const query = useQuery(['products'], getProductList);
+
+    // useEffect(() => {
+    //     query.refetch();
+    // }, []);
+
+    const handleNewProduct = () => {
         setOpenProducto(true);
     };
     const handleCloseProducto = () => {
         setOpenProducto(!openProducto);
-        getData();
     };
 
-    const handleDeleteSocio = async (uid, activo) => {
+    const handleDeleteProduct = async (uid, activo) => {
         setDialogRemoveConfirmOpen(true);
     };
 
@@ -48,7 +48,7 @@ const Productos = () => {
             {/* <AgregarProducto open={openProducto} handleClose={handleCloseProducto} /> */}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                 <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewSocio(); }}>Crear</Button>
+                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                 </Grid>
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Productos</Typography>
@@ -58,31 +58,31 @@ const Productos = () => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="left">Apellido</TableCell>
-                                    <TableCell align="left">Nombre</TableCell>
-                                    <TableCell align="left">Vencimiento</TableCell>
-                                    <TableCell align="left">Clases Restantes</TableCell>
-                                    <TableCell align="left">Actividad</TableCell>
+                                    <TableCell align="left">Descripcion</TableCell>
+                                    <TableCell align="left">Tipo</TableCell>
+                                    <TableCell align="left">Cantidad</TableCell>
+                                    <TableCell align="left">Precio</TableCell>
+                                    <TableCell align="left">Fecha Actualizacion</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {productos.map(({ uid, apellido, nombre, fechaVencimiento, clasesRestantes, actividades }) => (
+                                {productos.map(({ uid, descripcion, tipo, cantidad, precio, fechaActualizacion }) => (
                                     <TableRow
                                         key={uid}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{apellido}</TableCell>
-                                        <TableCell align="left">{nombre}</TableCell>
-                                        {/* <TableCell align="left">{moment(fechaVencimiento).format('DD-M-YYYY')}</TableCell> */}
-                                        <TableCell align="left">{clasesRestantes}</TableCell>
-                                        <TableCell align="left">{actividades.map(a => a + " ")}</TableCell>
+                                        <TableCell align="left">{descripcion}</TableCell>
+                                        <TableCell align="left">{tipo}</TableCell>
+                                        <TableCell align="left">{cantidad}</TableCell>
+                                        <TableCell align="left">{"$" + precio}</TableCell>
+                                        <TableCell align="left">{dayjs(fechaActualizacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="right">
                                             <>
-                                                <IconButton aria-label="edit" component={NavLink} to={"/Socios/" + uid} >
-                                                    <ModeEditIcon color="primary" />
+                                                <IconButton aria-label="edit" component={NavLink} to={"/Productos/" + uid} >
+                                                    <ModeEditIcon color="secondary" />
                                                 </ IconButton>
-                                                <IconButton aria-label="delete" onClick={() => handleDeleteSocio(uid, true)} >
+                                                <IconButton aria-label="delete" onClick={() => handleDeleteProduct(uid, true)} >
                                                     <DeleteIcon color="error" />
                                                 </ IconButton>
                                             </>
