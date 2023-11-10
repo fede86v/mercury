@@ -38,7 +38,7 @@ function MyAppBar({ title, openCloseDrawer, drawerWidth, drawerOpen }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingLeft: 30 }}>
-                        {user.empresa}
+                        {user ? user.empresa : title}
                     </Typography>
                     {
                         (user !== null && user !== false)
