@@ -44,7 +44,7 @@ const MyNavBar = ({ title }) => {
                 id: 1,
                 nombre: 'Productos',
                 children: [
-                    { id: 12, nombre: 'Stock', icon: <Store />, link: '/Productos' },
+                    { id: 12, nombre: 'Productos', icon: <Store />, link: '/Productos' },
                 ],
             });
 
@@ -52,7 +52,7 @@ const MyNavBar = ({ title }) => {
                 id: 2,
                 nombre: 'Ventas',
                 children: [
-                    { id: 22, nombre: 'Ventas', icon: <LocalGroceryStore />, link: '/Stock' },
+                    { id: 22, nombre: 'Ventas', icon: <LocalGroceryStore />, link: '/Ventas' },
                 ],
             });
 
@@ -60,7 +60,7 @@ const MyNavBar = ({ title }) => {
                 id: 3,
                 nombre: 'Clientes',
                 children: [
-                    { id: 32, nombre: 'Socios', icon: <People />, link: '/Clientes' },
+                    { id: 32, nombre: 'Clientes', icon: <People />, link: '/Clientes' },
                 ],
             });
 
