@@ -10,11 +10,10 @@ export const useProduct = () => {
     const { user } = useContext(UserContext);
 
     const saveData = (data) => {
-        console.log(data);
         setAlert(null);
-        return ProductService.create(data, user);
+        const product = {...data, empresaId:user.empresaId}
+        return ProductService.create(data, product);
     }
-
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
         onError: (error) => setError(error.message),

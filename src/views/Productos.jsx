@@ -1,31 +1,37 @@
- import React, { useState } from 'react';
+ import React, { useState, useContext } from 'react';
 import { NavLink } from "react-router-dom";
-// import AgregarProducto from '../components/modules/AgregarProducto'
+import AgregarProducto from '../components/modules/AgregarProducto'
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {ProductService} from '../utils'
-import { useQuery } from '@tanstack/react-query'
-import dayjs from 'dayjs'
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { ProductService, ProductTypeService } from '../utils';
+import { UserContext } from '../context/UserProvider';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
+    const [tipoProductos, setTipoProductos] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
+    const { user } = useContext(UserContext);
+
 
     const getProductList = async () => {
-        const data = await ProductService.getAll();
+        const data = await ProductService.getQueryry("empresa", "==", user.empresaId);;
+        return data;
+    };
+    const getProductTypeList = async () => {
+        const data = await ProductTypeService.getQueryry("empresa", "==", user.empresaId);
+        setTipoProductos(data);
         return data;
     };
 
     const query = useQuery(['products'], getProductList);
-
-    // useEffect(() => {
-    //     query.refetch();
-    // }, []);
+    const queryProdTypes = useQuery(['productTypes'], getProductTypeList);
 
     const handleNewProduct = () => {
         setOpenProducto(true);
@@ -33,19 +39,17 @@ const Productos = () => {
     const handleCloseProducto = () => {
         setOpenProducto(!openProducto);
     };
-
     const handleDeleteProduct = async (uid, activo) => {
         setDialogRemoveConfirmOpen(true);
     };
-
     const handleClose = async (aceptar) => {
-        //Agregar codigo para seleccionar el current Socio y eliminarlo
         setDialogRemoveConfirmOpen(false);
+        query.refetch();
     };
 
     return (
         <>
-            {/* <AgregarProducto open={openProducto} handleClose={handleCloseProducto} /> */}
+            <AgregarProducto open={openProducto} tipoProductos={tipoProductos} handleClose={handleCloseProducto} />
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>

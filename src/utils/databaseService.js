@@ -147,4 +147,5 @@ export const CompanyService = new DatabaseService("empresas");
 export const EmployeeService = new DatabaseService("vendedores");
 export const TransactionService = new DatabaseService("ventas");
 export const ProductService = new DatabaseService("productos");
+export const ProductTypeService = new DatabaseService("tipoProductos");
 export const UserService = new DatabaseService("usuarios");

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext, useState } from 'react';
 import {
     Box,
     TextField,
@@ -17,7 +17,7 @@ import {
     Radio,
     InputAdornment,
     IconButton
-} from '@mui/material'
+} from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -31,9 +31,9 @@ import { NavLink } from 'react-router-dom';
 import { UserContext } from '../context/UserProvider';
 import { DocumentTypes } from '../utils/enums';
 import { CompanyService } from '../utils/databaseService';
-import Alerts from '../components/common/alerts'
+import Alerts from '../components/common/Alerts';
 import { useForm } from '../utils';
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query';
 
 const DEFAULT_USER = {
     uid: "",

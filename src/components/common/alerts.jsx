@@ -2,7 +2,7 @@ import React from 'react'
 import { Alert, AlertTitle } from '@mui/material'
 import PropTypes from 'prop-types'
 
-const alerts = ({ alert, error }) => {
+const Alerts = ({ alert, error }) => {
     return (
         <>
             {/* Alerts */
@@ -32,10 +32,10 @@ const alerts = ({ alert, error }) => {
 }
 
 
-alerts.propTypes = {
+Alerts.propTypes = {
     alert: PropTypes.string,
     error: PropTypes.string
 }
 
 
-export default alerts
+export default Alerts
