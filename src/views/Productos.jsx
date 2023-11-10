@@ -10,6 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { ProductService, ProductTypeService, BrandService } from '../utils';
+import { useProduct } from '../utils'
 import { UserContext } from '../context/UserProvider';
 
 const Productos = () => {
@@ -19,10 +20,12 @@ const Productos = () => {
     const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
+    const { error, alert, onSave, success } = useProduct();
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const sortedData = data.sort((a, b) => {
+        const filtered = data.filter(i => i.fechaInactivo); 
+        const sortedData = filtered.sort((a, b) => {
             if (a.nombre < b.nombre) {
               return -1;
             }
@@ -81,7 +84,8 @@ const Productos = () => {
         query.refetch();
     };
     const handleDeleteProduct = async (productoAeliminar) => {
-        const producto = {...productoAeliminar, fechaInactivo: Date.now()}
+        const producto = {...productoAeliminar, fechaInactivo: Date.now()};
+        onSave(producto);
         setDialogRemoveConfirmOpen(true);
     };
     const handleClose = async (aceptar) => {

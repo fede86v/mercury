@@ -11,8 +11,16 @@ export const useProduct = () => {
 
     const saveData = (data) => {
         setAlert(null);
-        const product = {...data, empresaId:user.empresaId}
-        return ProductService.create(product, user);
+        if (!data.id)
+        {
+            const product = {...data, empresaId:user.empresaId}
+            return ProductService.create(product, user);
+        }
+        else
+        {
+            return ProductService.update(data.id, data, user);
+        }
+        
     }
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
@@ -22,14 +30,14 @@ export const useProduct = () => {
 
     const onSave = (data) => {
         // 1. Validate
-        let validation = data.monto !== (data.cuota - data.descuento)
-        if (validation) setAlert(`Monto invalido`);
+        let validation = data.precioVenta < data.precioCompra;
+        if (validation) setAlert(`Precio de Venta debe ser mayor al de compra`);
 
-        validation = data.monto < 0
-        if (validation) setAlert(`Monto invalido`);
+        validation = data.precioVenta < 0
+        if (validation) setAlert(`Precio de Venta invalido`);
 
-        validation = data.descuento > 100
-        if (validation) setAlert(`Descuento invalido`);
+        validation = data.precioCompra < 0
+        if (validation) setAlert(`Precio de Compra invalido`);
 
         // 2. if Success then save
         if (!validation) mutation.mutate(data);
