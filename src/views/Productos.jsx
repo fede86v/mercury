@@ -1,4 +1,4 @@
- import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarProducto from '../components/modules/AgregarProducto'
 import {
@@ -20,20 +20,20 @@ const Productos = () => {
     const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
-    const { error, alert, onSave, success } = useProduct();
+    const { onSave } = useProduct();
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => i.fechaInactivo); 
+        const filtered = data.filter(i => i.fechaInactivo);
         const sortedData = filtered.sort((a, b) => {
             if (a.nombre < b.nombre) {
-              return -1;
+                return -1;
             }
             if (a.nombre > b.nombre) {
-              return 1;
+                return 1;
             }
             return 0;
-          });
+        });
         setProductos(sortedData)
         return sortedData;
     };
@@ -41,13 +41,13 @@ const Productos = () => {
         const data = await ProductTypeService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {
             if (a.nombre < b.nombre) {
-              return -1;
+                return -1;
             }
             if (a.nombre > b.nombre) {
-              return 1;
+                return 1;
             }
             return 0;
-          });
+        });
         setTipoProductos(sortedData);
         return sortedData;
     };
@@ -55,13 +55,13 @@ const Productos = () => {
         const data = await BrandService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {
             if (a.nombre < b.nombre) {
-              return -1;
+                return -1;
             }
             if (a.nombre > b.nombre) {
-              return 1;
+                return 1;
             }
             return 0;
-          });
+        });
         setMarcas(sortedData);
         return sortedData;
     };
@@ -84,7 +84,7 @@ const Productos = () => {
         query.refetch();
     };
     const handleDeleteProduct = async (productoAeliminar) => {
-        const producto = {...productoAeliminar, fechaInactivo: Date.now()};
+        const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
         onSave(producto);
         setDialogRemoveConfirmOpen(true);
     };
@@ -95,8 +95,8 @@ const Productos = () => {
 
     return (
         <>
-            { openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null }
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
+            {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                 </Grid>
