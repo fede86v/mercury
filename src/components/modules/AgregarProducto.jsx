@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types'
 import { useForm, useProduct } from '../../utils';
-import Alerts from '../common/alerts1';
+import Alerts from '../common/Alerts';
 import Producto from '../common/Producto';
 
 const DEFAULT_PRODUCT = {
