@@ -1,24 +1,24 @@
 import React from 'react'
-import { Grid, FormControl, Radio, RadioGroup, Select, FormControlLabel, TextField, Divider, InputLabel, MenuItem, FormLabel, } from '@mui/material'
+import { Grid, FormControl, Radio, RadioGroup, Select, FormControlLabel, TextField, InputLabel, MenuItem, FormLabel, } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DocumentTypes, PhoneTypes } from '../../utils/enums'
 import PropTypes from 'prop-types'
 
-const Persona = ({ persona, handleChange, handleDateChange }) => {
+const Persona = ({ persona, onInputChange, onInputDateChange }) => {
     const { email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
             {/* Email */}
             <Grid item xs={12} sm={12}>
                 <TextField label='Email' placeholder='Email' margin='normal' type='email' variant="standard"
-                    onChange={handleChange} value={email} name="email" required sx={{ width: "100%" }} />
+                    onChange={onInputChange} value={email} name="email" sx={{ width: "100%" }} />
             </Grid>
 
             {/* Nombre */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-name" label="Nombre" variant="standard"
                     value={nombre} name="nombre" required
-                    onChange={handleChange}
+                    onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
 
@@ -26,7 +26,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-lastName" label="Apellido" variant="standard"
                     value={apellido} name="apellido" required
-                    onChange={handleChange}
+                    onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
 
@@ -38,7 +38,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                     value={fechaNacimiento} name="fechaNacimiento"
                     onChange={(newValue) => {
                         const target = { name: "fechaNacimiento", value: newValue };
-                        handleDateChange({ target })
+                        onInputDateChange({ target })
                     }
                     }
                     renderInput={(props) => <TextField variant="standard" {...props} />}
@@ -50,7 +50,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                 <FormControl >
                     <FormLabel id="lbl-genero" >Genero</FormLabel>
                     <RadioGroup row
-                        value={genero} name="genero" onChange={handleChange} >
+                        value={genero} name="genero" onChange={onInputChange} >
                         <FormControlLabel value="Femenino" control={<Radio />} label="Femenino" />
                         <FormControlLabel value="Masculino" control={<Radio />} label="Masculino" />
                         <FormControlLabel value="Otro" control={<Radio />} label="Otro" />
@@ -67,7 +67,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                         labelId="tipo-dni-select-item-label"
                         id="tipo-dni-select-item"
                         value={tipoDocumento} name="tipoDocumento"
-                        onChange={handleChange}
+                        onChange={onInputChange}
                         label="Tipo Documento" >
                         {DocumentTypes.sort().map((dt) => (
                             <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
@@ -81,7 +81,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                 <TextField id="txt-dni" label="Numero de Documento"
                     variant="standard" sx={{ width: '100%' }}
                     value={numeroDocumento} name="numeroDocumento"
-                    onChange={handleChange}
+                    onChange={onInputChange}
                 />
             </Grid>
 
@@ -93,7 +93,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                         labelId="tipo-tel-select-item-label"
                         id="tipo-tel-select-item"
                         value={tipoTelefono} name="tipoTelefono"
-                        onChange={handleChange}
+                        onChange={onInputChange}
                         label="Teléfono" >
                         {PhoneTypes.sort().map((dt) => (
                             <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
@@ -108,7 +108,7 @@ const Persona = ({ persona, handleChange, handleDateChange }) => {
                 <TextField id="txt-phone" label="Teléfono"
                     variant="standard" sx={{ width: '100%' }}
                     value={telefono} name="telefono"
-                    onChange={handleChange}
+                    onChange={onInputChange}
                 />
             </Grid>
         </Grid>

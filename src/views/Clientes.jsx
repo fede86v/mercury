@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useFirestore } from '../utils/useFirestore';
 import { NavLink } from "react-router-dom";
-import AgregarCliente from '../components/modules/AgregarCliente'
+import AgregarPersona from '../components/modules/AgregarPersona'
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
@@ -50,7 +50,7 @@ const Clientes = () => {
 
     return (
         <>
-            <AgregarCliente open={openSocio} handleClose={handleCloseSocio} />
+            <AgregarPersona open={openSocio} handleClose={handleCloseSocio} />
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
 
                 <Grid item sm={12}>
