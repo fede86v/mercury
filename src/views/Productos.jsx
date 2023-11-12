@@ -15,6 +15,7 @@ import { UserContext } from '../context/UserProvider';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
+    const [productoAeliminar, setProductoAeliminar] = useState(null);
     const [tipoProductos, setTipoProductos] = useState([]);
     const [marcas, setMarcas] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
@@ -84,12 +85,16 @@ const Productos = () => {
         query.refetch();
     };
     const handleDeleteProduct = async (productoAeliminar) => {
-        const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
-        onSave(producto);
+        setProductoAeliminar(productoAeliminar);
         setDialogRemoveConfirmOpen(true);
     };
     const handleClose = async (aceptar) => {
+        if (aceptar) {
+            const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
+            onSave(producto);
+        }
         setDialogRemoveConfirmOpen(false);
+        setProductoAeliminar(null);
         query.refetch();
     };
 
