@@ -9,7 +9,7 @@ import { useProduct, useForm } from '../utils'
 import { useQuery } from '@tanstack/react-query';
 import { UserContext } from '../context/UserProvider';
 
-const DEFAULT_PROSUCT = {
+const DEFAULT_PRODUCT = {
     descripcion: "",
     tipo: "",
     cantidad: null,
@@ -22,7 +22,7 @@ const DetalleProducto = () => {
     const [categorias, setCategories] = useState([]);
     const [marcas, setMarcas] = useState([]);
     const { onSave } = useProduct();
-    const { formState: producto, onInputChange, onInputDateChange, setFormState: setProducto } = useForm(DEFAULT_PROSUCT)
+    const { formState: producto, onInputChange, onInputDateChange, setFormState: setProducto } = useForm(DEFAULT_PRODUCT)
     const { user } = useContext(UserContext);
 
     const getProducto = async () => {
@@ -70,7 +70,7 @@ const DetalleProducto = () => {
 
         return () => {
             console.log("destructor");
-            setProducto(DEFAULT_PROSUCT);
+            setProducto(DEFAULT_PRODUCT);
         }
     }, []);
 
