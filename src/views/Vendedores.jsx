@@ -61,7 +61,7 @@ const Vendedores = () => {
 
     return (
         <>
-            {open ? <AgregarPersona open={open} handleClose={handleCloseVendedor} /> : null}
+            {open ? <AgregarPersona open={open} handleClose={handleCloseVendedor} tipoPersona="vendedor" /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>

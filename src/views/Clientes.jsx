@@ -1,63 +1,57 @@
-import React, { useEffect, useState } from 'react'
-import { useFirestore } from '../utils/useFirestore';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarPersona from '../components/modules/AgregarPersona'
 import {
-    Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
+    Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton, Button
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
+import { ClientService } from '../utils';
+import { UserContext } from '../context/UserProvider';
 
 const Clientes = () => {
-    const [socios, setSocios] = useState([]);
-    const [openSocio, setOpenSocio] = useState(false);
-    const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
+    const [vendedores, setClientes] = useState([]);
+    const [open, setOpen] = useState(false);
+    const { user } = useContext(UserContext);
 
+    const getClientList = async () => {
+        const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
+        const sortedData = data.sort((a, b) => {
+            if (a.nombre < b.nombre) {
+                return -1;
+            }
+            if (a.nombre > b.nombre) {
+                return 1;
+            }
+            return 0;
+        });
+        setClientes(sortedData)
+        return sortedData;
+    };
 
-    const { getSocios: fb_getSocios } = useFirestore();
+    const query = useQuery(['clientes'], getClientList);
 
     useEffect(() => {
-        getData();
+        query.refetch();
     }, []);
 
-    const getData = async () => {
-        const res = await fb_getSocios();
-        if (res !== null)
-            setSocios(res);
+    const handleNewProduct = () => {
+        setOpen(true);
     };
-
-    const handleNewSocio = () => {
-        setOpenSocio(true);
-    };
-    const handleCloseSocio = () => {
-        setOpenSocio(!openSocio);
-        getData();
-    };
-
-    const handleDeleteSocio = async (uid, activo) => {
-        /* const currentSocio = activo
-            ? entrenadores.find(e => e.uid === uid)
-            : entrenadoresInactivos.find(e => e.uid === uid);
-        setCurrentSocio(currentSocio);*/
-        setDialogRemoveConfirmOpen(true);
-    };
-
-    const handleClose = async (aceptar) => {
-        //Agregar codigo para seleccionar el current Socio y eliminarlo
-        setDialogRemoveConfirmOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+        query.refetch();
     };
 
     return (
         <>
-            <AgregarPersona open={openSocio} handleClose={handleCloseSocio} />
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-
-                <Grid item sm={12}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewSocio(); }}>Crear</Button>
+            {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" /> : null}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
+                <Grid item sm={2}>
+                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                 </Grid>
-
-                <Grid item sm={12}>
+                <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
                 </Grid>
                 <Grid item sm={12}>
@@ -65,32 +59,27 @@ const Clientes = () => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="left">Apellido</TableCell>
                                     <TableCell align="left">Nombre</TableCell>
-                                    <TableCell align="left">Vencimiento</TableCell>
-                                    <TableCell align="left">Clases Restantes</TableCell>
-                                    <TableCell align="left">Actividad</TableCell>
+                                    <TableCell align="left">Apellido</TableCell>
+                                    <TableCell align="left">Genero</TableCell>
+                                    <TableCell align="left">Fecha Actualizacion</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {socios.map(({ uid, apellido, nombre, fechaVencimiento, clasesRestantes, actividades }) => (
+                                {vendedores.map((item) => (
                                     <TableRow
-                                        key={uid}
+                                        key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{apellido}</TableCell>
-                                        <TableCell align="left">{nombre}</TableCell>
-                                        {/* <TableCell align="left">{moment(fechaVencimiento).format('DD-M-YYYY')}</TableCell> */}
-                                        <TableCell align="left">{clasesRestantes}</TableCell>
-                                        <TableCell align="left">{actividades.map(a => a + " ")}</TableCell>
+                                        <TableCell align="left">{item.nombre}</TableCell>
+                                        <TableCell align="left">{item.apellido}</TableCell>
+                                        <TableCell align="left">{item.genero}</TableCell>
+                                        <TableCell align="left">{dayjs(item.fechaActualizacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="right">
                                             <>
-                                                <IconButton aria-label="edit" component={NavLink} to={"/Socios/" + uid} >
-                                                    <ModeEditIcon color="primary" />
-                                                </ IconButton>
-                                                <IconButton aria-label="delete" onClick={() => handleDeleteSocio(uid, true)} >
-                                                    <DeleteIcon color="error" />
+                                                <IconButton aria-label="edit" component={NavLink} to={"/Clientes/" + item.id} >
+                                                    <ModeEditIcon color="secondary" />
                                                 </ IconButton>
                                             </>
 
@@ -101,27 +90,6 @@ const Clientes = () => {
                         </Table>
                     </TableContainer>
                 </Grid>
-                <Dialog
-                    open={dialogRemoveConfirmOpen}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">
-                        {"Esta seguro?"}
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Esta seguro de eliminar a esta persona? los datos no seran eliminados pero no seran visibles directamente.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => handleClose(false)} color="secondary" >Cancelar</Button>
-                        <Button onClick={() => handleClose(true)} color="primary" autoFocus>
-                            Aceptar
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </Grid>
         </>
 

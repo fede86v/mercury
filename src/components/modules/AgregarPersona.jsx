@@ -55,7 +55,7 @@ const AgregarPersona = (props) => {
     const { error, alert, onSave, success } = usePersona(props.activePrices);
 
     const handleSave = () => {
-        onSave(persona, "vendedor");
+        onSave(persona, props.tipoPersona);
     };
 
     useEffect(() => {
@@ -83,6 +83,7 @@ const AgregarPersona = (props) => {
 
 AgregarPersona.propTypes = {
     open: PropTypes.bool.isRequired,
+    tipoPersona: PropTypes.string.isRequired,
     handleClose: PropTypes.func.isRequired
 };
 
