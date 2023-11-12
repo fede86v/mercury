@@ -3,7 +3,7 @@ import { EmployeeService, ClientService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
 
-export const usePersona = () => {
+export const usePerson = () => {
     const [alert, setAlert] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);

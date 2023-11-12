@@ -5,7 +5,7 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import SaveIcon from '@mui/icons-material/Save';
 import { ProductService } from '../utils/databaseService';
 import Persona from '../components/common/Persona';
-import { useProduct, useForm } from '../utils'
+import { usePerson, useForm } from '../utils'
 import { useQuery } from '@tanstack/react-query';
 
 const DEFAULT_PERSON = {
@@ -23,7 +23,7 @@ const DEFAULT_PERSON = {
 const DetalleCliente = () => {
 
     const { id } = useParams();
-    const { onSave } = useProduct();
+    const { onSave } = usePerson();
     const { formState: cliente, onInputChange, onInputDateChange, setFormState: setCliente } = useForm(DEFAULT_PERSON)
 
     const getCliente = async () => {
@@ -68,7 +68,7 @@ const DetalleCliente = () => {
                                             sx={{ ml: 1 }}
                                             variant="contained"
                                             startIcon={< SaveIcon />}
-                                            onClick={() => onSave(cliente)}
+                                            onClick={() => onSave(cliente, "cliente")}
                                         >
                                             Guardar
                                         </Button>
@@ -76,7 +76,7 @@ const DetalleCliente = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} >
                                     <Paper sx={{ p: 2 }}  >
-                                        <Persona persona={cliente} tipoPersona={"cliente"} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
+                                        <Persona persona={cliente} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
                                     </Paper>
                                 </Grid>
                             </Grid>

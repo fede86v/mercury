@@ -4,6 +4,6 @@ export * from './useProduct';
 export * from './useClient';
 export * from './useConfig';
 export * from './useUser';
-export * from './usePersona';
+export * from './usePerson';
 export * from './databaseService';
 export * from './enums';
