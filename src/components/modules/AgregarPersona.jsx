@@ -26,12 +26,11 @@ import {
     Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types'
-import { useForm, usePersona } from '../../utils';
+import { useForm, usePerson } from '../../utils';
 import Alerts from '../common/Alerts';
 import Persona from '../common/Persona';
 
 const DEFAULT_PERSONA = {
-    uid: "",
     email: "",
     tipoTelefono: "Principal",
     telefono: "",
@@ -41,18 +40,11 @@ const DEFAULT_PERSONA = {
     genero: "Femenino",
     tipoDocumento: "DNI",
     numeroDocumento: "",
-    fechaVencimiento: Date.now(),
-    clasesRestantes: 0,
-    totalClases: 0,
-    actividades: ['MUSCULACION'],
-    codigoAcceso: "",
-    frecuencia: "3 veces por semana",
-    cuota: 0,
 }
 
 const AgregarPersona = (props) => {
     const { formState: persona, onInputChange, onInputDateChange, } = useForm(DEFAULT_PERSONA)
-    const { error, alert, onSave, success } = usePersona(props.activePrices);
+    const { error, alert, onSave, success } = usePerson(props.activePrices);
 
     const handleSave = () => {
         onSave(persona, props.tipoPersona);
@@ -66,7 +58,7 @@ const AgregarPersona = (props) => {
 
     return (
         <Dialog open={props.open} >
-            <DialogTitle>Producto</DialogTitle>
+            <DialogTitle>Persona</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                 </DialogContentText>
