@@ -5,7 +5,7 @@ import { DocumentTypes, PhoneTypes } from '../../utils/enums'
 import PropTypes from 'prop-types'
 
 const Persona = ({ persona, onInputChange, onInputDateChange }) => {
-    const { email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
+    const { email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono, direccion, ciudad, localidad, zip } = persona;
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
             {/* Email */}
@@ -58,7 +58,6 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                 </FormControl>
             </Grid>
 
-
             {/* Tipo Documento */}
             <Grid item xs={12} sm={6} md={3}>
                 <FormControl variant="standard" fullWidth >
@@ -102,8 +101,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                 </FormControl>
             </Grid>
 
-
-            {/* Documento */}
+            {/* Telefono */}
             <Grid item xs={12} sm={6} md={3}>
                 <TextField id="txt-phone" label="Teléfono"
                     variant="standard" sx={{ width: '100%' }}
@@ -111,6 +109,40 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                     onChange={onInputChange}
                 />
             </Grid>
+
+             {/* Direccion */}
+             <Grid item xs={12} sm={12}>
+                <TextField id="txt-direccion" label="Direccion" variant="standard"
+                    value={direccion} name="direccion" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+             {/* Ciudad */}
+             <Grid item xs={12} sm={6}>
+                <TextField id="txt-ciudad" label="Ciudad" variant="standard"
+                    value={ciudad} name="ciudad" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+             {/* Localidad */}
+             <Grid item xs={12} sm={6}>
+                <TextField id="txt-localidad" label="Localidad" variant="standard"
+                    value={localidad} name="localidad" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+            
+             {/* Localidad */}
+             <Grid item xs={12} sm={6}>
+                <TextField id="txt-zip" label="Zip" variant="standard"
+                    value={zip} name="zip" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+
         </Grid>
     )
 }
