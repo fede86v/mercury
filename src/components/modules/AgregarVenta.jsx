@@ -34,7 +34,7 @@ const AgregarVenta = (props) => {
     }, [success]);
 
     return (
-        <Dialog open={props.open} >
+        <Dialog open={props.open} fullWidth maxWidth="sm" >
             <DialogTitle>Venta</DialogTitle>
             <DialogContent>
                 <DialogContentText>

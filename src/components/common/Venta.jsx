@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Box, Select, TextField, InputAdornment, InputLabel, MenuItem, Typography } from '@mui/material'
+import { Grid, Box, Card, Typography, Divider } from '@mui/material'
 import PropTypes from 'prop-types'
 
 const Venta = ({ venta, onInputChange, vendedores, productos }) => {
@@ -7,24 +7,42 @@ const Venta = ({ venta, onInputChange, vendedores, productos }) => {
 
     return (
         <Box sx={{ p: 2 }} >
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} spacing={2} >
+                {/* Cliente */}
+                <Grid item xs={12} sm={12}>
+                    
+                </Grid>
 
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                 {/* Detalle Compra */}
                 <Grid item xs={12} sm={12}>
 
                 </Grid>
 
-                {/* Subtotal */}
                 <Grid item xs={12} sm={12}>
-                    <Typography variant="h6" textAlign="end" >$ {subtotal}</Typography>
+                    <Divider />
+                </Grid>
+                { /* Resumen */ }
+                {/* Subtotal */}
+                <Grid item xs={12} sm={4}>
+                    <Card sx={{p:1}} >
+                        <Typography textAlign="end" >Subtotal</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {subtotal}</Typography>
+                    </Card>
+                    
                 </Grid>
                 {/* Descuento */}
-                <Grid item xs={12} sm={12}>
+                <Grid item xs={12} sm={4}>
+                <Card sx={{p:1}} >
+                <Typography textAlign="end" >Descuento</Typography>
                     <Typography variant="h6" textAlign="end" >$ {descuento}</Typography>
+                    </Card>
                 </Grid>
                 {/* Total */}
-                <Grid item xs={12} sm={12}>
+                <Grid item xs={12} sm={4}>
+                <Card sx={{p:1}} >
+                    <Typography textAlign="end" >Total</Typography>
                     <Typography variant="h6" textAlign="end" >$ {total}</Typography>
+                    </Card>
                 </Grid>
             </Grid>
         </Box>
