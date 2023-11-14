@@ -1,17 +1,63 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Grid, FormControl, Radio, RadioGroup, Select, FormControlLabel, TextField, InputLabel, MenuItem, FormLabel, } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DocumentTypes, PhoneTypes } from '../../utils/enums'
 import PropTypes from 'prop-types'
 
-const Persona = ({ persona, onInputChange, onInputDateChange }) => {
+const Cliente = ({ persona, onInputChange, onInputDateChange }) => {
     const { email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
+
+    const getEmployeeList = async () => {
+        const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
+        const filtered = data.filter(i => i.fechaInactivo);
+        const sortedData = filtered.sort((a, b) => {
+            if (a.nombre < b.nombre) {
+                return -1;
+            }
+            if (a.nombre > b.nombre) {
+                return 1;
+            }
+            return 0;
+        });
+        setVendedores(sortedData)
+        return sortedData;
+    };
+
+    const query = useQuery(['employees'], getEmployeeList);
+
+    useEffect(() => {
+        if (numeroDocumento.length >= 8) {
+
+        }
+    }, [numeroDocumento]);
+
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-            {/* Email */}
-            <Grid item xs={12} sm={12}>
-                <TextField label='Email' placeholder='Email' margin='normal' type='email' variant="standard"
-                    onChange={onInputChange} value={email} name="email" sx={{ width: "100%" }} />
+
+            {/* Tipo Documento */}
+            <Grid item xs={12} sm={6} md={3}>
+                <FormControl variant="standard" fullWidth >
+                    <InputLabel id="tipo-dni-select-item-label">Tipo Documento</InputLabel>
+                    <Select
+                        labelId="tipo-dni-select-item-label"
+                        id="tipo-dni-select-item"
+                        value={tipoDocumento} name="tipoDocumento"
+                        onChange={onInputChange}
+                        label="Tipo Documento" >
+                        {DocumentTypes.sort().map((dt) => (
+                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Grid>
+
+            {/* Documento */}
+            <Grid item xs={12} sm={6} md={3}>
+                <TextField id="txt-dni" label="Numero de Documento"
+                    variant="standard" sx={{ width: '100%' }}
+                    value={numeroDocumento} name="numeroDocumento"
+                    onChange={onInputChange}
+                />
             </Grid>
 
             {/* Nombre */}
@@ -59,31 +105,6 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
             </Grid>
 
 
-            {/* Tipo Documento */}
-            <Grid item xs={12} sm={6} md={3}>
-                <FormControl variant="standard" fullWidth >
-                    <InputLabel id="tipo-dni-select-item-label">Tipo Documento</InputLabel>
-                    <Select
-                        labelId="tipo-dni-select-item-label"
-                        id="tipo-dni-select-item"
-                        value={tipoDocumento} name="tipoDocumento"
-                        onChange={onInputChange}
-                        label="Tipo Documento" >
-                        {DocumentTypes.sort().map((dt) => (
-                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Grid>
-
-            {/* Documento */}
-            <Grid item xs={12} sm={6} md={3}>
-                <TextField id="txt-dni" label="Numero de Documento"
-                    variant="standard" sx={{ width: '100%' }}
-                    value={numeroDocumento} name="numeroDocumento"
-                    onChange={onInputChange}
-                />
-            </Grid>
 
             {/* Tipo Telefono */}
             <Grid item xs={12} sm={6} md={3}>
@@ -115,11 +136,11 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
     )
 }
 
-Persona.propTypes = {
+Cliente.propTypes = {
     persona: PropTypes.object.isRequired,
     handleChange: PropTypes.func.isRequired,
     handleDateChange: PropTypes.func.isRequired,
 }
 
 
-export default Persona
+export default Cliente
