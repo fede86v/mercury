@@ -1,35 +1,39 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { Grid, FormControl, Radio, RadioGroup, Select, FormControlLabel, TextField, InputLabel, MenuItem, FormLabel, } from '@mui/material'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DocumentTypes, PhoneTypes } from '../../utils/enums'
+import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
+import { DocumentTypes, PhoneTypes } from '../../utils/enums'
+import {ClientService} from '../../utils/databaseService'
+import { UserContext } from '../context/UserProvider';
+
 
 const Cliente = ({ persona, onInputChange, onInputDateChange }) => {
-    const { email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
+    const { id, email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
+    const { user } = useContext(UserContext);
+    const [clientes, setClientes] = useState([])
 
-    const getEmployeeList = async () => {
+    const getClientList = async () => {
         const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => i.fechaInactivo);
-        const sortedData = filtered.sort((a, b) => {
-            if (a.nombre < b.nombre) {
-                return -1;
-            }
-            if (a.nombre > b.nombre) {
-                return 1;
-            }
-            return 0;
-        });
-        setVendedores(sortedData)
-        return sortedData;
+        clientes(data)
+        return data;
     };
 
-    const query = useQuery(['employees'], getEmployeeList);
+    const query = useQuery(['client'], getClientList);
 
     useEffect(() => {
         if (numeroDocumento.length >= 8) {
-
+            const client = clientes.find(c=> c.numeroDocumento === numeroDocumento);
+            if (client)
+            {
+                
+            }
         }
     }, [numeroDocumento]);
+
+    useEffect(() => {
+        
+    }, []);
 
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
