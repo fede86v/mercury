@@ -17,6 +17,7 @@ export const usePerson = () => {
         if (data.tipoPersona === "vendedor") {
             if (!persona.id) {
                 const result = await EmployeeService.create(persona, user);
+                EmployeeService.update(result.id, result, user);
                 setResult(result);
             }
             else {
@@ -27,6 +28,7 @@ export const usePerson = () => {
         if (data.tipoPersona === "cliente") {
             if (!persona.id) {
                 const result = await ClientService.create(persona, user);
+                EmployeeService.update(result.id, result, user);
                 setResult(result);
             }
             else {

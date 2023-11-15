@@ -26,13 +26,13 @@ const DetalleVendedor = () => {
     const { onSave } = usePerson();
     const { formState: vendedor, onInputChange, onInputDateChange, setFormState: setCliente } = useForm(DEFAULT_PERSON)
 
-    const getCliente = async () => {
+    const getVendedor = async () => {
         const data = await ProductService.getOne(id);
         setCliente(data);
         return data;
     };
 
-    const query = useQuery(['vendedores'], getCliente, id);
+    const query = useQuery(['vendedores'], getVendedor, id);
 
     useEffect(() => {
         query.refetch();

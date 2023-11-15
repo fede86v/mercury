@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid, Box, Card, Typography, Divider, Paper } from '@mui/material'
 import PropTypes from 'prop-types'
 import Cliente from '../common/Cliente'
+import Vendedor from '../common/Vendedor'
 
 const Venta = ({ venta, setVenta }) => {
     const { total, subtotal, descuento, cliente, vendedor, productos } = venta;
@@ -11,22 +12,37 @@ const Venta = ({ venta, setVenta }) => {
             ...venta,
             "cliente": data
         });
-        console.log(venta);
+    };
+
+    const setVendedor = (data) => {
+        setVenta({
+            ...venta,
+            "vendedor": data
+        });
     };
 
     return (
         <Box sx={{ p: 2 }} >
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} spacing={2} >
                 {/* Cliente */}
-                <Grid item xs={12} sm={12}>
+                <Grid item xs={12} sm={12} md={6}>
                     <Paper>
                         <Cliente persona={cliente} setPersona={setCliente} />
                     </Paper>
                 </Grid>
 
+                {/* Vendedor */}
+                <Grid item xs={12} sm={12} md={6}>
+                    <Paper>
+                        <Vendedor persona={vendedor} setPersona={setVendedor} />
+                    </Paper>
+                </Grid>
+
                 {/* Detalle Compra */}
                 <Grid item xs={12} sm={12}>
+                    <Paper>
 
+                    </Paper>
                 </Grid>
 
                 <Grid item xs={12} sm={12}>
