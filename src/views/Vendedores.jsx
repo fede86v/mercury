@@ -22,7 +22,7 @@ const Vendedores = () => {
 
     const getEmployeeList = async () => {
         const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => i.fechaInactivo);
+        const filtered = data.filter(i => !i.fechaInactivo);
         const sortedData = filtered.sort((a, b) => {
             if (a.nombre < b.nombre) {
                 return -1;
@@ -36,7 +36,7 @@ const Vendedores = () => {
         return sortedData;
     };
 
-    const query = useQuery(['employees'], getEmployeeList);
+    const query = useQuery(['vendedores'], getEmployeeList);
 
     useEffect(() => {
         query.refetch();

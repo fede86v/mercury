@@ -70,6 +70,10 @@ const App = () => {
                 <Route index element={<RequireAuth><Ventas /></RequireAuth>} />
               </Route>
 
+              <Route path="DetalleVenta" >
+                <Route index element={<RequireAuth><DetalleVenta /></RequireAuth>} />
+              </Route>
+
               <Route path="Productos" >
                 <Route path=":id" element={<RequireAuth><DetalleProducto /></RequireAuth>} />
                 <Route index element={<RequireAuth><Productos /></RequireAuth>} />

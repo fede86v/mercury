@@ -16,7 +16,6 @@ const Ventas = () => {
     const [vendedores, setVendedores] = useState([]);
     const [productos, setProductos] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
-    const [open, setOpen] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave } = useTransaction();
@@ -74,13 +73,6 @@ const Ventas = () => {
         queryVendedores.refetch();
     }, []);
 
-    const handleNewVenta = () => {
-        setOpen(true);
-    };
-    const handleCloseVenta = () => {
-        setOpen(false);
-        query.refetch();
-    };
     const handleDelete = async (itemAeliminar) => {
         setItemAeliminar(itemAeliminar);
         setDialogRemoveConfirmOpen(true);
@@ -97,10 +89,11 @@ const Ventas = () => {
 
     return (
         <>
-            {open ? <AgregarVenta open={open} vendedores={vendedores} productos={productos} handleClose={handleCloseVenta} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewVenta(); }}>Crear</Button>
+                    <Button
+                        component={NavLink}
+                        to={"/DetalleVenta/"} color="primary" variant="contained" >Crear</Button>
                 </Grid>
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>

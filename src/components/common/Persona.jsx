@@ -35,6 +35,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                 <DatePicker
                     id="date-dateOfBird"
                     label="Fecha de Nacimiento"
+                    inputFormat="DD/MM/YYYY"
                     value={fechaNacimiento} name="fechaNacimiento"
                     onChange={(newValue) => {
                         const target = { name: "fechaNacimiento", value: newValue };
@@ -110,32 +111,32 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                 />
             </Grid>
 
-             {/* Direccion */}
-             <Grid item xs={12} sm={12}>
+            {/* Direccion */}
+            <Grid item xs={12} sm={12}>
                 <TextField id="txt-direccion" label="Direccion" variant="standard"
                     value={direccion} name="direccion" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
 
-             {/* Ciudad */}
-             <Grid item xs={12} sm={6}>
+            {/* Ciudad */}
+            <Grid item xs={12} sm={6}>
                 <TextField id="txt-ciudad" label="Ciudad" variant="standard"
                     value={ciudad} name="ciudad" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
 
-             {/* Localidad */}
-             <Grid item xs={12} sm={6}>
+            {/* Localidad */}
+            <Grid item xs={12} sm={6}>
                 <TextField id="txt-localidad" label="Localidad" variant="standard"
                     value={localidad} name="localidad" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
-            
-             {/* Localidad */}
-             <Grid item xs={12} sm={6}>
+
+            {/* Localidad */}
+            <Grid item xs={12} sm={6}>
                 <TextField id="txt-zip" label="Zip" variant="standard"
                     value={zip} name="zip" required
                     onChange={onInputChange}

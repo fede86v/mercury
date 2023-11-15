@@ -1,7 +1,6 @@
 export * from './useForm';
 export * from './usePayment';
 export * from './useProduct';
-export * from './useClient';
 export * from './useConfig';
 export * from './useUser';
 export * from './usePerson';

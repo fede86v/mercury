@@ -10,9 +10,10 @@ export const usePayment = () => {
     const { user } = useContext(UserContext);
 
     const saveData = (data) => {
-        console.log(data);
         setAlert(null);
-        return TransactionService.create(data, user);
+
+        const payment = { ...data, empresaId: user.empresaId }
+        return TransactionService.create(payment, user);
     }
 
     // create mutation

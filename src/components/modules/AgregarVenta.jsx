@@ -31,7 +31,7 @@ const STEPS = ["venta", "pago"];
 
 const AgregarVenta = (props) => {
     const [activeStep, setActiveStep] = useState(0);
-    const { formState: venta, onInputChange, onInputDateChange, } = useForm(DEFAULT_VENTA)
+    const { formState: venta, onInputChange, onInputDateChange, setFormState } = useForm(DEFAULT_VENTA)
     const { error, alert, onSave, success } = useTransaction();
 
 
@@ -77,7 +77,7 @@ const AgregarVenta = (props) => {
                 {/* Venta */
                     activeStep === 0 ? (
                         <Box sx={{ my: 2 }} >
-                            <Venta venta={venta} productos={props.productos} vendedores={props.vendedores} />
+                            <Venta venta={venta} setVenta={setFormState} />
                         </Box>
                     ) : null}
                 {

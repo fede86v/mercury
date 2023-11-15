@@ -11,7 +11,7 @@ import { ClientService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 
 const Clientes = () => {
-    const [vendedores, setClientes] = useState([]);
+    const [clientes, setClientes] = useState([]);
     const [open, setOpen] = useState(false);
     const { user } = useContext(UserContext);
 
@@ -36,7 +36,7 @@ const Clientes = () => {
         query.refetch();
     }, []);
 
-    const handleNewProduct = () => {
+    const handleNewClient = () => {
         setOpen(true);
     };
     const handleClose = () => {
@@ -49,7 +49,7 @@ const Clientes = () => {
             {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                    <Button color="primary" variant="contained" onClick={() => { handleNewClient(); }}>Crear</Button>
                 </Grid>
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
@@ -67,7 +67,7 @@ const Clientes = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {vendedores.map((item) => (
+                                {clientes.map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

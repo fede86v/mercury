@@ -1,149 +1,97 @@
 import React, { useEffect, useContext, useState } from 'react'
-import { Grid, FormControl, Radio, RadioGroup, Select, FormControlLabel, TextField, InputLabel, MenuItem, FormLabel, } from '@mui/material'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Grid, FormControl, Typography, Select, TextField, InputLabel, MenuItem, Button } from '@mui/material'
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
-import { DocumentTypes, PhoneTypes } from '../../utils/enums'
-import {ClientService} from '../../utils/databaseService'
-import { UserContext } from '../context/UserProvider';
+import { DocumentTypes } from '../../utils/enums'
+import { ClientService } from '../../utils/databaseService'
+import { UserContext } from '../../context/UserProvider'
+import { useForm } from '../../utils'
+import Alerts from '../common/Alerts'
+import AgregarPersona from '../modules/AgregarPersona'
 
+const Cliente = ({ persona, setPersona }) => {
 
-const Cliente = ({ persona, onInputChange, onInputDateChange }) => {
-    const { id, email, nombre, apellido, fechaNacimiento, tipoDocumento, numeroDocumento, genero, tipoTelefono, telefono } = persona;
+    const { formState: cliente, onInputChange, setFormState } = useForm(persona);
+    const { nombre, apellido, tipoDocumento, numeroDocumento } = cliente;
     const { user } = useContext(UserContext);
-    const [clientes, setClientes] = useState([])
+    const [clientes, setClientes] = useState([]);
+    const [alert, setAlert] = useState(null)
+    const [error, setError] = useState(null)
+    const [open, setOpen] = useState(false);
 
     const getClientList = async () => {
         const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
-        clientes(data)
+        setClientes(data)
         return data;
     };
-
     const query = useQuery(['client'], getClientList);
 
+    const handleNewClient = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setAlert(null);
+        setOpen(false);
+    };
+
     useEffect(() => {
-        if (numeroDocumento.length >= 8) {
-            const client = clientes.find(c=> c.numeroDocumento === numeroDocumento);
-            if (client)
-            {
-                
+        if (numeroDocumento && numeroDocumento.length >= 8) {
+            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
+            if (client) {
+                setFormState(client);
+                setPersona(client);
+                setAlert(null)
+            }
+            else {
+                const msg =
+                    (
+                        <>
+                            <Typography>No se encontro el cliente. Desea Agregarlo?</Typography>
+                            <Button color="primary" variant="contained" onClick={() => { handleNewClient(); }}>Crear</Button>
+                        </>
+                    );
+                setAlert(msg);
             }
         }
     }, [numeroDocumento]);
 
     useEffect(() => {
-        
+        query.refetch();
     }, []);
 
     return (
-        <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-
-            {/* Tipo Documento */}
-            <Grid item xs={12} sm={6} md={3}>
-                <FormControl variant="standard" fullWidth >
-                    <InputLabel id="tipo-dni-select-item-label">Tipo Documento</InputLabel>
-                    <Select
-                        labelId="tipo-dni-select-item-label"
-                        id="tipo-dni-select-item"
-                        value={tipoDocumento} name="tipoDocumento"
+        <>
+            {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" setPersona={setPersona} /> : null}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ p: 1 }}  >
+                <Grid item xs={12} sm={12} md={12} sx={{ p: 1 }}>
+                    <Alerts alert={alert} error={error} />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} sx={{ p: 1 }}>
+                    <Typography variant='H4' padding={0} sx={{ mt: 2, mb: 2 }}  >Cliente</Typography>
+                </Grid>
+                {/* Documento */}
+                <Grid item xs={12} sm={6} md={3}>
+                    <TextField id="txt-dni" label="Numero de Documento"
+                        variant="standard" sx={{ width: '100%' }}
+                        value={numeroDocumento} name="numeroDocumento"
                         onChange={onInputChange}
-                        label="Tipo Documento" >
-                        {DocumentTypes.sort().map((dt) => (
-                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                    />
+                </Grid>
+
+                {/* Nombre Completo*/}
+                <Grid item xs={12} sm={12} md={9}>
+                    {nombre && apellido ? <Typography padding={0} sx={{ mt: 2, mb: 2 }}  >{nombre}, {apellido}</Typography> : null}
+                </Grid>
             </Grid>
+        </>
 
-            {/* Documento */}
-            <Grid item xs={12} sm={6} md={3}>
-                <TextField id="txt-dni" label="Numero de Documento"
-                    variant="standard" sx={{ width: '100%' }}
-                    value={numeroDocumento} name="numeroDocumento"
-                    onChange={onInputChange}
-                />
-            </Grid>
-
-            {/* Nombre */}
-            <Grid item xs={12} sm={6}>
-                <TextField id="txt-name" label="Nombre" variant="standard"
-                    value={nombre} name="nombre" required
-                    onChange={onInputChange}
-                    sx={{ width: '100%' }} />
-            </Grid>
-
-            {/* Apellido */}
-            <Grid item xs={12} sm={6}>
-                <TextField id="txt-lastName" label="Apellido" variant="standard"
-                    value={apellido} name="apellido" required
-                    onChange={onInputChange}
-                    sx={{ width: '100%' }} />
-            </Grid>
-
-            {/* Fecha de Nacimiento */}
-            <Grid item xs={12} sm={6}>
-                <DatePicker
-                    id="date-dateOfBird"
-                    label="Fecha de Nacimiento"
-                    value={fechaNacimiento} name="fechaNacimiento"
-                    onChange={(newValue) => {
-                        const target = { name: "fechaNacimiento", value: newValue };
-                        onInputDateChange({ target })
-                    }
-                    }
-                    renderInput={(props) => <TextField variant="standard" {...props} />}
-                />
-            </Grid>
-
-            {/* Genero */}
-            <Grid item xs={12} sm={6}>
-                <FormControl >
-                    <FormLabel id="lbl-genero" >Genero</FormLabel>
-                    <RadioGroup row
-                        value={genero} name="genero" onChange={onInputChange} >
-                        <FormControlLabel value="Femenino" control={<Radio />} label="Femenino" />
-                        <FormControlLabel value="Masculino" control={<Radio />} label="Masculino" />
-                        <FormControlLabel value="Otro" control={<Radio />} label="Otro" />
-                    </RadioGroup>
-                </FormControl>
-            </Grid>
-
-
-
-            {/* Tipo Telefono */}
-            <Grid item xs={12} sm={6} md={3}>
-                <FormControl variant="standard" fullWidth >
-                    <InputLabel id="tipo-tel-select-item-label">Teléfono</InputLabel>
-                    <Select
-                        labelId="tipo-tel-select-item-label"
-                        id="tipo-tel-select-item"
-                        value={tipoTelefono} name="tipoTelefono"
-                        onChange={onInputChange}
-                        label="Teléfono" >
-                        {PhoneTypes.sort().map((dt) => (
-                            <MenuItem key={dt.key} value={dt.value}>{dt.value}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Grid>
-
-
-            {/* Documento */}
-            <Grid item xs={12} sm={6} md={3}>
-                <TextField id="txt-phone" label="Teléfono"
-                    variant="standard" sx={{ width: '100%' }}
-                    value={telefono} name="telefono"
-                    onChange={onInputChange}
-                />
-            </Grid>
-        </Grid>
     )
 }
 
 Cliente.propTypes = {
     persona: PropTypes.object.isRequired,
     handleChange: PropTypes.func.isRequired,
-    handleDateChange: PropTypes.func.isRequired,
+    setPersona: PropTypes.func.isRequired
 }
 
 

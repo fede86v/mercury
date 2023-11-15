@@ -26,7 +26,7 @@ const DEFAULT_PERSONA = {
 
 const AgregarPersona = (props) => {
     const { formState: persona, onInputChange, onInputDateChange, } = useForm(DEFAULT_PERSONA)
-    const { error, alert, onSave, success } = usePerson(props.activePrices);
+    const { error, alert, onSave, success, result } = usePerson();
 
     const handleSave = () => {
         onSave(persona, props.tipoPersona);
@@ -34,9 +34,10 @@ const AgregarPersona = (props) => {
 
     useEffect(() => {
         if (success) {
+            if (props.setPersona) props.setPersona(result);
             props.handleClose();
         }
-    }, [success]);
+    }, [success, result]);
 
     return (
         <Dialog open={props.open} >
@@ -58,6 +59,7 @@ const AgregarPersona = (props) => {
 AgregarPersona.propTypes = {
     open: PropTypes.bool.isRequired,
     tipoPersona: PropTypes.string.isRequired,
+    setPersona: PropTypes.func,
     handleClose: PropTypes.func.isRequired
 };
 

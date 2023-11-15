@@ -7,26 +7,31 @@ export const usePerson = () => {
     const [alert, setAlert] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+    const [result, setResult] = useState(null);
     const { user } = useContext(UserContext);
 
-    const saveData = (data) => {
+    const saveData = async (data) => {
         setAlert(null);
-        const persona = data.persona;
+        const persona = { ...data.persona, empresaId: user.empresaId }
 
         if (data.tipoPersona === "vendedor") {
-            if (persona.id) {
-                EmployeeService.create(persona, user);
+            if (!persona.id) {
+                const result = await EmployeeService.create(persona, user);
+                setResult(result);
             }
             else {
-                EmployeeService.update(persona.id, persona, user);
+                const result = await EmployeeService.update(persona.id, persona, user);
+                setResult(result);
             }
         }
         if (data.tipoPersona === "cliente") {
-            if (persona.id) {
-                ClientService.create(persona, user);
+            if (!persona.id) {
+                const result = await ClientService.create(persona, user);
+                setResult(result);
             }
             else {
-                ClientService.update(persona.id, persona, user);
+                const result = await ClientService.update(persona.id, persona, user);
+                setResult(result);
             }
         }
     }
@@ -38,7 +43,6 @@ export const usePerson = () => {
     })
 
     const onSave = (data, tipoPersona) => {
-
         if (data.nombre.trim() === "") {
             setAlert(`Debe ingresar un Nombre`);
             return;
@@ -75,6 +79,7 @@ export const usePerson = () => {
         error,
         alert,
         success,
+        result,
         onSave,
         onSetAlert,
         onSetError,
