@@ -59,7 +59,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                 </Grid>
 
                 {/* Detalle Compra */}
-                <Grid item xs={12} sm={12}>
+                <Grid item xs={12} sm={12} md={12}>
                     <Paper>
                         <ItemVenta itemVenta={itemVenta} productos={productos} setDetalleVenta={setDetalleVenta} />
                         <TableContainer>

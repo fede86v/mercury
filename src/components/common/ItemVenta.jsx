@@ -23,6 +23,19 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
                     }
                 );
             }
+            else
+            {
+                setFormState(
+                    {
+                        ...item,
+                        id: 0,
+                        descripcion: "",
+                        precio: 0,
+                        cantidad: 1,
+                        importe: 0
+                    }
+                );
+            }
         }
     }, [codigo]);
 
@@ -45,7 +58,7 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
                 <Grid item xs={12} sm={6} md={4}>
                     <TextField id="txt-descripcion" label="Descripción" variant="standard"
                         value={descripcion} name="descripcion"
-                        onChange={onInputChange}
+                        InputProps={{readOnly: true,}}
                         sx={{ width: '100%' }} />
                 </Grid>
 

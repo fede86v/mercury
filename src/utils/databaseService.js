@@ -88,10 +88,16 @@ class DatabaseService {
                 const docRef = doc(db, this.collectionName, id);
                 return await setDoc(docRef, {
                     ...values,
+                    id: docRef.id,
                     fechaCreacion: Date.now(),
                     fechaActualizacion: Date.now(),
                     usuarioActualizacion: user.email,
-                })
+                }).then((docref) => {
+                    return {
+                        ...docref.data,
+                        id: docref.id,
+                    };
+                });
             }
             else {
                 const col = collection(db, this.collectionName, id, subcollection);
@@ -100,7 +106,12 @@ class DatabaseService {
                     fechaCreacion: Date.now(),
                     fechaActualizacion: Date.now(),
                     usuarioActualizacion: user.email,
-                })
+                }).then((docref) => {
+                    return {
+                        ...docref.data,
+                        id: docref.id,
+                    };
+                });
             }
         }
         else {
