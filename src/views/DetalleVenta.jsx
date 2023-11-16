@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Stepper, Box, Step, StepLabel, Button } from '@mui/material'
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import SendIcon from '@mui/icons-material/Send';
+import { useQuery } from '@tanstack/react-query';
+import { ProductService } from '../utils';
+import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
 import Alerts from '../components/common/Alerts';
 import Venta from '../components/common/Venta';
@@ -14,14 +17,33 @@ const DEFAULT_VENTA = {
     descuento: 0,
     vendedor: { nombre: "caja", id: "0" },
     cliente: { nombre: "consumidor Final", id: "0" },
+    detalleVenta: [],
 };
 
 const STEPS = ["venta", "pago"];
 
 const DetalleVenta = () => {
+    const [productos, setProductos] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const { formState: venta, onInputChange, onInputDateChange, setFormState } = useForm(DEFAULT_VENTA)
     const { error, alert, onSave, success } = useTransaction();
+    const { user } = useContext(UserContext);
+
+    const getProductList = async () => {
+        const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
+        const filtered = data.filter(i => i.fechaInactivo);
+        const sortedData = filtered.sort((a, b) => {
+            if (a.nombre < b.nombre) {
+                return -1;
+            }
+            if (a.nombre > b.nombre) {
+                return 1;
+            }
+            return 0;
+        });
+        setProductos(sortedData)
+        return sortedData;
+    };
 
     const handleCancel = () => {
         setFormState(DEFAULT_VENTA);
@@ -39,14 +61,20 @@ const DetalleVenta = () => {
         setActiveStep(activeStep + 1);
     };
 
+    const queryProductos = useQuery(['products'], getProductList);
+
+    useEffect(() => {
+        queryProductos.refetch();
+    }, []);
+
     useEffect(() => {
         if (success) {
 
         }
     }, [success]);
+
     return (
         <>
-
             <Box sx={{ width: '100%', p: 1 }}>
                 <Stepper activeStep={activeStep}>
                     {STEPS.map((label, index) => {
@@ -63,7 +91,7 @@ const DetalleVenta = () => {
                 {/* Venta */
                     activeStep === 0 ? (
                         <Box sx={{ my: 2 }} >
-                            <Venta venta={venta} setVenta={setFormState} />
+                            <Venta venta={venta} setVenta={setFormState} productos={productos} />
                         </Box>
                     ) : null}
                 {

@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
-import AgregarVenta from '../components/modules/AgregarVenta'
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,

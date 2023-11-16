@@ -1,11 +1,23 @@
-import React from 'react'
-import { Grid, Box, Card, Typography, Divider, Paper } from '@mui/material'
+import React, { useState } from 'react'
+import { Grid, Box, Card, Typography, Divider, Paper, TableContainer, Table, TableCell, TableHead, TableRow, TableBody, IconButton } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types'
 import Cliente from '../common/Cliente'
 import Vendedor from '../common/Vendedor'
+import ItemVenta from './ItemVenta';
 
-const Venta = ({ venta, setVenta }) => {
-    const { total, subtotal, descuento, cliente, vendedor, productos } = venta;
+
+const DEFAULT_ITEM_VENTA = {
+    codigo: "",
+    descripcion: "",
+    precio: 0,
+    cantidad: 1,
+    importe: 0
+};
+
+const Venta = ({ venta, setVenta, productos }) => {
+    const { total, subtotal, descuento, cliente, vendedor, detalleVenta } = venta;
+    const [itemVenta, setItemVenta] = useState(DEFAULT_ITEM_VENTA);
 
     const setCliente = (data) => {
         setVenta({
@@ -19,6 +31,14 @@ const Venta = ({ venta, setVenta }) => {
             ...venta,
             "vendedor": data
         });
+    };
+
+    const setDetalleVenta = (data) => {
+        venta.detalleVenta.push(data);
+        console.log(venta);
+    };
+
+    const handleDelete = (item) => {
     };
 
     return (
@@ -41,7 +61,40 @@ const Venta = ({ venta, setVenta }) => {
                 {/* Detalle Compra */}
                 <Grid item xs={12} sm={12}>
                     <Paper>
-
+                        <ItemVenta itemVenta={itemVenta} productos={productos} setDetalleVenta={setDetalleVenta} />
+                        <TableContainer>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="left">Descripcion</TableCell>
+                                        <TableCell align="left">Cant.</TableCell>
+                                        <TableCell align="left">Precio Unit.</TableCell>
+                                        <TableCell align="left">Importe</TableCell>
+                                        <TableCell align="right">Acción</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {detalleVenta.map((item) => (
+                                        <TableRow
+                                            key={item.id}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell align="left">{item.descripcion}</TableCell>
+                                            <TableCell align="left">{item.cantidad}</TableCell>
+                                            <TableCell align="left">{item.precio}</TableCell>
+                                            <TableCell align="left">{item.importe}</TableCell>
+                                            <TableCell align="right">
+                                                <>
+                                                    <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                        <DeleteIcon color="error" />
+                                                    </ IconButton>
+                                                </>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Paper>
                 </Grid>
 
