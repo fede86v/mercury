@@ -34,8 +34,23 @@ const Venta = ({ venta, setVenta, productos }) => {
     };
 
     const setDetalleVenta = (data) => {
-        venta.detalleVenta.push(data);
-        console.log(venta);
+        const item = venta.detalleVenta.find(i => i.id === data.id);
+
+        if (item) {
+            const result = venta.detalleVenta.map(i => i.id === data.id ? { ...i, cantidad: i.cantidad + 1, importe: i.precio * (i.cantidad + 1) } : i);
+            setVenta({
+                ...venta,
+                "detalleVenta": result
+            });
+        }
+        else {
+            const detalleVenta = venta.detalleVenta;
+            detalleVenta.push(data);
+            setVenta({
+                ...venta,
+                "detalleVenta": detalleVenta
+            });
+        }
     };
 
     const handleDelete = (item) => {

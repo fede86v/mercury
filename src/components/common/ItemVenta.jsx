@@ -6,7 +6,7 @@ import { useForm } from '../../utils'
 const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
 
     const { formState: item, onInputChange, setFormState } = useForm(itemVenta);
-    const { codigo, descripcion, cantidad, precio, importe } = item;
+    const { id, codigo, descripcion, cantidad, precio, importe } = item;
 
     useEffect(() => {
         if (codigo) {
@@ -23,8 +23,7 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
                     }
                 );
             }
-            else
-            {
+            else {
                 setFormState(
                     {
                         ...item,
@@ -38,6 +37,16 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
             }
         }
     }, [codigo]);
+
+
+    useEffect(() => {
+        if (id !== 0) {
+            const target = {
+                name: "importe",
+                value: precio * cantidad
+            }
+        }
+    }, [id, cantidad]);
 
     const handleNewItem = async () => {
 
@@ -58,7 +67,7 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
                 <Grid item xs={12} sm={6} md={4}>
                     <TextField id="txt-descripcion" label="Descripción" variant="standard"
                         value={descripcion} name="descripcion"
-                        InputProps={{readOnly: true,}}
+                        InputProps={{ readOnly: true, }}
                         sx={{ width: '100%' }} />
                 </Grid>
 
@@ -74,6 +83,7 @@ const ItemVenta = ({ itemVenta, setDetalleVenta, productos }) => {
                 <Grid item xs={12} sm={6} md={2}>
                     <TextField id="txt-importe" label="Importe" variant="standard"
                         value={importe} name="importe"
+                        InputProps={{ readOnly: true, }}
                         sx={{ width: '100%' }} />
                 </Grid>
 
