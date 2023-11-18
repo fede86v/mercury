@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, Box, TextField, Button, Autocomplete } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useForm } from '../../utils'
@@ -15,6 +15,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 
     const { formState: itemVenta, onInputChange, setFormState } = useForm(DEFAULT_ITEM_VENTA);
     const { id, codigo, cantidad, precio, importe } = itemVenta;
+    const [cod, setCod] = useState(codigo)
 
     useEffect(() => {
         if (codigo) {
@@ -66,8 +67,18 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                 {/* Codigo */}
                 <Grid item xs={12} sm={6} md={2}>
                     <TextField id="txt-codigo" label="Código"
-                        value={codigo} name="codigo"
-                        onChange={onInputChange}
+                        value={cod}
+                        onChange={(v) => setCod(v.target.value)}
+                        onKeyUp={(event) => {
+                            if (event.keyCode === 13) {
+                                setFormState(
+                                    {
+                                        ...itemVenta,
+                                        codigo: cod
+                                    }
+                                );
+                            }
+                        }}
                         sx={{ width: '100%' }} />
                 </Grid>
 
@@ -84,6 +95,10 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                                         codigo: newValue.codigo
                                     }
                                 );
+                                setCod(newValue.codigo);
+                            }
+                            else {
+                                setFormState(DEFAULT_ITEM_VENTA);
                             }
                         }}
                         getOptionLabel={(option) => option.descripcion}
