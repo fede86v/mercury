@@ -4,7 +4,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     TextField
@@ -20,15 +19,15 @@ const DEFAULT_MARCA = {
 const AgregarMarca = (props) => {
     const { formState: marca, onInputChange, setFormState } = useForm(props.marca ?? DEFAULT_MARCA)
     const { error, alert, onSaveMarca, success } = useConfig();
-    
+
     const handleSave = () => {
         onSaveMarca(marca);
-        };
+    };
 
     const handleClose = () => {
         setFormState(DEFAULT_MARCA);
-            props.handleClose();
-        };
+        props.handleClose();
+    };
 
     useEffect(() => {
         if (success) {
