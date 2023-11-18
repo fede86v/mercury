@@ -55,7 +55,7 @@ const Cliente = ({ persona, setPersona }) => {
     return (
         <>
             {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" setPersona={setPersona} /> : null}
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ p: 1 }}  >
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} >
                 <Grid item xs={12} sm={12} md={6} sx={{ p: 1 }}>
                     <Box display="flex" justifyContent="flex-start">
                         <Typography variant='h5' padding={0}  >Cliente</Typography>

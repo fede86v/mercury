@@ -36,25 +36,38 @@ const Venta = ({ venta, setVenta, productos }) => {
                 ...venta,
                 "detalleVenta": result
             });
+            calcularMontos(result);
         }
         else {
-            const detalleVenta = venta.detalleVenta;
+            const detalle = detalleVenta;
             detalleVenta.push(data);
             setVenta({
                 ...venta,
-                "detalleVenta": detalleVenta
+                "detalleVenta": detalle
             });
+        calcularMontos(detalle);
         }
     };
 
     const handleDelete = (item) => {
         if (item) {
             const array = venta.detalleVenta.filter(i => i.id !== item.id);
+            console.log(array);
             setVenta({
                 ...venta,
                 "detalleVenta": array
             });
+            calcularMontos(array);
         }
+    };
+
+    const calcularMontos = (detalleVenta) => {
+        let total = 0;
+        for (let i of detalleVenta) total += Number(i.importe);
+        setVenta({
+            ...venta,
+            "subtotal": total
+        });
     };
 
     return (
@@ -62,14 +75,14 @@ const Venta = ({ venta, setVenta, productos }) => {
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} spacing={2} >
                 {/* Cliente */}
                 <Grid item xs={12} sm={12} md={6}>
-                    <Paper>
+                    <Paper sx={{ p: 2 }}  >
                         <Cliente persona={cliente} setPersona={setCliente} />
                     </Paper>
                 </Grid>
 
                 {/* Vendedor */}
                 <Grid item xs={12} sm={12} md={6}>
-                    <Paper>
+                    <Paper sx={{ p: 2 }}  >
                         <Vendedor persona={vendedor} setPersona={setVendedor} />
                     </Paper>
                 </Grid>
