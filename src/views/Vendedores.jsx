@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { EmployeeService } from '../utils';
-import { useProduct } from '../utils'
+import { usePerson } from '../utils'
 import { UserContext } from '../context/UserProvider';
 
 const Vendedores = () => {
@@ -18,7 +18,7 @@ const Vendedores = () => {
     const [open, setOpen] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
-    const { onSave } = useProduct();
+    const { onSave } = usePerson();
 
     const getEmployeeList = async () => {
         const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
@@ -42,14 +42,14 @@ const Vendedores = () => {
         query.refetch();
     }, []);
 
-    const handleNewProduct = () => {
+    const handleNewVendedor = () => {
         setOpen(true);
     };
     const handleCloseVendedor = () => {
         setOpen(false);
         query.refetch();
     };
-    const handleDeleteProduct = async (productoAeliminar) => {
+    const handleDeleteVendedor = async (productoAeliminar) => {
         const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
         onSave(producto);
         setDialogRemoveConfirmOpen(true);
@@ -64,7 +64,7 @@ const Vendedores = () => {
             {open ? <AgregarPersona open={open} handleClose={handleCloseVendedor} tipoPersona="vendedor" /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                    <Button color="primary" variant="contained" onClick={() => { handleNewVendedor(); }}>Crear</Button>
                 </Grid>
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Vendedores</Typography>
@@ -96,7 +96,7 @@ const Vendedores = () => {
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Vendedores/" + item.id} >
                                                     <ModeEditIcon color="secondary" />
                                                 </ IconButton>
-                                                <IconButton aria-label="delete" onClick={() => handleDeleteProduct(item)} >
+                                                <IconButton aria-label="delete" onClick={() => handleDeleteVendedor(item)} >
                                                     <DeleteIcon color="error" />
                                                 </ IconButton>
                                             </>

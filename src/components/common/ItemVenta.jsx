@@ -31,10 +31,13 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                         importe: producto.precioVenta,
                     }
                 );
+                setCod(producto.codigo);
             }
             else {
                 setFormState(DEFAULT_ITEM_VENTA);
+                setCod("");
             }
+            setAlert(null);
         }
     }, [codigo]);
 
@@ -99,6 +102,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                             }
                             else {
                                 setFormState(DEFAULT_ITEM_VENTA);
+                                setCod("");
                             }
                         }}
                         getOptionLabel={(option) => option.descripcion}

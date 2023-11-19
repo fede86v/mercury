@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import { Grid, Box, Card, Typography, Divider, Paper, TableContainer, Table, TableCell, TableHead, TableRow, TableBody, IconButton } from '@mui/material'
+import {
+    Grid, Box, Card, Typography, Divider, Paper, TableContainer, Table,
+    TableCell, TableHead, TableRow, TableBody, IconButton, Dialog,
+    DialogTitle, DialogContent, Button, DialogContentText, DialogActions
+} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types'
 import Cliente from '../common/Cliente'
@@ -10,6 +14,9 @@ import Alerts from './Alerts';
 const Venta = ({ venta, setVenta, productos }) => {
     const { total, subtotal, descuento, cliente, vendedor, detalleVenta } = venta;
     const [alert, setAlert] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
+    const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
 
     const setCliente = (data) => {
         setVenta({
@@ -26,48 +33,56 @@ const Venta = ({ venta, setVenta, productos }) => {
     };
 
     const setDetalleVenta = (data) => {
-        const item = venta.detalleVenta.find(i => i.id === data.id);
+        const item = detalleVenta.find(i => i.id === data.id);
 
         if (item) {
-            const result = venta.detalleVenta.map(i => i.id === data.id ?
+            const result = detalleVenta.map(i => i.id === item.id ?
                 { ...i, cantidad: Number(i.cantidad) + Number(data.cantidad), importe: Number(i.precio) * (Number(i.cantidad) + Number(data.cantidad)) }
                 : i);
+            calcularMontos(result);
             setVenta({
                 ...venta,
                 "detalleVenta": result
             });
-            calcularMontos(result);
         }
         else {
-            const detalle = detalleVenta;
-            detalleVenta.push(data);
+            let detalle = detalleVenta;
+            detalle.push(data);
+            calcularMontos(detalle);
             setVenta({
                 ...venta,
                 "detalleVenta": detalle
             });
-        calcularMontos(detalle);
         }
     };
 
     const handleDelete = (item) => {
         if (item) {
-            const array = venta.detalleVenta.filter(i => i.id !== item.id);
-            console.log(array);
-            setVenta({
-                ...venta,
-                "detalleVenta": array
-            });
-            calcularMontos(array);
+            setItemToDelete(item);
+            setDialogRemoveConfirmOpen(true);
         }
     };
 
-    const calcularMontos = (detalleVenta) => {
+    const calcularMontos = (detVenta) => {
         let total = 0;
-        for (let i of detalleVenta) total += Number(i.importe);
+        for (let i of detVenta) total += Number(i.importe);
         setVenta({
             ...venta,
             "subtotal": total
         });
+    };
+
+    /* Dialog Remove */
+    const handleClose = async (aceptar) => {
+        if (aceptar) {
+            const array = detalleVenta.filter(i => i.id !== itemToDelete.id);
+            calcularMontos(array);
+            setVenta({
+                ...venta,
+                "detalleVenta": array
+            });
+        }
+        setDialogRemoveConfirmOpen(false);
     };
 
     return (
@@ -155,6 +170,27 @@ const Venta = ({ venta, setVenta, productos }) => {
                     </Card>
                 </Grid>
             </Grid>
+            <Dialog
+                open={dialogRemoveConfirmOpen}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Esta seguro?"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Esta seguro de eliminar este producto?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleClose(false)} color="secondary" >Cancelar</Button>
+                    <Button onClick={() => handleClose(true)} color="primary" autoFocus>
+                        Aceptar
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }
