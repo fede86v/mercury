@@ -31,6 +31,18 @@ const Venta = ({ venta, setVenta, productos }) => {
             "vendedor": data
         });
     };
+    
+    const calcularImporte = (detalle) => {
+        let importe = 0;
+        for (let i of detalle) importe += Number(i.importe);
+        
+    setVenta({
+        ...venta,
+        "detalleVenta": detalle,
+        "subtotal": importe,
+        "total": importe - descuento
+    });
+    };
 
     const setDetalleVenta = (data) => {
         const item = detalleVenta.find(i => i.id === data.id);
@@ -39,20 +51,13 @@ const Venta = ({ venta, setVenta, productos }) => {
             const result = detalleVenta.map(i => i.id === item.id ?
                 { ...i, cantidad: Number(i.cantidad) + Number(data.cantidad), importe: Number(i.precio) * (Number(i.cantidad) + Number(data.cantidad)) }
                 : i);
-            calcularMontos(result);
-            setVenta({
-                ...venta,
-                "detalleVenta": result
-            });
+                
+            calcularImporte(result);
         }
         else {
             let detalle = detalleVenta;
             detalle.push(data);
-            calcularMontos(detalle);
-            setVenta({
-                ...venta,
-                "detalleVenta": detalle
-            });
+            calcularImporte(detalle);
         }
     };
 
@@ -63,24 +68,11 @@ const Venta = ({ venta, setVenta, productos }) => {
         }
     };
 
-    const calcularMontos = (detVenta) => {
-        let total = 0;
-        for (let i of detVenta) total += Number(i.importe);
-        setVenta({
-            ...venta,
-            "subtotal": total
-        });
-    };
-
     /* Dialog Remove */
-    const handleClose = async (aceptar) => {
+    const handleClose = (aceptar) => {
         if (aceptar) {
             const array = detalleVenta.filter(i => i.id !== itemToDelete.id);
-            calcularMontos(array);
-            setVenta({
-                ...venta,
-                "detalleVenta": array
-            });
+            calcularImporte(array);
         }
         setDialogRemoveConfirmOpen(false);
     };

@@ -15,6 +15,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 
     const { formState: itemVenta, onInputChange, setFormState } = useForm(DEFAULT_ITEM_VENTA);
     const { id, codigo, cantidad, precio, importe } = itemVenta;
+    const [currentProd, setCurrentProd] = useState(null);
     const [cod, setCod] = useState(codigo)
 
     useEffect(() => {
@@ -32,10 +33,12 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     }
                 );
                 setCod(producto.codigo);
+                setCurrentProd(producto);
             }
             else {
                 setFormState(DEFAULT_ITEM_VENTA);
                 setCod("");
+                setCurrentProd(null);
             }
             setAlert(null);
         }
@@ -50,6 +53,22 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         onInputChange({ target });
     }, [cantidad]);
 
+    useEffect(() => {
+        if (currentProd) {
+            setFormState(
+                {
+                    ...itemVenta,
+                    codigo: currentProd.codigo
+                }
+            );
+            setCod(currentProd.codigo);
+        }
+        else {
+            setFormState(DEFAULT_ITEM_VENTA);
+            setCod("");
+        }
+    }, [currentProd]);
+
     const handleNewItem = async () => {
         if (!id) {
             setAlert("Producto invalido");
@@ -60,6 +79,8 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
             return;
         }
         setFormState(DEFAULT_ITEM_VENTA);
+        setCod("");        
+        setCurrentProd(null);
         setAlert(null);
         setDetalleVenta(itemVenta);
     };
@@ -91,22 +112,10 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                         id="autocomplete-descripcion"
                         options={productos}
                         onChange={(event, newValue) => {
-                            if (newValue) {
-                                setFormState(
-                                    {
-                                        ...itemVenta,
-                                        codigo: newValue.codigo
-                                    }
-                                );
-                                setCod(newValue.codigo);
-                            }
-                            else {
-                                setFormState(DEFAULT_ITEM_VENTA);
-                                setCod("");
-                            }
+                            setCurrentProd(newValue);
                         }}
                         getOptionLabel={(option) => option.descripcion}
-                        value={itemVenta}
+                        value={currentProd}
                         sx={{ width: '100%' }}
                         renderInput={(params) => <TextField {...params} label="Descripción" />}
                     />
