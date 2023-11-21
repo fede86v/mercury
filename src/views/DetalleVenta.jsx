@@ -25,7 +25,8 @@ const STEPS = ["venta", "pago"];
 const DetalleVenta = () => {
     const [productos, setProductos] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
-    const { formState: venta, onInputChange, onInputDateChange, setFormState } = useForm(DEFAULT_VENTA)
+    const { formState: venta, setFormState: setVenta } = useForm(DEFAULT_VENTA);
+    const { formState: pagos, setFormState: setPagos } = useForm(DEFAULT_VENTA);
     const { error, alert, onSave, success } = useTransaction();
     const { user } = useContext(UserContext);
 
@@ -46,7 +47,7 @@ const DetalleVenta = () => {
     };
 
     const handleCancel = () => {
-        setFormState(DEFAULT_VENTA);
+        setVenta(DEFAULT_VENTA);
         setActiveStep(0);
     };
 
@@ -91,14 +92,14 @@ const DetalleVenta = () => {
                 {/* Venta */
                     activeStep === 0 ? (
                         <Box sx={{ my: 2 }} >
-                            <Venta venta={venta} setVenta={setFormState} productos={productos} />
+                            <Venta venta={venta} setVenta={setVenta} productos={productos} />
                         </Box>
                     ) : null}
                 {
                     /* Pago */
                     activeStep === 1 ? (
                         <Box sx={{ my: 2 }} >
-                            <Pagos />
+                            <Pagos pagos={pagos} setPagos={setPagos} />
                         </Box>
                     ) : null}
                 <Button

@@ -51,13 +51,12 @@ const Venta = ({ venta, setVenta, productos }) => {
             const result = detalleVenta.map(i => i.id === item.id ?
                 { ...i, cantidad: Number(i.cantidad) + Number(data.cantidad), importe: Number(i.precio) * (Number(i.cantidad) + Number(data.cantidad)) }
                 : i);
-                
-            calcularImporte(result);
+            calcularMontos(result);
         }
         else {
             let detalle = detalleVenta;
             detalle.push(data);
-            calcularImporte(detalle);
+            calcularMontos(detalle);
         }
     };
 
@@ -66,6 +65,17 @@ const Venta = ({ venta, setVenta, productos }) => {
             setItemToDelete(item);
             setDialogRemoveConfirmOpen(true);
         }
+    };
+
+    const calcularMontos = (detVenta) => {
+        let total = 0;
+        for (let i of detVenta) total += Number(i.importe);
+        setVenta({
+            ...venta,
+            "detalleVenta": detVenta,
+            "subtotal": total,
+            "total": total - descuento
+        });
     };
 
     /* Dialog Remove */
