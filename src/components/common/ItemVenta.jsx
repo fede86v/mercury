@@ -15,7 +15,8 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 
     const { formState: itemVenta, onInputChange, setFormState } = useForm(DEFAULT_ITEM_VENTA);
     const { id, codigo, cantidad, precio, importe } = itemVenta;
-    const [cod, setCod] = useState(codigo)
+    const [cod, setCod] = useState(codigo);
+    const [prod, setProd] = useState(null);
 
     useEffect(() => {
         if (codigo) {
@@ -32,10 +33,12 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     }
                 );
                 setCod(producto.codigo);
+                setProd(producto);
             }
             else {
                 setFormState(DEFAULT_ITEM_VENTA);
                 setCod("");
+                setProd(null);
             }
             setAlert(null);
         }
@@ -50,6 +53,22 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         onInputChange({ target });
     }, [cantidad]);
 
+    useEffect(() => {
+        if (prod) {
+            setFormState(
+                {
+                    ...itemVenta,
+                    codigo: prod.codigo
+                }
+            );
+            setCod(prod.codigo);
+        }
+        else {
+            setFormState(DEFAULT_ITEM_VENTA);
+            setCod("");
+        }
+    }, [prod]);
+
     const handleNewItem = async () => {
         if (!id) {
             setAlert("Producto invalido");
@@ -61,80 +80,67 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         }
         setFormState(DEFAULT_ITEM_VENTA);
         setAlert(null);
+        setProd(null);
         setDetalleVenta(itemVenta);
     };
 
     return (
-        <>
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} >
-                {/* Codigo */}
-                <Grid item xs={12} sm={6} md={2}>
-                    <TextField id="txt-codigo" label="Código"
-                        value={cod}
-                        onChange={(v) => setCod(v.target.value)}
-                        onKeyUp={(event) => {
-                            if (event.keyCode === 13) {
-                                setFormState(
-                                    {
-                                        ...itemVenta,
-                                        codigo: cod
-                                    }
-                                );
-                            }
-                        }}
-                        sx={{ width: '100%' }} />
-                </Grid>
-
-                {/* Descripción */}
-                <Grid item xs={12} sm={6} md={4}>
-                    <Autocomplete
-                        id="autocomplete-descripcion"
-                        options={productos}
-                        onChange={(event, newValue) => {
-                            if (newValue) {
-                                setFormState(
-                                    {
-                                        ...itemVenta,
-                                        codigo: newValue.codigo
-                                    }
-                                );
-                                setCod(newValue.codigo);
-                            }
-                            else {
-                                setFormState(DEFAULT_ITEM_VENTA);
-                                setCod("");
-                            }
-                        }}
-                        getOptionLabel={(option) => option.descripcion}
-                        value={itemVenta}
-                        sx={{ width: '100%' }}
-                        renderInput={(params) => <TextField {...params} label="Descripción" />}
-                    />
-                </Grid>
-
-                {/* Cantidad */}
-                <Grid item xs={12} sm={6} md={2}>
-                    <TextField id="txt-cantidad" label="Cantidad"
-                        value={cantidad} name="cantidad"
-                        onChange={onInputChange}
-                        sx={{ width: '100%' }} />
-                </Grid>
-
-                {/* Importe */}
-                <Grid item xs={12} sm={6} md={2}>
-                    <TextField id="txt-importe" label="Importe"
-                        value={importe} name="importe"
-                        InputProps={{ readOnly: true, }}
-                        sx={{ width: '100%' }} />
-                </Grid>
-
-                <Grid item xs={12} sm={6} md={2}>
-                    <Box display="flex" justifyContent="flex-end">
-                        <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
-                    </Box>
-                </Grid>
+        <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} >
+            {/* Codigo */}
+            <Grid item xs={12} sm={6} md={2}>
+                <TextField id="txt-codigo" label="Código"
+                    value={cod}
+                    onChange={(v) => setCod(v.target.value)}
+                    onKeyUp={(event) => {
+                        if (event.keyCode === 13) {
+                            setFormState(
+                                {
+                                    ...itemVenta,
+                                    codigo: cod
+                                }
+                            );
+                        }
+                    }}
+                    sx={{ width: '100%' }} />
             </Grid>
-        </>
+
+            {/* Descripción */}
+            <Grid item xs={12} sm={6} md={4}>
+                <Autocomplete
+                    id="autocomplete-descripcion"
+                    options={productos}
+                    onChange={(event, newValue) => {
+                        setProd(newValue);
+                    }}
+                    getOptionLabel={(option) => option.descripcion}
+                    value={prod}
+                    sx={{ width: '100%' }}
+                    renderInput={(params) => <TextField {...params} label="Descripción" />}
+                />
+            </Grid>
+
+            {/* Cantidad */}
+            <Grid item xs={12} sm={6} md={2}>
+                <TextField id="txt-cantidad" label="Cantidad"
+                    value={cantidad} name="cantidad"
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* Importe */}
+            <Grid item xs={12} sm={6} md={2}>
+                <TextField id="txt-importe" label="Importe"
+                    value={importe} name="importe"
+                    InputProps={{ readOnly: true, }}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={2}>
+                <Box display="flex" justifyContent="flex-end">
+                    <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
+                </Box>
+            </Grid>
+        </Grid>
     )
 }
 

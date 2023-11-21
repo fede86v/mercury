@@ -92,7 +92,7 @@ const PaymentMethods = [
         value: "Transferencia"
     },
     {
-        key: "Credito",
+        key: "Debito",
         value: "Debito"
     },
     {

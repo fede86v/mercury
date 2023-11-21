@@ -40,19 +40,11 @@ const Venta = ({ venta, setVenta, productos }) => {
                 { ...i, cantidad: Number(i.cantidad) + Number(data.cantidad), importe: Number(i.precio) * (Number(i.cantidad) + Number(data.cantidad)) }
                 : i);
             calcularMontos(result);
-            setVenta({
-                ...venta,
-                "detalleVenta": result
-            });
         }
         else {
             let detalle = detalleVenta;
             detalle.push(data);
             calcularMontos(detalle);
-            setVenta({
-                ...venta,
-                "detalleVenta": detalle
-            });
         }
     };
 
@@ -68,7 +60,9 @@ const Venta = ({ venta, setVenta, productos }) => {
         for (let i of detVenta) total += Number(i.importe);
         setVenta({
             ...venta,
-            "subtotal": total
+            "detalleVenta": detVenta,
+            "subtotal": total,
+            "total": total - descuento
         });
     };
 
