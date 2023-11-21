@@ -165,7 +165,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Esta seguro de eliminar este producto?
+                            Esta seguro de eliminar este pago?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
