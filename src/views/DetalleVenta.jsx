@@ -29,6 +29,7 @@ const DetalleVenta = () => {
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success } = useTransaction();
     const { user } = useContext(UserContext);
+    const { total } = venta;
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
@@ -51,15 +52,8 @@ const DetalleVenta = () => {
         setActiveStep(0);
     };
 
-    const handleBack = () => {
-        setActiveStep(activeStep - 1);
-    };
-
-    const handleNext = () => {
-        if (activeStep === STEPS.length - 1) {
-            onSave(venta);
-        }
-        setActiveStep(activeStep + 1);
+    const handleSave = () => {
+        onSave(venta);
     };
 
     const queryProductos = useQuery(['products'], getProductList);
@@ -77,42 +71,23 @@ const DetalleVenta = () => {
     return (
         <>
             <Box sx={{ width: '100%', p: 1 }}>
-                <Stepper activeStep={activeStep}>
-                    {STEPS.map((label, index) => {
-                        const stepProps = {};
-                        const labelProps = {};
-                        return (
-                            <Step key={label} {...stepProps}>
-                                <StepLabel {...labelProps}>{label}</StepLabel>
-                            </Step>
-                        );
-                    })}
-                </Stepper>
+
                 <Alerts alert={alert} error={error} />
-                {/* Venta */
-                    activeStep === 0 ? (
-                        <Box sx={{ my: 2 }} >
-                            <Venta venta={venta} setVenta={setVenta} productos={productos} />
-                        </Box>
-                    ) : null}
-                {
-                    /* Pago */
-                    activeStep === 1 ? (
-                        <Box sx={{ my: 2 }} >
-                            <Pagos pagos={pagos} setPagos={setPagos} />
-                        </Box>
-                    ) : null}
-                <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    sx={{ mr: 1 }}
-                    startIcon={< ArrowLeftIcon />}
-                >
-                    Atras
-                </Button>
-                <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
-                <Button color="primary" variant="contained" onClick={handleNext}
-                    endIcon={activeStep === STEPS.length - 1 ? < SendIcon /> : < ArrowRightIcon />} >{activeStep === STEPS.length - 1 ? 'Guardar' : 'Siguiente'}</Button>
+
+                <Box  >
+                    <Venta venta={venta} setVenta={setVenta} productos={productos} />
+                </Box>
+                <Box  >
+                    <Pagos pagos={pagos} setPagos={setPagos} montoTotal={total} />
+                </Box>
+
+                <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
+                    <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
+                    <Button color="primary" variant="contained" onClick={handleSave}
+                        endIcon={< SendIcon />} >Guardar</Button>
+
+                </Box>
+
             </Box>
 
         </>

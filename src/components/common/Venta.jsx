@@ -31,17 +31,17 @@ const Venta = ({ venta, setVenta, productos }) => {
             "vendedor": data
         });
     };
-    
+
     const calcularImporte = (detalle) => {
         let importe = 0;
         for (let i of detalle) importe += Number(i.importe);
-        
-    setVenta({
-        ...venta,
-        "detalleVenta": detalle,
-        "subtotal": importe,
-        "total": importe - descuento
-    });
+
+        setVenta({
+            ...venta,
+            "detalleVenta": detalle,
+            "subtotal": importe,
+            "total": importe - descuento
+        });
     };
 
     const setDetalleVenta = (data) => {
@@ -89,7 +89,7 @@ const Venta = ({ venta, setVenta, productos }) => {
 
     return (
         <Box sx={{ p: 2 }} >
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} spacing={2} >
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} spacing={2} >
                 {/* Cliente */}
                 <Grid item xs={12} sm={12} md={6}>
                     <Paper sx={{ p: 2 }}  >
