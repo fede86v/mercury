@@ -21,18 +21,21 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
     useEffect(() => {
         if (codigo) {
             const producto = productos.find(i => i.codigo === codigo);
+
             if (producto && producto !== itemVenta) {
-                setFormState(
-                    {
-                        id: producto.id,
-                        codigo: producto.codigo,
-                        descripcion: producto.descripcion,
-                        precio: producto.precioVenta,
-                        cantidad: 1,
-                        importe: producto.precioVenta,
-                    }
-                );
-                setCod(producto.codigo);
+                const item =
+                {
+                    id: producto.id,
+                    codigo: producto.codigo,
+                    descripcion: producto.descripcion,
+                    precio: producto.precioVenta,
+                    cantidad: 1,
+                    importe: producto.precioVenta,
+                };
+
+                setFormState(item);
+                setCod(codigo);
+                setAlert(null);
                 setProd(producto);
             }
             else {
@@ -75,12 +78,11 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
             return;
         }
         if (cantidad <= 0) {
-            setAlert("Cantidad debe ser mayor a 0;");
+            setAlert("Cantidad debe ser mayor a 0");
             return;
         }
         setFormState(DEFAULT_ITEM_VENTA);
-        setCod("");        
-        setCurrentProd(null);
+        setCod("");
         setAlert(null);
         setProd(null);
         setDetalleVenta(itemVenta);

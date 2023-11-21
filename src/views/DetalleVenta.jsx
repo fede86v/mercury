@@ -26,7 +26,7 @@ const DetalleVenta = () => {
     const [productos, setProductos] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
     const { formState: venta, setFormState: setVenta } = useForm(DEFAULT_VENTA);
-    const { formState: pagos, setFormState: setPagos } = useForm(DEFAULT_VENTA);
+    const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success } = useTransaction();
     const { user } = useContext(UserContext);
 

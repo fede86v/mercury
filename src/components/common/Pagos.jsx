@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types'
 import { PaymentMethods } from '../../utils/enums';
 import { useForm } from '../../utils';
+import Alerts from '../common/Alerts';
 
 const DEFAULT_PAYMENT_METHOD = { key: "Efectivo", value: "Efectivo" };
 const DEFAULT_PAYMENT = {
@@ -104,10 +105,9 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="left">Descripcion</TableCell>
-                                    <TableCell align="left">Cant.</TableCell>
-                                    <TableCell align="left">Precio Unit.</TableCell>
-                                    <TableCell align="left">Importe</TableCell>
+                                    <TableCell align="left">Metodo de Pago</TableCell>
+                                    <TableCell align="left">Monto</TableCell>
+                                    <TableCell align="left">Comprobante #</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
