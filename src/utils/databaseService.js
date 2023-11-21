@@ -45,7 +45,7 @@ class DatabaseService {
         const snapshot = await getDocs(query(col));
 
         return snapshot.empty
-            ? null
+            ? []
             : snapshot.docs.map((doc) => {
                 return {
                     ...doc.data(),

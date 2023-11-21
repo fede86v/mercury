@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Stepper, Box, Step, StepLabel, Button } from '@mui/material'
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { Box, Button } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send';
 import { useQuery } from '@tanstack/react-query';
 import { ProductService } from '../utils';
@@ -17,14 +15,11 @@ const DEFAULT_VENTA = {
     descuento: 0,
     vendedor: { nombre: "caja", id: "0" },
     cliente: { nombre: "consumidor Final", id: "0" },
-    detalleVenta: [],
+    detalleVenta: []
 };
-
-const STEPS = ["venta", "pago"];
 
 const DetalleVenta = () => {
     const [productos, setProductos] = useState([]);
-    const [activeStep, setActiveStep] = useState(0);
     const { formState: venta, setFormState: setVenta } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success } = useTransaction();
@@ -49,11 +44,11 @@ const DetalleVenta = () => {
 
     const handleCancel = () => {
         setVenta(DEFAULT_VENTA);
-        setActiveStep(0);
     };
 
     const handleSave = () => {
-        onSave(venta);
+        const ventaFinal = { ...venta, pagos: pagos };
+        onSave(ventaFinal);
     };
 
     const queryProductos = useQuery(['products'], getProductList);
