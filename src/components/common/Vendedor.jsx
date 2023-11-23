@@ -81,7 +81,6 @@ const Vendedor = ({ persona, setPersona }) => {
 
 Vendedor.propTypes = {
     persona: PropTypes.object.isRequired,
-    handleChange: PropTypes.func.isRequired,
     setPersona: PropTypes.func.isRequired
 }
 

@@ -91,7 +91,6 @@ const Cliente = ({ persona, setPersona }) => {
 
 Cliente.propTypes = {
     persona: PropTypes.object.isRequired,
-    handleChange: PropTypes.func.isRequired,
     setPersona: PropTypes.func.isRequired
 }
 

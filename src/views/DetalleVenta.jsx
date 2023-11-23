@@ -51,9 +51,13 @@ const DetalleVenta = () => {
         if (id) {
             const data = await TransactionService.getOne(id);
             const cliente = await ClientService.getOne(data.clienteId);
-            const detalle1 = await TransactionDetailService.getQuery("ventId", "==", id);
-            const detalle2 = await PaymentService.getQuery("ventId", "==", id);
-            return { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, key: data.vendedorId }, cliente: cliente };
+            const detalle1 = await TransactionDetailService.getQuery("ventaId", "==", id);
+            const detalle2 = await PaymentService.getQuery("ventaId", "==", id);
+            const final = { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, key: data.vendedorId }, cliente: cliente };
+            setVenta({ ...data, detalleVenta: detalle1, vendedor: { nombre: data.vendedor, key: data.vendedorId }, cliente: cliente });
+            setPagos(detalle2);
+            console.log(final);
+            return final;
         }
 
         return null;
@@ -74,6 +78,7 @@ const DetalleVenta = () => {
 
     useEffect(() => {
         queryProductos.refetch();
+        queryVenta.refetch();
     }, []);
 
     useEffect(() => {

@@ -183,9 +183,8 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 }
 
 ItemVenta.propTypes = {
-    producto: PropTypes.object.isRequired,
-    handleChange: PropTypes.func.isRequired,
-    setProducto: PropTypes.func.isRequired,
+    setDetalleVenta: PropTypes.func.isRequired,
+    productos: PropTypes.array.isRequired,
     setAlert: PropTypes.func.isRequired
 }
 

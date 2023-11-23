@@ -197,7 +197,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
 Pagos.propTypes = {
     pagos: PropTypes.array.isRequired,
     setPagos: PropTypes.func.isRequired,
-    montoTotal: PropTypes.number.isRequired
+    montoTotal: PropTypes.number
 }
 
 export default Pagos
