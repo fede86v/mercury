@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, Box, TextField, Button, Autocomplete } from '@mui/material'
+import { Grid, Box, TextField, Button, Autocomplete, InputAdornment } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useForm } from '../../utils'
 
@@ -8,6 +8,7 @@ const DEFAULT_ITEM_VENTA = {
     descripcion: "",
     precio: 0,
     cantidad: 1,
+    descuento: 0,
     importe: 0
 };
 
@@ -17,6 +18,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
     const { id, codigo, cantidad, precio, importe } = itemVenta;
     const [cod, setCod] = useState(codigo);
     const [prod, setProd] = useState(null);
+    const [desc, setDesc] = useState(0);
 
     useEffect(() => {
         if (codigo) {
@@ -30,6 +32,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     descripcion: producto.descripcion,
                     precio: producto.precioVenta,
                     cantidad: 1,
+                    descuento: 0,
                     importe: producto.precioVenta,
                 };
 
@@ -72,6 +75,24 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         }
     }, [prod]);
 
+    const handleDesc = (item) => {
+        if (!item) return;
+
+        const importe = Number(precio) * Number(cantidad);
+        const montoDesc = importe * item.target.value / 100;
+
+        console.log(item.target.value);
+
+        setFormState(
+            {
+                ...itemVenta,
+                descuento: montoDesc,
+                importe: importe - montoDesc
+            }
+        );
+        setDesc(item.target.value);
+    };
+
     const handleNewItem = async () => {
         if (!id) {
             setAlert("Producto invalido");
@@ -85,6 +106,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         setCod("");
         setAlert(null);
         setProd(null);
+        setDesc(0);
         setDetalleVenta(itemVenta);
     };
 
@@ -124,22 +146,34 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
             </Grid>
 
             {/* Cantidad */}
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid item xs={12} sm={6} md={1}>
                 <TextField id="txt-cantidad" label="Cantidad"
-                    value={cantidad} name="cantidad"
+                    value={cantidad} name="cantidad" type="number"
                     onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* Descuento */}
+            <Grid item xs={12} sm={6} md={2}>
+                <TextField id="txt-descuento" label="Descuento" type="number"
+                    value={desc}
+                    onChange={handleDesc}
+                    min={0} max={100}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>
+                    }}
                     sx={{ width: '100%' }} />
             </Grid>
 
             {/* Importe */}
             <Grid item xs={12} sm={6} md={2}>
-                <TextField id="txt-importe" label="Importe"
+                <TextField id="txt-importe" label="Importe" type="number"
                     value={importe} name="importe"
                     InputProps={{ readOnly: true, }}
                     sx={{ width: '100%' }} />
             </Grid>
 
-            <Grid item xs={12} sm={6} md={2}>
+            <Grid item xs={12} sm={6} md={1}>
                 <Box display="flex" justifyContent="flex-end">
                     <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
                 </Box>

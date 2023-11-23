@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Grid, Paper, TableContainer, TableCell, TableBody, TableHead, Table, TableRow, IconButton, Autocomplete, TextField, Box, Button, Dialog,
     DialogTitle, DialogContent, DialogContentText, DialogActions, Divider
@@ -19,12 +19,24 @@ const DEFAULT_PAYMENT = {
 const Pagos = ({ pagos, setPagos, montoTotal }) => {
 
     const { formState: pago, onInputChange, setFormState: setPago } = useForm({ ...DEFAULT_PAYMENT, monto: montoTotal });
-    const { monto, metodoPago, comprobante, cuotas } = pago;
+    const { monto, comprobante, cuotas } = pago;
     const [metodo, setMetodo] = useState(DEFAULT_PAYMENT_METHOD);
     const [alert, setAlert] = useState(null);
     const [montoTotalPagos, setMontoTotalPagos] = useState(0);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
+
+
+    useEffect(() => {
+        if (montoTotal > 0) {
+            setPago(
+                {
+                    ...pago,
+                    monto: montoTotal
+                }
+            )
+        }
+    }, [montoTotal]);
 
     const agregarPago = () => {
         let pagosActualizado = pagos;
@@ -34,18 +46,19 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
         let total = 0;
         for (let i of pagosActualizado) total += Number(i.monto);
         setMontoTotalPagos(total);
+        setAlert(null);
         setPago({ ...DEFAULT_PAYMENT, monto: montoTotal - total })
     };
 
     const handleNewItem = () => {
         let validacion = "";
-        if ((metodo === "Credito" || metodo === "Debito") && monto === 0) {
+        if ((metodo.key === "Credito" || metodo.key === "Debito") && monto === 0) {
             validacion = "Monto es requerido."
         }
-        if ((metodo === "Credito" || metodo === "Debito") && !comprobante) {
+        if ((metodo.key === "Credito" || metodo.key === "Debito") && !comprobante) {
             validacion = "Comprobante es requerido."
         }
-        if (metodo === "Credito" && !cuotas) {
+        if (metodo.key === "Credito" && !cuotas) {
             validacion = "Ingrese la cantidad de cuotas en que realizará el pago."
         }
 

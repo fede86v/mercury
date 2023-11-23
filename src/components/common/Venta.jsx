@@ -14,7 +14,6 @@ import Alerts from './Alerts';
 const Venta = ({ venta, setVenta, productos }) => {
     const { total, subtotal, descuento, cliente, vendedor, detalleVenta } = venta;
     const [alert, setAlert] = useState(null);
-    const [open, setOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
 
@@ -44,20 +43,29 @@ const Venta = ({ venta, setVenta, productos }) => {
         });
     };
 
-    const setDetalleVenta = (data) => {
-        const item = detalleVenta.find(i => i.id === data.id);
+    const calcularMontos = (detVenta) => {
+        let precio = 0;
+        let descuento = 0;
+        let total = 0;
+        for (let i of detVenta) {
+            precio += Number(i.precio);
+            descuento += Number(i.descuento);
+            total += Number(i.importe);
+        }
 
-        if (item) {
-            const result = detalleVenta.map(i => i.id === item.id ?
-                { ...i, cantidad: Number(i.cantidad) + Number(data.cantidad), importe: Number(i.precio) * (Number(i.cantidad) + Number(data.cantidad)) }
-                : i);
-            calcularMontos(result);
-        }
-        else {
-            let detalle = detalleVenta;
-            detalle.push(data);
-            calcularMontos(detalle);
-        }
+        setVenta({
+            ...venta,
+            "detalleVenta": detVenta,
+            "subtotal": precio,
+            "descuento": descuento,
+            "total": total
+        });
+    };
+
+    const setDetalleVenta = (data) => {
+        let detalle = detalleVenta;
+        detalle.push(data);
+        calcularMontos(detalle);
     };
 
     const handleDelete = (item) => {
@@ -67,21 +75,10 @@ const Venta = ({ venta, setVenta, productos }) => {
         }
     };
 
-    const calcularMontos = (detVenta) => {
-        let total = 0;
-        for (let i of detVenta) total += Number(i.importe);
-        setVenta({
-            ...venta,
-            "detalleVenta": detVenta,
-            "subtotal": total,
-            "total": total - descuento
-        });
-    };
-
     /* Dialog Remove */
     const handleClose = (aceptar) => {
         if (aceptar) {
-            const array = detalleVenta.filter(i => i.id !== itemToDelete.id);
+            const array = detalleVenta.filter(i => i !== itemToDelete);
             calcularImporte(array);
         }
         setDialogRemoveConfirmOpen(false);
@@ -116,20 +113,22 @@ const Venta = ({ venta, setVenta, productos }) => {
                                         <TableCell align="left">Descripcion</TableCell>
                                         <TableCell align="left">Cant.</TableCell>
                                         <TableCell align="left">Precio Unit.</TableCell>
+                                        <TableCell align="left">Descuento</TableCell>
                                         <TableCell align="left">Importe</TableCell>
                                         <TableCell align="right">Acción</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {detalleVenta.map((item) => (
+                                    {detalleVenta.map((item, index) => (
                                         <TableRow
-                                            key={item.id}
+                                            key={index}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="left">{item.descripcion}</TableCell>
                                             <TableCell align="left">{item.cantidad}</TableCell>
-                                            <TableCell align="left">{item.precio}</TableCell>
-                                            <TableCell align="left">{item.importe}</TableCell>
+                                            <TableCell align="left">$ {item.precio}</TableCell>
+                                            <TableCell align="left">{item.descuento !== 0 ? '$' + item.descuento : ''}</TableCell>
+                                            <TableCell align="left">$ {item.importe}</TableCell>
                                             <TableCell align="right">
                                                 <>
                                                     <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
@@ -148,7 +147,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                 <Grid item xs={12} sm={12}>
                     <Divider />
                 </Grid>
-                { /* Resumen */}
+                { /* ---------- Resumen ----------  */}
                 {/* Subtotal */}
                 <Grid item xs={12} sm={4}>
                     <Card sx={{ p: 1 }} >
@@ -157,6 +156,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                     </Card>
 
                 </Grid>
+
                 {/* Descuento */}
                 <Grid item xs={12} sm={4}>
                     <Card sx={{ p: 1 }} >
@@ -164,6 +164,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                         <Typography variant="h6" textAlign="end" >$ {descuento}</Typography>
                     </Card>
                 </Grid>
+
                 {/* Total */}
                 <Grid item xs={12} sm={4}>
                     <Card sx={{ p: 1 }} >
