@@ -2,8 +2,10 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
-} from '@mui/material'
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop
+} from '@mui/material';
+
+import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
@@ -17,11 +19,13 @@ const Ventas = () => {
     const [itemAeliminar, setItemAeliminar] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
-    const { onSave } = useTransaction();
+    const { onSave, mutation } = useTransaction();
 
     const getTransactionList = async () => {
         const data = await TransactionService.getQuery("empresaId", "==", user.empresaId);
-        const sortedData = data.sort((a, b) => {
+        const filterData = data.filter(i => !i.fechaAnulacion);
+
+        const sortedData = filterData.sort((a, b) => {
             if (a.nombre < b.nombre) {
                 return -1;
             }
@@ -88,6 +92,13 @@ const Ventas = () => {
 
     return (
         <>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={mutation.isLoading}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button

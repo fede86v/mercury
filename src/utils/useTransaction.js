@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { TransactionService } from './databaseService'
+import { TransactionService, TransactionDetailService, PaymentService, ProductService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
 
@@ -9,11 +9,57 @@ export const useTransaction = () => {
     const [success, setSuccess] = useState(false);
     const { user } = useContext(UserContext);
 
-    const saveData = (data) => {
+    const saveData = async (data) => {
         setAlert(null);
+
         if (!data.id) {
-            const product = { ...data, empresaId: user.empresaId }
-            return TransactionService.create(product, user);
+            /* Crear venta */
+            const venta = {
+                total: data.total,
+                subtotal: data.subtotal,
+                descuento: data.descuento,
+                vendedorId: data.vendedor.id,
+                vendedor: data.vendedor.nombre,
+                clienteId: data.cliente.id
+            };
+
+            const newVenta = await TransactionService.create(venta, user);
+
+            const { detalleVenta, pagos } = data;
+
+            let newDetalle = [];
+            detalleVenta.forEach(async (item) => {
+                /* Update Stock */
+                const producto = await ProductService.getOne(item.id);
+                await ProductService.update(producto.id, { ...producto, cantidad: producto.cantidad - 1 }, user);
+
+                const itemVenta = {
+                    ventaId: newVenta.id,
+                    productoId: item.id,
+                    descripcion: item.descripcion,
+                    codigo: item.codigo,
+                    precio: item.precio,
+                    cantidad: item.cantidad,
+                    descuento: item.descuento,
+                    importe: item.importe
+                };
+                const detalle = await TransactionDetailService.create(itemVenta, user);
+                newDetalle.push(detalle);
+            });
+
+            let newPagos = [];
+            pagos.forEach(async (item) => {
+                const itemPago = {
+                    ventaId: newVenta.id,
+                    metodoPago: item.metodoPago,
+                    monto: item.monto,
+                    comprobante: item.comprobante
+                };
+                const detalle = await PaymentService.create(itemPago, user);
+                newPagos.push(detalle);
+            });
+
+            return { ...newVenta, newDetalle, newPagos }
         }
         else {
             return TransactionService.update(data.id, data, user);
@@ -28,14 +74,11 @@ export const useTransaction = () => {
 
     const onSave = (data) => {
         // 1. Validate
-        let validation = data.precioVenta < data.precioCompra;
-        if (validation) setAlert(`Precio de Venta debe ser mayor al de compra`);
+        let validation = data.total > 0;
+        if (validation) setAlert(`No ha ingresado productos.`);
 
-        validation = data.precioVenta < 0
-        if (validation) setAlert(`Precio de Venta invalido`);
-
-        validation = data.precioCompra < 0
-        if (validation) setAlert(`Precio de Compra invalido`);
+        validation = data.vendedor === null
+        if (validation) setAlert(`Vendedor es requerido.`);
 
         // 2. if Success then save
         if (!validation) mutation.mutate(data);
@@ -48,6 +91,7 @@ export const useTransaction = () => {
         error,
         alert,
         success,
+        mutation,
         onSave,
         onSetAlert,
         onSetError,

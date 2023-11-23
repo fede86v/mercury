@@ -45,6 +45,7 @@ const Vendedor = ({ persona, setPersona }) => {
 
     useEffect(() => {
         query.refetch();
+        setFormState(persona);
     }, []);
 
     return (

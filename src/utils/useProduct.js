@@ -11,16 +11,13 @@ export const useProduct = () => {
 
     const saveData = (data) => {
         setAlert(null);
-        if (!data.id)
-        {
-            const product = {...data, empresaId:user.empresaId}
-            return ProductService.create(product, user);
+        if (!data.id) {
+            return ProductService.create(data, user);
         }
-        else
-        {
+        else {
             return ProductService.update(data.id, data, user);
         }
-        
+
     }
     // create mutation
     const mutation = useMutation((data) => saveData(data), {

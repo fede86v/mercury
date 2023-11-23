@@ -12,8 +12,7 @@ export const usePayment = () => {
     const saveData = (data) => {
         setAlert(null);
 
-        const payment = { ...data, empresaId: user.empresaId }
-        return TransactionService.create(payment, user);
+        return TransactionService.create(data, user);
     }
 
     // create mutation

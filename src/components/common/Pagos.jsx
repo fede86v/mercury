@@ -26,16 +26,13 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
     const [itemToDelete, setItemToDelete] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
 
-
     useEffect(() => {
         if (montoTotal > 0) {
-            setPago(
-                {
-                    ...pago,
-                    monto: montoTotal
-                }
-            )
+            setPago({ ...pago, monto: Number(montoTotal) });
         }
+        let total = 0;
+        for (let i of pagos) total += Number(i.monto);
+        setMontoTotalPagos(total);
     }, [montoTotal]);
 
     const agregarPago = () => {
@@ -128,11 +125,13 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                                     sx={{ width: '100%' }} />
                             </Grid>
 
+                            {/* Boton Agregar */}
                             <Grid item xs={12} sm={6} md={4}>
                                 <Box display="flex" justifyContent="flex-end">
                                     <Button color="secondary" variant="contained" disabled={montoTotalPagos === montoTotal} onClick={handleNewItem}>Agregar</Button>
                                 </Box>
                             </Grid>
+
                         </Grid>
                         <TableContainer>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -167,6 +166,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                         </TableContainer>
                     </Paper>
                 </Grid>
+
                 <Dialog
                     open={dialogRemoveConfirmOpen}
                     onClose={handleClose}

@@ -11,25 +11,21 @@ export const useConfig = () => {
 
     const saveTipoProducto = (data) => {
         setAlert(null);
-        if (!data.id)
-        { 
-            const tipoProducto = {nombre: data.nombre, empresaId: user.empresaId};
+        if (!data.id) {
+            const tipoProducto = { nombre: data.nombre };
             return ProductTypeService.create(tipoProducto, user);
         }
-        else
-        {
+        else {
             return ProductTypeService.update(data.id, data, user);
         }
     };
     const saveMarca = (data) => {
         setAlert(null);
-        if (!data.id)
-        { 
-            const marca = {nombre: data.nombre, empresaId: user.empresaId};
+        if (!data.id) {
+            const marca = { nombre: data.nombre };
             return BrandService.create(marca, user);
         }
-        else
-        {
+        else {
             return ProductTypeService.update(data.id, data, user);
         }
     }
@@ -45,8 +41,7 @@ export const useConfig = () => {
     })
     const onSaveTipoProducto = (data) => {
         // 1. Validate
-        if (!data.nombre)
-        {
+        if (!data.nombre) {
             setAlert(`Tipo de producto es requerido`);
             return;
         }
@@ -54,8 +49,7 @@ export const useConfig = () => {
     };
     const onSaveMarca = (data) => {
         // 1. Validate
-        if (!data.nombre)
-        {
+        if (!data.nombre) {
             setAlert(`Marca es requerido`);
             return;
         }

@@ -12,7 +12,7 @@ export const usePerson = () => {
 
     const saveData = async (data) => {
         setAlert(null);
-        const persona = { ...data.persona, empresaId: user.empresaId }
+        const persona = { ...data.persona }
 
         if (data.tipoPersona === "vendedor") {
             if (!persona.id) {

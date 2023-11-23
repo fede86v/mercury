@@ -89,6 +89,7 @@ class DatabaseService {
                 return await setDoc(docRef, {
                     ...values,
                     id: docRef.id,
+                    empresaId: user.empresaId,
                     fechaCreacion: Date.now(),
                     fechaActualizacion: Date.now(),
                     usuarioActualizacion: user.email,
@@ -103,6 +104,7 @@ class DatabaseService {
                 const col = collection(db, this.collectionName, id, subcollection);
                 return await addDoc(col, {
                     ...values,
+                    empresaId: user.empresaId,
                     fechaCreacion: Date.now(),
                     fechaActualizacion: Date.now(),
                     usuarioActualizacion: user.email,
@@ -117,6 +119,7 @@ class DatabaseService {
         else {
             return await addDoc(this.currentCollection, {
                 ...values,
+                empresaId: user.empresaId,
                 fechaCreacion: Date.now(),
                 fechaActualizacion: Date.now(),
                 usuarioActualizacion: user.email,
@@ -153,11 +156,13 @@ class DatabaseService {
 
 // Create services for each entity type
 export const ClientService = new DatabaseService("clientes");
-export const BrandService = new DatabaseService("marcas");
-export const PeopleService = new DatabaseService("personas");
+export const TransactionDetailService = new DatabaseService("detalleVentas");
 export const CompanyService = new DatabaseService("empresas");
-export const EmployeeService = new DatabaseService("vendedores");
-export const TransactionService = new DatabaseService("ventas");
+export const BrandService = new DatabaseService("marcas");
+export const PaymentService = new DatabaseService("pagos");
+export const PeopleService = new DatabaseService("personas");
 export const ProductService = new DatabaseService("productos");
 export const ProductTypeService = new DatabaseService("tipoProductos");
 export const UserService = new DatabaseService("usuarios");
+export const EmployeeService = new DatabaseService("vendedores");
+export const TransactionService = new DatabaseService("ventas");
