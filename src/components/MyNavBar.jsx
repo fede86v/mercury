@@ -11,8 +11,7 @@ import {
 import {
     People,
     MiscellaneousServicesSharp,
-    Home,
-    EventAvailable, Store, LocalGroceryStore, LocalMall
+    Home, Store, LocalGroceryStore, LocalMall
 } from '@mui/icons-material';
 import { NavLink } from "react-router-dom";
 import { UserContext } from '../context/UserProvider';
