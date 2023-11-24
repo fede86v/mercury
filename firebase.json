@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "mercury-go4it",
     "public": "build",
     "ignore": [
       "firebase.json",
