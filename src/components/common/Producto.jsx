@@ -3,7 +3,7 @@ import { Grid, FormControl, Select, TextField, InputAdornment, InputLabel, MenuI
 import PropTypes from 'prop-types'
 
 const Producto = ({ producto, onInputChange, tipoProductos, marcas }) => {
-    const { descripcion, tipo, cantidad, precioVenta, precioCompra, marca, codigo, imagen } = producto;
+    const { descripcion, tipo, cantidad, precioVenta, precioCompra, marca, codigo } = producto;
 
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
