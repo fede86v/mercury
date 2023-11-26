@@ -21,7 +21,7 @@ const Productos = () => {
     const [openProducto, setOpenProducto] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
-    const { onSave } = useProduct();
+    const { onSave, success } = useProduct();
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
@@ -77,6 +77,10 @@ const Productos = () => {
         queryMarcas.refetch();
     }, []);
 
+    useEffect(() => {
+        query.refetch();
+    }, [success]);
+
     const handleNewProduct = () => {
         setOpenProducto(true);
     };
@@ -95,7 +99,6 @@ const Productos = () => {
         }
         setDialogRemoveConfirmOpen(false);
         setProductoAeliminar(null);
-        query.refetch();
     };
 
     return (
