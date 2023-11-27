@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { useParams, NavLink } from 'react-router-dom';
-import { Grid, Box, Typography, Button, Paper } from '@mui/material'
+import { Grid, Box, Typography, Button, Paper, Backdrop } from '@mui/material'
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import SaveIcon from '@mui/icons-material/Save';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from "react-router-dom";
 import { ProductService, ProductTypeService, BrandService } from '../utils/databaseService';
 import Producto from '../components/common/Producto';
 import { useProduct, useForm } from '../utils'
@@ -19,9 +21,10 @@ const DEFAULT_PRODUCT = {
 const DetalleProducto = () => {
 
     const { id } = useParams();
+    const navigate = useNavigate();
     const [categorias, setCategories] = useState([]);
     const [marcas, setMarcas] = useState([]);
-    const { onSave } = useProduct();
+    const { onSave, mutation, success } = useProduct();
     const { formState: producto, onInputChange, onInputDateChange, setFormState: setProducto } = useForm(DEFAULT_PRODUCT)
     const { user } = useContext(UserContext);
 
@@ -74,12 +77,23 @@ const DetalleProducto = () => {
         }
     }, []);
 
+    useEffect(() => {
+        if (success) {
+            navigate("/Productos");
+        }
+    }, [success]);
     return (
         <>
             {
                 query.isLoading || queryProdTypes.isLoading || queryMarcas.isLoading ? (<Typography variant="h4" padding={3} textAlign="center" >Loading...</Typography>)
                     : (
                         <>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={mutation && mutation.isLoading}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
                             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 1 }} spacing={1} >
                                 <Grid item xs={12} sm={2}>
                                     <Button

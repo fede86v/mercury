@@ -112,7 +112,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                             {/* Monto */}
                             <Grid item xs={12} sm={6} md={2}>
                                 <TextField id="txt-monto" label="Monto"
-                                    value={monto} name="monto"
+                                    value={Number(monto)} name="monto"
                                     onChange={onInputChange}
                                     sx={{ width: '100%' }} />
                             </Grid>
