@@ -4,6 +4,7 @@ import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop
 } from '@mui/material';
+import dayjs from 'dayjs';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -130,7 +131,7 @@ const Ventas = () => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{item.fechaCreacion}</TableCell>
+                                        <TableCell align="left">{dayjs(item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>
