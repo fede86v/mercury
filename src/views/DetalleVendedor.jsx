@@ -19,7 +19,12 @@ const DEFAULT_PERSON = {
     tipoDocumento: "DNI",
     numeroDocumento: "",
     tipoTelefono: "Principal",
-    telefono: ""
+    telefono: "",
+    ciudad: "Salta",
+    localidad: "Salta",
+    direccion: "",
+    zip: "4400"
+
 };
 
 const DetalleVendedor = () => {

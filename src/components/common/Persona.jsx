@@ -135,10 +135,10 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
                     sx={{ width: '100%' }} />
             </Grid>
 
-            {/* Localidad */}
+            {/* zip */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-zip" label="Zip" variant="standard"
-                    value={zip} name="zip"
+                    value={Number(zip)} name="zip"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
