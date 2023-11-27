@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react'
 import { useParams, NavLink } from 'react-router-dom';
-import { Grid, Box, Typography, Button, Paper } from '@mui/material'
+import { useNavigate } from "react-router-dom";
+import { Grid, Box, Typography, Button, Paper, Backdrop } from '@mui/material'
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import CircularProgress from '@mui/material/CircularProgress';
 import SaveIcon from '@mui/icons-material/Save';
-import { ProductService } from '../utils/databaseService';
+import { EmployeeService } from '../utils/databaseService';
 import Persona from '../components/common/Persona';
 import { usePerson, useForm } from '../utils'
 import { useQuery } from '@tanstack/react-query';
@@ -23,12 +25,13 @@ const DEFAULT_PERSON = {
 const DetalleVendedor = () => {
 
     const { id } = useParams();
-    const { onSave } = usePerson();
-    const { formState: vendedor, onInputChange, onInputDateChange, setFormState: setCliente } = useForm(DEFAULT_PERSON)
+    const navigate = useNavigate();
+    const { onSave, success, mutation } = usePerson();
+    const { formState: vendedor, onInputChange, onInputDateChange, setFormState: setVendedor } = useForm(DEFAULT_PERSON)
 
     const getVendedor = async () => {
-        const data = await ProductService.getOne(id);
-        setCliente(data);
+        const data = await EmployeeService.getOne(id);
+        setVendedor(data);
         return data;
     };
 
@@ -36,11 +39,14 @@ const DetalleVendedor = () => {
 
     useEffect(() => {
         query.refetch();
-
-        return () => {
-            setCliente(DEFAULT_PERSON);
-        }
     }, []);
+
+    useEffect(() => {
+        if (success) {
+            setVendedor(DEFAULT_PERSON);
+            navigate("/Vendedores");
+        }
+    }, [success]);
 
     return (
         <>
@@ -48,6 +54,12 @@ const DetalleVendedor = () => {
                 query.isLoading ? (<Typography variant="h4" padding={3} textAlign="center" >Loading...</Typography>)
                     : (
                         <>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={mutation && mutation.isLoading}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
                             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 1 }} spacing={1} >
                                 <Grid item xs={12} sm={2}>
                                     <Button
