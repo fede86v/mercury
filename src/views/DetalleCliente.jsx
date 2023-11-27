@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react'
 import { useParams, NavLink } from 'react-router-dom';
-import { Grid, Box, Typography, Button, Paper } from '@mui/material'
+import { Grid, Box, Typography, Button, Paper, Backdrop } from '@mui/material'
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import CircularProgress from '@mui/material/CircularProgress';
 import SaveIcon from '@mui/icons-material/Save';
-import { ProductService } from '../utils/databaseService';
+import { ClientService } from '../utils/databaseService';
 import Persona from '../components/common/Persona';
 import { usePerson, useForm } from '../utils'
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_PERSON = {
     email: '',
@@ -17,17 +19,23 @@ const DEFAULT_PERSON = {
     tipoDocumento: "DNI",
     numeroDocumento: "",
     tipoTelefono: "Principal",
-    telefono: ""
+    telefono: "",
+    ciudad: "Salta",
+    localidad: "Salta",
+    direccion: "",
+    zip: "4400"
+
 };
 
 const DetalleCliente = () => {
 
     const { id } = useParams();
-    const { onSave } = usePerson();
+    const navigate = useNavigate();
+    const { onSave, success, mutation } = usePerson();
     const { formState: cliente, onInputChange, onInputDateChange, setFormState: setCliente } = useForm(DEFAULT_PERSON)
 
     const getCliente = async () => {
-        const data = await ProductService.getOne(id);
+        const data = await ClientService.getOne(id);
         setCliente(data);
         return data;
     };
@@ -36,11 +44,14 @@ const DetalleCliente = () => {
 
     useEffect(() => {
         query.refetch();
-
-        return () => {
-            setCliente(DEFAULT_PERSON);
-        }
     }, []);
+
+    useEffect(() => {
+        if (success) {
+            setCliente(DEFAULT_PERSON);
+            navigate("/Clientes");
+        }
+    }, [success]);
 
     return (
         <>
@@ -48,6 +59,13 @@ const DetalleCliente = () => {
                 query.isLoading ? (<Typography variant="h4" padding={3} textAlign="center" >Loading...</Typography>)
                     : (
                         <>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={mutation.isLoading}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
+
                             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 1 }} spacing={1} >
                                 <Grid item xs={12} sm={2}>
                                     <Button

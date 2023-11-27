@@ -47,6 +47,7 @@ export const useProduct = () => {
         error,
         alert,
         success,
+        mutation,
         onSave,
         onSetAlert,
         onSetError,

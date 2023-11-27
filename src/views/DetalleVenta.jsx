@@ -93,7 +93,7 @@ const DetalleVenta = () => {
         <Box sx={{ width: '100%', p: 1 }}>
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={mutation && mutation.isLoading}
+                open={mutation.isLoading}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
