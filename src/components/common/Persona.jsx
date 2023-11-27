@@ -114,7 +114,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
             {/* Direccion */}
             <Grid item xs={12} sm={12}>
                 <TextField id="txt-direccion" label="Direccion" variant="standard"
-                    value={direccion} name="direccion" required
+                    value={direccion} name="direccion"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
@@ -122,7 +122,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
             {/* Ciudad */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-ciudad" label="Ciudad" variant="standard"
-                    value={ciudad} name="ciudad" required
+                    value={ciudad} name="ciudad"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
@@ -130,7 +130,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
             {/* Localidad */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-localidad" label="Localidad" variant="standard"
-                    value={localidad} name="localidad" required
+                    value={localidad} name="localidad"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
@@ -138,7 +138,7 @@ const Persona = ({ persona, onInputChange, onInputDateChange }) => {
             {/* Localidad */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-zip" label="Zip" variant="standard"
-                    value={zip} name="zip" required
+                    value={zip} name="zip"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>

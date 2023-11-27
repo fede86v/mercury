@@ -37,13 +37,15 @@ const Ventas = () => {
         setVentas(sortedData)
         return sortedData;
     };
+
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const sortedData = data.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+        const filtered = data.filter(i => !i.fechaInactivo);
+        const sortedData = filtered.sort((a, b) => {
+            if (a.descripcion < b.descripcion) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (a.descripcion > b.descripcion) {
                 return 1;
             }
             return 0;
@@ -51,6 +53,7 @@ const Ventas = () => {
         setProductos(sortedData)
         return sortedData;
     };
+
     const getEmployeeList = async () => {
         const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {

@@ -35,11 +35,13 @@ const Cliente = ({ persona, setPersona }) => {
 
     useEffect(() => {
         if (numeroDocumento) {
+
+            setAlert(null)
+
             const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
             if (client) {
                 setFormState(client);
                 setPersona(client);
-                setAlert(null)
             }
             else {
                 const msg = "No se encontro el cliente.";

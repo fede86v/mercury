@@ -33,12 +33,12 @@ const DetalleVenta = () => {
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => i.fechaInactivo);
+        const filtered = data.filter(i => !i.fechaInactivo);
         const sortedData = filtered.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+            if (a.descripcion < b.descripcion) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (a.descripcion > b.descripcion) {
                 return 1;
             }
             return 0;
