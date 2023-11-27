@@ -22,7 +22,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 
     useEffect(() => {
         if (codigo) {
-            const producto = productos.find(i => i.codigo === codigo);
+            const producto = productos.find(i => i.codigo.toLowerCase() === codigo.toLowerCase());
 
             if (producto && producto !== itemVenta) {
                 const item =
