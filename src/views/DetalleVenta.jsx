@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Button, Backdrop } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import SendIcon from '@mui/icons-material/Send';
+import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useQuery } from '@tanstack/react-query';
 import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService } from '../utils';
@@ -110,7 +110,7 @@ const DetalleVenta = () => {
             <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
                 <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
                 <Button color="primary" variant="contained" onClick={handleSave}
-                    endIcon={< SendIcon />} >Guardar</Button>
+                    endIcon={< SaveIcon />} >Guardar</Button>
             </Box>
         </Box>
     );

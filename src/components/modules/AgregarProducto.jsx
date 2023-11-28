@@ -8,6 +8,7 @@ import {
     DialogTitle,
     Backdrop
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
 import { useForm, useProduct } from '../../utils';
 import Alerts from '../common/Alerts';
@@ -50,7 +51,7 @@ const AgregarProducto = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.handleClose()}>Cancelar</Button>
-                <Button color="primary" variant="contained" onClick={handleSave} >Guardar</Button>
+                <Button color="primary" variant="contained" endIcon={< SaveIcon />}  onClick={handleSave} >Guardar</Button>
             </DialogActions>
         </Dialog>
     )

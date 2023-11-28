@@ -7,6 +7,7 @@ import {
     DialogContentText,
     DialogTitle
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
 import { useForm, usePerson } from '../../utils';
 import Alerts from '../common/Alerts';
@@ -50,7 +51,7 @@ const AgregarPersona = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.handleClose()}>Cancelar</Button>
-                <Button color="primary" variant="contained" onClick={handleSave} >Guardar</Button>
+                <Button color="primary" variant="contained" endIcon={< SaveIcon />}  onClick={handleSave} >Guardar</Button>
             </DialogActions>
         </Dialog>
     )

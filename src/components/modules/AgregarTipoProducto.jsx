@@ -9,6 +9,7 @@ import {
     Grid,
     TextField
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
 import { useForm, useConfig } from '../../utils';
 import Alerts from '../common/Alerts';
@@ -54,7 +55,7 @@ const AgregarTipoProducto = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={handleClose}>Cancelar</Button>
-                <Button color="primary" variant="contained" onClick={handleSave} >Guardar</Button>
+                <Button color="primary" variant="contained" endIcon={< SaveIcon />}  onClick={handleSave} >Guardar</Button>
             </DialogActions>
         </Dialog>
     )
