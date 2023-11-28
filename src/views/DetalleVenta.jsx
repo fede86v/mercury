@@ -59,6 +59,10 @@ const DetalleVenta = () => {
             console.log(final);
             return final;
         }
+        else {
+            setVenta(DEFAULT_VENTA);
+            setPagos([]);
+        }
 
         return null;
     };

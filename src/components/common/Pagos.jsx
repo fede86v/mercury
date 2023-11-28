@@ -55,9 +55,6 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
         if ((metodo.key === "Credito" || metodo.key === "Debito") && !comprobante) {
             validacion = "Comprobante es requerido."
         }
-        if (metodo.key === "Credito" && !cuotas) {
-            validacion = "Ingrese la cantidad de cuotas en que realizará el pago."
-        }
 
         if (validacion) {
             setAlert(validacion);
