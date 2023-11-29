@@ -83,12 +83,13 @@ const DetalleVenta = () => {
     useEffect(() => {
         queryProductos.refetch();
         queryVenta.refetch();
+        return () => { }
     }, []);
 
     useEffect(() => {
         if (success) {
-            setVenta(DEFAULT_VENTA);
             setPagos([]);
+            setVenta(DEFAULT_VENTA);
             navigate("/Ventas");
         }
     }, [success]);

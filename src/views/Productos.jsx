@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { ProductService, ProductTypeService, BrandService } from '../utils';
 import { useProduct } from '../utils'
 import { UserContext } from '../context/UserProvider';
+import AgregarStock from '../components/modules/AgregarStock';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -19,6 +20,7 @@ const Productos = () => {
     const [tipoProductos, setTipoProductos] = useState([]);
     const [marcas, setMarcas] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
+    const [openStock, setOpenStock] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, success } = useProduct();
@@ -92,6 +94,11 @@ const Productos = () => {
         setProductoAeliminar(productoAeliminar);
         setDialogRemoveConfirmOpen(true);
     };
+
+    const handleNewStock = () => {
+        setOpenStock(true);
+    };
+
     const handleClose = async (aceptar) => {
         if (aceptar) {
             const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
@@ -100,13 +107,22 @@ const Productos = () => {
         setDialogRemoveConfirmOpen(false);
         setProductoAeliminar(null);
     };
+    const handleCloseStock = (success) => {
+        if (success) {
+            setOpenStock(false);
+            query.refetch();
+        }
+    };
 
     return (
         <>
             {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
+            {openStock ? <AgregarStock open={openStock} productos={productos} handleClose={handleCloseStock} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item sm={2}>
                     <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                    <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
+
                 </Grid>
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Productos</Typography>
