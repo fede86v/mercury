@@ -43,11 +43,11 @@ const Venta = ({ venta, setVenta, productos }) => {
         });
     };
 
-    const calcularMontos = (detVenta) => {
+    const calcularMontos = () => {
         let precio = 0;
         let descuento = 0;
         let total = 0;
-        for (let i of detVenta) {
+        for (let i of detalleVenta) {
             precio += Number(i.precio);
             descuento += Number(i.descuento);
             total += Number(i.importe);
@@ -55,7 +55,7 @@ const Venta = ({ venta, setVenta, productos }) => {
 
         setVenta({
             ...venta,
-            "detalleVenta": detVenta,
+            "detalleVenta": detalleVenta,
             "subtotal": precio,
             "descuento": descuento,
             "total": total
@@ -63,9 +63,10 @@ const Venta = ({ venta, setVenta, productos }) => {
     };
 
     const setDetalleVenta = (data) => {
-        let detalle = detalleVenta;
-        detalle.push(data);
-        calcularMontos(detalle);
+        console.log(detalleVenta)
+        detalleVenta.push(data);
+        console.log(detalleVenta)
+        calcularMontos();
     };
 
     const handleDelete = (item) => {

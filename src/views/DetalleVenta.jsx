@@ -62,9 +62,8 @@ const DetalleVenta = () => {
         else {
             setVenta(DEFAULT_VENTA);
             setPagos([]);
+            return DEFAULT_VENTA;
         }
-
-        return null;
     };
 
     const handleCancel = () => {

@@ -119,13 +119,13 @@ const Productos = () => {
             {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
             {openStock ? <AgregarStock open={openStock} productos={productos} handleClose={handleCloseStock} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                <Grid item sm={12}>
+                    <Button color="primary" sx={{mr:'10px'}}  variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                     <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
 
                 </Grid>
-                <Grid item sm={10}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Productos</Typography>
+                <Grid item sm={12}>
+                    <Typography variant="h4" textAlign="center" >Productos</Typography>
                 </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
