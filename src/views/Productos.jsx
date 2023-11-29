@@ -108,8 +108,7 @@ const Productos = () => {
         setProductoAeliminar(null);
     };
     const handleCloseStock = () => {
-        setOpenStock(false);
-        
+        setOpenStock(false);        
     };
 
     return (

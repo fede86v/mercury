@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card
 } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -18,6 +18,9 @@ const Ventas = () => {
     const [vendedores, setVendedores] = useState([]);
     const [productos, setProductos] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
+    const [totalHoy, setTotalHoy] = useState(0);
+    const [totalSemana, setTotalSemana] = useState(0);
+    const [totalMes, setTotalMes] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
@@ -35,6 +38,28 @@ const Ventas = () => {
             }
             return 0;
         });
+        let hoy = 0;
+        let semana = 0;
+        let mes = 0;
+        sortedData.forEach(item => {
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("day"))
+            {
+                hoy = hoy + Number(item.total);
+            }
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("week"))
+            {
+                semana = semana + Number(item.total);
+            }
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("month"))
+            {
+                mes = mes + Number(item.total);
+            }
+        });
+
+        setTotalHoy(hoy);
+        setTotalSemana(semana);
+        setTotalMes(mes);
+
         setVentas(sortedData)
         return sortedData;
     };
@@ -112,6 +137,27 @@ const Ventas = () => {
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
                 </Grid>
+                <Grid item xs={12} sm={4}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Hoy</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Semana</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Mes</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
+                    </Card>
+                </Grid>
+
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
