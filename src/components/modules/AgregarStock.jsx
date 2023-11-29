@@ -6,14 +6,17 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Box, TextField, Autocomplete, Grid
+    Box, TextField, Autocomplete, Grid, TableContainer, Paper, TableHead, TableRow, TableCell, TableBody, Table, IconButton
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import dayjs from 'dayjs';
 import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
-import { useForm, useTransaction } from '../../utils';
+import { useForm, useStock } from '../../utils';
 import Alerts from '../common/Alerts';
 
 const DEFAULT_ITEM = {
+    item:null,
     codigo: "",
     descripcion: "",
     precio: 0,
@@ -21,13 +24,13 @@ const DEFAULT_ITEM = {
 };
 
 const AgregarStock = ({ productos, handleClose, open }) => {
-    const [activeStep, setActiveStep] = useState(0);
-    const { error, onSave, success } = useTransaction();
+    const { error, onSave, success } = useStock();
     const { formState: item, onInputChange, setFormState } = useForm(DEFAULT_ITEM);
     const { id, codigo, cantidad, precio } = item;
     const [alert, setAlert] = useState(null);
     const [cod, setCod] = useState(codigo);
     const [prod, setProd] = useState(null);
+    const [stock, setStock] = useState([]);
 
     useEffect(() => {
         if (codigo) {
@@ -71,8 +74,15 @@ const AgregarStock = ({ productos, handleClose, open }) => {
             setCod("");
         }
     }, [prod]);
+    
+    useEffect(() => {
+        if (success) {
+            handleClose();
+        }
+    }, [success]);
 
     const handleNewItem = async () => {
+        console.log(item);
         if (!id) {
             setAlert("Producto invalido");
             return;
@@ -81,6 +91,20 @@ const AgregarStock = ({ productos, handleClose, open }) => {
             setAlert("Cantidad debe ser mayor a 0");
             return;
         }
+        
+        let existingItem = stock.find(i => i.id === id);
+
+        if (existingItem)
+        {
+            const newStock = stock.map(obj =>
+                obj.id === id ? { ...obj, cantidad: existingItem.cantidad + item.cantidad } : obj
+            );
+            setStock(newStock);
+        }
+        else{
+            stock.push(item);
+        }
+        
         setFormState(DEFAULT_ITEM);
         setCod("");
         setAlert(null);
@@ -88,24 +112,23 @@ const AgregarStock = ({ productos, handleClose, open }) => {
     };
 
     const handleSave = () => {
+        onSave(stock);
     };
 
-    useEffect(() => {
-        if (success) {
-            handleClose();
-        }
-    }, [success]);
+    const handleDeleteProduct = (item) => {
+        const newStock = stock.filter(obj => obj.id !== item.id);
+        setStock(newStock);
+    };
 
     return (
         <Dialog open={open} >
-            <DialogTitle>Venta</DialogTitle>
+            <DialogTitle>Stock</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />
                 <Box sx={{ width: '100%', p: 1 }}>
-                    <Alerts alert={alert} error={error} />
-                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} >
+                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1}} sx={{mb:2}} >
                         {/* Codigo */}
                         <Grid item xs={12} sm={4} md={2}>
                             <TextField id="txt-codigo" label="Código"
@@ -125,7 +148,7 @@ const AgregarStock = ({ productos, handleClose, open }) => {
                         </Grid>
 
                         {/* Descripción */}
-                        <Grid item xs={12} sm={8} md={4}>
+                        <Grid item xs={12} sm={8} md={6}>
                             <Autocomplete
                                 id="autocomplete-descripcion"
                                 options={productos}
@@ -147,13 +170,47 @@ const AgregarStock = ({ productos, handleClose, open }) => {
                                 sx={{ width: '100%' }} />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={4}>
+                        <Grid item xs={12} sm={8} md={2}>
                             <Box display="flex" justifyContent="flex-end" alignContent="center" >
-                                <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
+                                <Button color="secondary" variant="contained" onClick={handleNewItem} sx={{my:1}} >Agregar</Button>
                             </Box>
                         </Grid>
                     </Grid>
+                <Grid item sm={12}>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 500}} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="left">Descripcion</TableCell>
+                                    <TableCell align="left">Cantidad</TableCell>
+                                    <TableCell align="right">Acción</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {stock.map((producto) => (
+                                    <TableRow
+                                        key={producto.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell align="left">{producto.descripcion}</TableCell>
+                                        <TableCell align="left">{producto.cantidad}</TableCell>
+                                        <TableCell align="right">
+                                            <>
+                                                <IconButton aria-label="delete" onClick={() => handleDeleteProduct(producto)} >
+                                                    <DeleteIcon color="error" />
+                                                </ IconButton>
+                                            </>
+
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+
                 </Box>
+
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => handleClose()}>Cancelar</Button>

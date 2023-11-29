@@ -107,11 +107,9 @@ const Productos = () => {
         setDialogRemoveConfirmOpen(false);
         setProductoAeliminar(null);
     };
-    const handleCloseStock = (success) => {
-        if (success) {
-            setOpenStock(false);
-            query.refetch();
-        }
+    const handleCloseStock = () => {
+        setOpenStock(false);
+        
     };
 
     return (
