@@ -67,6 +67,7 @@ const DetalleVenta = () => {
     };
 
     const handleCancel = () => {
+        venta.detalleVenta.length = 0;
         setVenta(DEFAULT_VENTA);
         navigate("/Ventas");
     };
@@ -82,8 +83,9 @@ const DetalleVenta = () => {
     useEffect(() => {
         queryProductos.refetch();
         queryVenta.refetch();
-        return () => { 
+        return () => {
             setPagos([]);
+            venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
         }
     }, []);
@@ -91,10 +93,11 @@ const DetalleVenta = () => {
     useEffect(() => {
         if (success) {
             setPagos([]);
+            venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
             navigate("/Ventas");
         }
-        return () => { 
+        return () => {
             setPagos([]);
             setVenta(DEFAULT_VENTA);
         }
