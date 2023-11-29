@@ -30,10 +30,10 @@ const Ventas = () => {
         const filterData = data.filter(i => !i.fechaAnulacion);
 
         const sortedData = filterData.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+            if (dayjs(a.fechaCreacion) > dayjs(b.fechaCreacion)) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (dayjs(a.fechaCreacion) < dayjs(b.fechaCreacion)) {
                 return 1;
             }
             return 0;
@@ -42,16 +42,13 @@ const Ventas = () => {
         let semana = 0;
         let mes = 0;
         sortedData.forEach(item => {
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("day"))
-            {
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
                 hoy = hoy + Number(item.total);
             }
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("week"))
-            {
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("week")) {
                 semana = semana + Number(item.total);
             }
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("month"))
-            {
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("month")) {
                 mes = mes + Number(item.total);
             }
         });
