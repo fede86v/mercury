@@ -31,23 +31,11 @@ const Venta = ({ venta, setVenta, productos }) => {
         });
     };
 
-    const calcularImporte = (detalle) => {
-        let importe = 0;
-        for (let i of detalle) importe += Number(i.importe);
-
-        setVenta({
-            ...venta,
-            "detalleVenta": detalle,
-            "subtotal": importe,
-            "total": importe - descuento
-        });
-    };
-
-    const calcularMontos = () => {
+    const calcularMontos = (detalle) => {
         let precio = 0;
         let descuento = 0;
         let total = 0;
-        for (let i of detalleVenta) {
+        for (let i of detalle) {
             precio += Number(i.precio);
             descuento += Number(i.descuento);
             total += Number(i.importe);
@@ -55,7 +43,7 @@ const Venta = ({ venta, setVenta, productos }) => {
 
         setVenta({
             ...venta,
-            "detalleVenta": detalleVenta,
+            "detalleVenta": detalle,
             "subtotal": precio,
             "descuento": descuento,
             "total": total
@@ -63,10 +51,8 @@ const Venta = ({ venta, setVenta, productos }) => {
     };
 
     const setDetalleVenta = (data) => {
-        console.log(detalleVenta)
         detalleVenta.push(data);
-        console.log(detalleVenta)
-        calcularMontos();
+        calcularMontos(detalleVenta);
     };
 
     const handleDelete = (item) => {
@@ -80,7 +66,7 @@ const Venta = ({ venta, setVenta, productos }) => {
     const handleClose = (aceptar) => {
         if (aceptar) {
             const array = detalleVenta.filter(i => i !== itemToDelete);
-            calcularImporte(array);
+            calcularMontos(array);
         }
         setDialogRemoveConfirmOpen(false);
     };

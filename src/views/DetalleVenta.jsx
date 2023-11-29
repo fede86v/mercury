@@ -82,7 +82,10 @@ const DetalleVenta = () => {
     useEffect(() => {
         queryProductos.refetch();
         queryVenta.refetch();
-        return () => { }
+        return () => { 
+            setPagos([]);
+            setVenta(DEFAULT_VENTA);
+        }
     }, []);
 
     useEffect(() => {
@@ -90,6 +93,10 @@ const DetalleVenta = () => {
             setPagos([]);
             setVenta(DEFAULT_VENTA);
             navigate("/Ventas");
+        }
+        return () => { 
+            setPagos([]);
+            setVenta(DEFAULT_VENTA);
         }
     }, [success]);
 
