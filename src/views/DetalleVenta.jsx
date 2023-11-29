@@ -16,8 +16,8 @@ const DEFAULT_VENTA = {
     total: null,
     subtotal: null,
     descuento: 0,
-    vendedor: { nombre: "caja", id: "0" },
-    cliente: { nombre: "consumidor Final", id: "0" },
+    vendedor: { nombre: "Caja", numeroDocumento: "0" },
+    cliente: { nombre: "Consumidor", apellido: "Final", numeroDocumento: "0", id: 0 },
     detalleVenta: []
 };
 

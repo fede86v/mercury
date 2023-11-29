@@ -1,16 +1,14 @@
 import React, { useEffect, useContext, useState } from 'react'
-import { Grid, FormControl, Typography, Select, TextField, InputLabel, MenuItem, Button } from '@mui/material'
+import { Grid, FormControl, Typography, Select, InputLabel, MenuItem } from '@mui/material'
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
 import { EmployeeService } from '../../utils/databaseService'
 import { UserContext } from '../../context/UserProvider'
-import { useForm } from '../../utils'
 import Alerts from './Alerts'
 
 const Vendedor = ({ persona, setPersona }) => {
 
-    const { formState: vendedor, onInputChange, setFormState } = useForm(persona);
-    const { id } = vendedor;
+    const { id } = persona;
     const { user } = useContext(UserContext);
     const [vendedores, setVendedores] = useState([]);
     const [alert, setAlert] = useState(null)
@@ -35,17 +33,30 @@ const Vendedor = ({ persona, setPersona }) => {
 
     useEffect(() => {
         if (id) {
-            const persona = vendedores.find(v => v.id === id);
-            if (persona) {
-                setFormState(persona);
-                setPersona(persona);
+            if (id === 0) {
+                const persona = vendedores.find(v => v.nombre.toLower() === "caja");
+                if (persona) {
+                    setPersona(persona);
+                }
+            }
+            else {
+                const persona = vendedores.find(v => v.id === id);
+                if (persona) {
+                    setPersona(persona);
+                }
             }
         }
     }, [id]);
 
     useEffect(() => {
         query.refetch();
-        setFormState(persona);
+        if (id === 0) {
+            const persona = vendedores.find(v => v.nombre.toLower() === "caja");
+            if (persona) {
+                setPersona(persona);
+                console.log(persona);
+            }
+        }
     }, []);
 
     return (
@@ -65,7 +76,7 @@ const Vendedor = ({ persona, setPersona }) => {
                             labelId="vendedores-label"
                             id="vendedores"
                             value={id} name="id"
-                            onChange={onInputChange}
+                            onChange={(e) => { setPersona({ ...persona, id: e.target.value }) }}
                             label="Vendedor" >
                             {vendedores.map((dt) => (
                                 <MenuItem key={dt.id} value={dt.id}>{dt.nombre} {dt.apellido}</MenuItem>
