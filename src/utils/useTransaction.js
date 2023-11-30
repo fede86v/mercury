@@ -61,9 +61,6 @@ export const useTransaction = () => {
 
             return { ...newVenta, newDetalle, newPagos }
         }
-        else {
-            return TransactionService.update(data.id, data, user);
-        }
     }
 
     // create mutation

@@ -16,7 +16,7 @@ const DEFAULT_VENTA = {
     total: 0,
     subtotal: 0,
     descuento: 0,
-    vendedor: { nombre: "Caja", numeroDocumento: "0" },
+    vendedor: { nombre: "Caja", id: "0" },
     cliente: { nombre: "Consumidor", apellido: "Final", numeroDocumento: "0", id: 0 },
     detalleVenta: []
 };
@@ -50,13 +50,16 @@ const DetalleVenta = () => {
     const getVenta = async () => {
         if (id) {
             const data = await TransactionService.getOne(id);
-            const cliente = await ClientService.getOne(data.clienteId);
+            let cliente = await ClientService.getOne(data.clienteId);
+            if (!cliente) {
+                const cls = await ClientService.getQuery("numeroDocumento", "==", "0");
+                cliente = cls[0];
+            }
             const detalle1 = await TransactionDetailService.getQuery("ventaId", "==", id);
             const detalle2 = await PaymentService.getQuery("ventaId", "==", id);
-            const final = { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, key: data.vendedorId }, cliente: cliente };
-            setVenta({ ...data, detalleVenta: detalle1, vendedor: { nombre: data.vendedor, key: data.vendedorId }, cliente: cliente });
+            const final = { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, id: data.vendedorId }, cliente: cliente };
+            setVenta({ ...data, detalleVenta: detalle1, vendedor: { nombre: data.vendedor, id: data.vendedorId }, cliente: cliente });
             setPagos(detalle2);
-            console.log(final);
             return final;
         }
         else {
@@ -125,13 +128,13 @@ const DetalleVenta = () => {
                 <Venta venta={venta} setVenta={setVenta} productos={productos} />
             </Box>
             <Box  >
-                <Pagos pagos={pagos} setPagos={setPagos} montoTotal={total} />
+                <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />
             </Box>
 
             <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
                 <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
-                <Button color="primary" variant="contained" onClick={handleSave}
-                    endIcon={< SaveIcon />} >Guardar</Button>
+                {!id ? (<Button color="primary" variant="contained" onClick={handleSave}
+                    endIcon={< SaveIcon />} >Guardar</Button>) : null}
             </Box>
         </Box>
     );

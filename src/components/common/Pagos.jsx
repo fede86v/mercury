@@ -16,7 +16,7 @@ const DEFAULT_PAYMENT = {
     comprobante: ""
 };
 
-const Pagos = ({ pagos, setPagos, montoTotal }) => {
+const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
 
     const { formState: pago, onInputChange, setFormState: setPago } = useForm({ ...DEFAULT_PAYMENT, monto: montoTotal });
     const { monto, comprobante, cuotas } = pago;
@@ -128,11 +128,12 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                             </Grid>
 
                             {/* Boton Agregar */}
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Box display="flex" justifyContent="flex-end">
-                                    <Button color="secondary" variant="contained" disabled={montoTotalPagos === montoTotal} onClick={handleNewItem}>Agregar</Button>
-                                </Box>
-                            </Grid>
+                            {!idVenta ? (
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <Box display="flex" justifyContent="flex-end">
+                                        <Button color="secondary" variant="contained" disabled={montoTotalPagos === montoTotal} onClick={handleNewItem}>Agregar</Button>
+                                    </Box>
+                                </Grid>) : null}
 
                         </Grid>
                         <TableContainer>
@@ -156,9 +157,11 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                                             <TableCell align="left">{item.comprobante}</TableCell>
                                             <TableCell align="right">
                                                 <>
-                                                    <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
-                                                        <DeleteIcon color="error" />
-                                                    </ IconButton>
+                                                    {!idVenta ? (
+                                                        <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                            <DeleteIcon color="error" />
+                                                        </ IconButton>
+                                                    ) : null}
                                                 </>
                                             </TableCell>
                                         </TableRow>
@@ -197,6 +200,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
 }
 
 Pagos.propTypes = {
+    idVenta: PropTypes.string.isRequired,
     pagos: PropTypes.array.isRequired,
     setPagos: PropTypes.func.isRequired,
     montoTotal: PropTypes.number

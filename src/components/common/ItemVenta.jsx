@@ -12,7 +12,7 @@ const DEFAULT_ITEM_VENTA = {
     importe: 0
 };
 
-const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
+const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
 
     const { formState: itemVenta, onInputChange, setFormState } = useForm(DEFAULT_ITEM_VENTA);
     const { id, codigo, cantidad, precio, importe } = itemVenta;
@@ -172,17 +172,19 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     InputProps={{ readOnly: true, }}
                     sx={{ width: '100%' }} />
             </Grid>
-
-            <Grid item xs={12} sm={6} md={1}>
-                <Box display="flex" justifyContent="flex-end">
-                    <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
-                </Box>
-            </Grid>
+            {!idVenta ? (
+                <Grid item xs={12} sm={6} md={1}>
+                    <Box display="flex" justifyContent="flex-end">
+                        <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
+                    </Box>
+                </Grid>
+            ) : null}
         </Grid>
     )
 }
 
 ItemVenta.propTypes = {
+    idVenta: PropTypes.string.isRequired,
     setDetalleVenta: PropTypes.func.isRequired,
     productos: PropTypes.array.isRequired,
     setAlert: PropTypes.func.isRequired

@@ -92,7 +92,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                 <Grid item xs={12} sm={12} md={12}>
                     <Paper sx={{ p: 2 }}  >
                         <Alerts alert={alert} />
-                        <ItemVenta productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
+                        <ItemVenta idVenta={venta.id} productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
                         <TableContainer>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -118,9 +118,13 @@ const Venta = ({ venta, setVenta, productos }) => {
                                             <TableCell align="left">$ {item.importe}</TableCell>
                                             <TableCell align="right">
                                                 <>
-                                                    <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
-                                                        <DeleteIcon color="error" />
-                                                    </ IconButton>
+                                                    {
+                                                        !venta.id ? (
+                                                            <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                                <DeleteIcon color="error" />
+                                                            </ IconButton>
+                                                        ) : null
+                                                    }
                                                 </>
                                             </TableCell>
                                         </TableRow>
