@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useQuery } from '@tanstack/react-query';
-import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService } from '../utils';
+import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
 import Alerts from '../components/common/Alerts';
@@ -13,6 +13,7 @@ import Pagos from '../components/common/Pagos';
 import { useNavigate } from "react-router-dom";
 
 const DEFAULT_VENTA = {
+    id: null,
     total: 0,
     subtotal: 0,
     descuento: 0,
@@ -63,7 +64,9 @@ const DetalleVenta = () => {
             return final;
         }
         else {
-            setVenta(DEFAULT_VENTA);
+            const data = await EmployeeService.getQuery("numeroDocumento", "==", "0");
+            const v = data[0];
+            setVenta({ ...DEFAULT_VENTA, vendedor: v });
             venta.detalleVenta.length = 0;
             setPagos([]);
             return DEFAULT_VENTA;
@@ -101,10 +104,6 @@ const DetalleVenta = () => {
             setVenta(DEFAULT_VENTA);
             navigate("/Ventas");
         }
-        return () => {
-            setPagos([]);
-            setVenta(DEFAULT_VENTA);
-        }
     }, [success]);
 
     return (
@@ -133,7 +132,7 @@ const DetalleVenta = () => {
 
             <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
                 <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
-                {!id ? (<Button color="primary" variant="contained" onClick={handleSave}
+                {!id ? (<Button color="primary" variant="contained" onClick={() => handleSave()}
                     endIcon={< SaveIcon />} >Guardar</Button>) : null}
             </Box>
         </Box>

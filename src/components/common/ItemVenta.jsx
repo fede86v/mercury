@@ -184,7 +184,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
 }
 
 ItemVenta.propTypes = {
-    idVenta: PropTypes.string.isRequired,
+    idVenta: PropTypes.string,
     setDetalleVenta: PropTypes.func.isRequired,
     productos: PropTypes.array.isRequired,
     setAlert: PropTypes.func.isRequired
