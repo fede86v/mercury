@@ -73,15 +73,29 @@ export const useTransaction = () => {
     })
 
     const onSave = (data) => {
+        setAlert(null);
+        setError(null);
+
         // 1. Validate
-        let validation = data.total > 0;
-        if (validation) setAlert(`No ha ingresado productos.`);
+        let validation = data.total <= 0;
+        if (validation) {
+            setAlert(`No ha ingresado productos.`);
+            return;
+        }
+
+        validation = (data.pagos.length === 0);
+        if (validation) {
+            setAlert(`No ha ingresado el pago para esta compra.`);
+            return;
+        }
 
         validation = data.vendedor === null
-        if (validation) setAlert(`Vendedor es requerido.`);
-
+        if (validation) {
+            setAlert(`Vendedor es requerido.`);
+            return;
+        }
         // 2. if Success then save
-        if (!validation) mutation.mutate(data);
+        mutation.mutate(data);
     }
 
     const onSetAlert = (data) => setAlert(data);

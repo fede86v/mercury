@@ -36,8 +36,13 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
     }, [montoTotal]);
 
     const agregarPago = () => {
+        console.log(metodo);
+
         let pagosActualizado = pagos;
-        pagosActualizado.push(pago);
+        pagosActualizado.push({
+            ...pago,
+            metodoPago: metodo.value
+        });
         setPagos(pagosActualizado);
 
         let total = 0;
@@ -109,7 +114,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                             {/* Monto */}
                             <Grid item xs={12} sm={6} md={2}>
                                 <TextField id="txt-monto" label="Monto"
-                                    value={Number(monto)} name="monto"
+                                    value={monto} name="monto"
                                     onChange={onInputChange}
                                     sx={{ width: '100%' }} />
                             </Grid>

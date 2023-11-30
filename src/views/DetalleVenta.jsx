@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Button, Backdrop } from '@mui/material';
+import { Box, Button, Backdrop, Paper } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,8 +13,8 @@ import Pagos from '../components/common/Pagos';
 import { useNavigate } from "react-router-dom";
 
 const DEFAULT_VENTA = {
-    total: null,
-    subtotal: null,
+    total: 0,
+    subtotal: 0,
     descuento: 0,
     vendedor: { nombre: "Caja", numeroDocumento: "0" },
     cliente: { nombre: "Consumidor", apellido: "Final", numeroDocumento: "0", id: 0 },
@@ -61,6 +61,7 @@ const DetalleVenta = () => {
         }
         else {
             setVenta(DEFAULT_VENTA);
+            venta.detalleVenta.length = 0;
             setPagos([]);
             return DEFAULT_VENTA;
         }
@@ -112,7 +113,13 @@ const DetalleVenta = () => {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
-            <Alerts alert={alert} error={error} />
+
+            {alert ? (<Box sx={{ p: 2 }}  >
+                <Paper sx={{ p: 2 }}  >
+                    <Alerts alert={alert} error={error} />
+
+                </Paper>
+            </Box>) : null}
 
             <Box  >
                 <Venta venta={venta} setVenta={setVenta} productos={productos} />
