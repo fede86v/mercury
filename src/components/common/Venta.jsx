@@ -36,7 +36,7 @@ const Venta = ({ venta, setVenta, productos }) => {
         let descuento = 0;
         let total = 0;
         for (let i of detalle) {
-            precio += Number(i.precio);
+            precio += Number(i.cantidad) * Number(i.precio);
             descuento += Number(i.descuento);
             total += Number(i.importe);
         }
