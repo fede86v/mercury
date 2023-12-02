@@ -123,6 +123,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
         setAlert(null);
         setProd(null);
         setDesc(0);
+        setDescMonto(0);
         setDetalleVenta(itemVenta);
     };
 
