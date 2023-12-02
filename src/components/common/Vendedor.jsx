@@ -77,7 +77,7 @@ const Vendedor = ({ persona, setPersona }) => {
                             id="vendedores"
                             value={id} name="id"
                             onChange={(e) => { setPersona({ ...persona, id: e.target.value }) }}
-                            label="Vendedor" >
+                        >
                             {vendedores.map((dt) => (
                                 <MenuItem key={dt.id} value={dt.id}>{dt.nombre} {dt.apellido}</MenuItem>
                             ))}

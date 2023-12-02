@@ -98,7 +98,7 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
                             {/* Metodo de Pago */}
                             <Grid item xs={12} sm={6} md={4}>
                                 <Autocomplete
-                                    id="autocomplete-descripcion"
+                                    id="autocomplete-metodoPago"
                                     value={metodo}
                                     onChange={(event, newValue) => {
                                         setMetodo(newValue);
