@@ -19,6 +19,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
     const [cod, setCod] = useState(codigo);
     const [prod, setProd] = useState(null);
     const [desc, setDesc] = useState(0);
+    const [descMonto, setDescMonto] = useState(0);
 
     useEffect(() => {
         if (codigo) {
@@ -80,8 +81,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
 
         const importe = Number(precio) * Number(cantidad);
         const montoDesc = importe * item.target.value / 100;
-
-        console.log(item.target.value);
+        setDescMonto(montoDesc);
 
         setFormState(
             {
@@ -93,6 +93,22 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
         setDesc(item.target.value);
     };
 
+    const handleDescMonto = (item) => {
+        if (!item) return;
+
+        const importe = Number(precio) * Number(cantidad);
+        const porDesc = Number(item.target.value) * 100 / importe;
+        setDesc(porDesc);
+
+        setFormState(
+            {
+                ...itemVenta,
+                descuento: item.target.value,
+                importe: importe - item.target.value
+            }
+        );
+        setDescMonto(item.target.value);
+    };
     const handleNewItem = async () => {
         if (!id) {
             setAlert("Producto invalido");
@@ -154,13 +170,25 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
             </Grid>
 
             {/* Descuento */}
-            <Grid item xs={12} sm={6} md={2}>
-                <TextField id="txt-descuento" label="Descuento" type="number"
+            <Grid item xs={12} sm={6} md={1}>
+                <TextField id="txt-descuento" label="Desc %" type="number"
                     value={desc}
                     onChange={handleDesc}
                     min={0} max={100}
                     InputProps={{
                         endAdornment: <InputAdornment position="end">%</InputAdornment>
+                    }}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* Descuento */}
+            <Grid item xs={12} sm={6} md={1}>
+                <TextField id="txt-descuentomonto" label="Desc $" type="number"
+                    value={descMonto}
+                    onChange={handleDescMonto}
+                    min={0} max={100}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>
                     }}
                     sx={{ width: '100%' }} />
             </Grid>
