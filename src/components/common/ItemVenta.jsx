@@ -135,7 +135,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
                     value={cod}
                     onChange={(v) => setCod(v.target.value)}
                     onKeyUp={(event) => {
-                        if (event.keyCode === 13) {
+                        if (event.keyCode === 13 && cod !== codigo) {
                             setFormState(
                                 {
                                     ...itemVenta,

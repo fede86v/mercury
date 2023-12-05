@@ -21,6 +21,7 @@ const Ventas = () => {
     const [totalHoy, setTotalHoy] = useState(0);
     const [totalSemana, setTotalSemana] = useState(0);
     const [totalMes, setTotalMes] = useState(0);
+    const [total, setTotal] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
@@ -41,6 +42,7 @@ const Ventas = () => {
         let hoy = 0;
         let semana = 0;
         let mes = 0;
+        let todo = 0;
         sortedData.forEach(item => {
             if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
                 hoy = hoy + Number(item.total);
@@ -51,11 +53,13 @@ const Ventas = () => {
             if (dayjs(item.fechaCreacion) > dayjs().startOf("month")) {
                 mes = mes + Number(item.total);
             }
+            todo = todo + Number(item.total);
         });
 
         setTotalHoy(hoy);
         setTotalSemana(semana);
         setTotalMes(mes);
+        setTotal(todo);
 
         setVentas(sortedData)
         return sortedData;
@@ -134,24 +138,31 @@ const Ventas = () => {
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Hoy</Typography>
                         <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Semana</Typography>
                         <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Mes</Typography>
                         <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Totales</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {total}</Typography>
                     </Card>
                 </Grid>
 

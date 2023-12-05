@@ -131,10 +131,10 @@ const Productos = () => {
                     <Typography variant="h4" textAlign="center" >Productos</Typography>
                 </Grid>
 
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Current Stock</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {stock}</Typography>
+                        <Typography variant="h6" textAlign="end" >{stock}</Typography>
                     </Card>
                 </Grid>
 
