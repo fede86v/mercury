@@ -21,7 +21,7 @@ import {
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import SendIcon from '@mui/icons-material/Send';
+import SaveIcon from '@mui/icons-material/Save';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import GoogleIcon from '@mui/icons-material/Google'
@@ -437,7 +437,7 @@ const Register = () => {
 
                                         <Button type="submit" onClick={handleNext}
                                             disabled={activeStep === 0 && !empresa}
-                                            endIcon={activeStep === STEPS.length - 1 ? < SendIcon /> : < ArrowRightIcon />} >
+                                            endIcon={activeStep === STEPS.length - 1 ? < SaveIcon /> : < ArrowRightIcon />} >
                                             {activeStep === STEPS.length - 1 ? 'Terminar' : 'Siguiente'}
                                         </Button>
                                     </Box>

@@ -553,244 +553,6 @@ export const useFirestore = () => {
     }
   };
 
-  /* entrenadores */
-  const getEntrenador = async (uid) => {
-    try {
-      setLoading(true);
-      const docRef = doc(db, "entrenadores", uid);
-      const querySnapshot = await getDoc(docRef);
-      let dataDB = querySnapshot.data();
-      setLoading(false);
-      return dataDB;
-    }
-    catch (error) {
-      setError(error.code);
-      setLoading(false);
-    }
-    finally {
-      setLoading(false);
-    }
-  };
-  const getEntrenadores = async (soloInactivos = false, incluirDeshabilitados = false) => {
-    try {
-      setLoading(true);
-      const docRef = collection(db, "entrenadores");
-      let querySnapshot = null;
-      let q = null
-      if (soloInactivos) {
-        q = incluirDeshabilitados
-          ? query(docRef, where("activado", "==", false))
-          : query(docRef, where("activado", "==", false), where("fechaDeshabilitado", "==", null));
-      }
-      else {
-        q = incluirDeshabilitados
-          ? query(docRef)
-          : query(docRef, where("fechaDeshabilitado", "==", null));
-      }
-      querySnapshot = await getDocs(q);
-
-      if (querySnapshot.empty) {
-        console.log("Coleccion vacia");
-        return [];
-      }
-      else {
-        let entrenadores = [];
-
-        querySnapshot.forEach((doc) => {
-          entrenadores.push(doc.data());
-        });
-
-        setLoading(false);
-        return entrenadores;
-      }
-    }
-    catch (error) {
-      console.log(error);
-      setError(error.code);
-      setLoading(false);
-      return null;
-    }
-  };
-  const createEntrenador = async (en) => {
-    const entrenadorFlat = {
-      uid: en.uid,
-      email: en.email,
-      nombre: en.nombre,
-      apellido: en.apellido,
-      fechaActualizacion: Date.now(),
-      fechaDeshabilitado: null,
-      activado: false
-    };
-    setLoading(true);
-    const entrenadorRef = doc(db, "entrenadores", entrenadorFlat.uid);
-    await setDoc(entrenadorRef, entrenadorFlat)
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-      });
-    return entrenadorFlat;
-  };
-  const updateEntrenador = async (en) => {
-    const entrenadorFlat = {
-      email: en.email,
-      nombre: en.nombre,
-      apellido: en.apellido,
-      fechaActualizacion: Date.now(),
-      activado: en.activado
-    };
-    setLoading(true);
-    const entrenadorRef = doc(db, "entrenadores", en.uid);
-    setDoc(entrenadorRef, entrenadorFlat, { merge: true })
-      .then(() => {
-        setLoading(false);
-        return en;
-      })
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-      });
-  };
-  const deleteEntrenador = async (uid) => {
-    setLoading(true);
-
-    const entrenadorRef = doc(db, "entrenadores", uid);
-    setDoc(entrenadorRef, { fechaDeshabilitado: Date.now() }, { merge: true })
-      .then(() => {
-        setLoading(false);
-        return true;
-      })
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-        return null;
-      });
-  };
-  const validateEntrenador = async (nombre, apellido, email) => {
-    try {
-      setLoading(true);
-      const peronaRef = collection(db, "entrenadores");
-      const q = query(peronaRef,
-        where("nombre", "==", nombre),
-        where("apellido", "==", apellido),
-        where("email", "==", email));
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.empty ? null : querySnapshot.docs[0].data();
-    }
-    catch (error) {
-      console.log(error);
-      setError(error.code);
-      setLoading(false);
-      return null;
-    }
-  };
-  const asociarEntrenador = async (per) => {
-    const entrenadorFlat = {
-      uid: per.uid,
-      email: per.email,
-      nombre: per.nombre,
-      apellido: per.apellido,
-      fechaActualizacion: Date.now(),
-      fechaDeshabilitado: null,
-      activado: false
-    };
-    setLoading(true);
-    const entrenadorRef = doc(db, "entrenadores", entrenadorFlat.uid);
-    await setDoc(entrenadorRef, entrenadorFlat)
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-      });
-
-    await updateUsuarioRoles(per.email, true);
-    return entrenadorFlat;
-  };
-
-  /* Precios */
-  const getPrecios = async (activo = false) => {
-    try {
-      setLoading(true);
-      const docRef = collection(db, "precios");
-      let q = null;
-
-      if (activo) {
-        q = query(docRef, where("desde", "<=", Date.now()));
-      }
-      else {
-        q = query(docRef);
-      }
-      const querySnapshot = await getDocs(q);
-
-      let precios = [];
-
-      if (querySnapshot.empty) {
-        console.log("Coleccion vacia");
-      }
-      else {
-        querySnapshot.forEach((doc) => {
-          let precio = doc.data();
-          precio = { ...precio, uid: doc.id }
-          precios.push(precio);
-        });
-
-        setLoading(false);
-      }
-      return precios;
-    }
-    catch (error) {
-      console.log(error);
-      setError(error.code);
-      setLoading(false);
-      return null;
-    }
-  };
-  const createPrecio = async (p) => {
-    setLoading(true);
-    const precioRef = collection(db, "precios");
-
-    const precioFlat = {
-      frecuencia: p.frecuencia,
-      actividad: p.actividad,
-      desde: Date.parse(p.desde),
-      hasta: Date.parse(p.hasta),
-      precio: p.precio,
-      fechaCreacion: Date.now(),
-      fechaActualizacion: Date.now(),
-    };
-
-    await addDoc(precioRef, precioFlat)
-      .then(docRef => {
-        p = { ...p, uid: docRef.id };
-      })
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-      });
-
-    return p;
-  };
-  const updatePrecio = async (p) => {
-    const precioFlat = {
-      uid: p.uid,
-      frecuencia: p.frecuencia,
-      actividad: p.actividad,
-      desde: Date.parse(p.desde),
-      hasta: Date.parse(p.hasta),
-      precio: p.precio,
-      fechaActualizacion: Date.now(),
-    };
-
-    setLoading(true);
-    const precioRef = doc(db, "precios", p.uid);
-    await setDoc(precioRef, precioFlat, { merge: true })
-      .then(() => {
-        setLoading(false);
-      })
-      .catch(error => {
-        setError(error.code);
-        setLoading(false);
-      });
-    return p;
-  };
 
   return {
     usuario,
@@ -801,35 +563,24 @@ export const useFirestore = () => {
     getPersona,
     getSocio,
     getSocios,
-    getEntrenador,
-    getEntrenadores,
     getAsistencia,
-    getPrecios,
 
     updateUsuario,
     updateUsuarioFull,
     updatePersona,
     updateSocio,
-    updateEntrenador,
     updateAsistencia,
-    updatePrecio,
 
     createUsuario,
     createUsuarioFull,
     createPersona,
     createSocio,
-    createEntrenador,
     createAsistencia,
-    createPrecio,
-
-    deleteEntrenador,
 
     validateCodigoAcceso,
     validatePersona,
-    validateEntrenador,
     validateSocio,
 
-    asociarEntrenador,
     existeUsuario
   };
 }

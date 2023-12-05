@@ -9,9 +9,7 @@ import Alerts from '../common/Alerts'
 import AgregarPersona from '../modules/AgregarPersona'
 
 const Cliente = ({ persona, setPersona }) => {
-
-    const { formState: cliente, onInputChange, setFormState } = useForm(persona);
-    const { nombre, apellido, numeroDocumento } = cliente;
+    const { nombre, apellido, numeroDocumento } = persona;
     const { user } = useContext(UserContext);
     const [clientes, setClientes] = useState([]);
     const [alert, setAlert] = useState(null)
@@ -37,20 +35,20 @@ const Cliente = ({ persona, setPersona }) => {
         if (numeroDocumento) {
             const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
             if (client) {
-                setFormState(client);
                 setPersona(client);
-                setAlert(null)
-            }
-            else {
-                const msg = "No se encontro el cliente.";
-                setAlert(msg);
             }
         }
     }, [numeroDocumento]);
 
     useEffect(() => {
         query.refetch();
-        setFormState(persona)
+        if (numeroDocumento) {
+            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
+            if (client) {
+                setPersona(client);
+            }
+        }
+
     }, []);
 
     return (
@@ -75,13 +73,13 @@ const Cliente = ({ persona, setPersona }) => {
                     <TextField id="txt-dni" label="Numero de Documento"
                         variant="standard" sx={{ width: '100%' }}
                         value={numeroDocumento} name="numeroDocumento"
-                        onChange={onInputChange}
+                        onChange={(e) => setPersona({ ...persona, numeroDocumento: e.target.value })}
                     />
                 </Grid>
 
                 {/* Nombre Completo*/}
                 <Grid item xs={12} sm={12} md={6}>
-                    {nombre && apellido ? <Typography padding={0} sx={{ mt: 3, mb: 1 }}  >{nombre}, {apellido}</Typography> : null}
+                    {nombre && apellido ? <Typography padding={0} sx={{ mt: 3, mb: 1 }}  >{nombre}, {apellido ?? ""}</Typography> : null}
                 </Grid>
             </Grid>
         </>

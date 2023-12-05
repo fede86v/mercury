@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import AgregarProducto from '../components/modules/AgregarProducto'
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { ProductService, ProductTypeService, BrandService } from '../utils';
 import { useProduct } from '../utils'
 import { UserContext } from '../context/UserProvider';
+import AgregarStock from '../components/modules/AgregarStock';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -19,6 +20,8 @@ const Productos = () => {
     const [tipoProductos, setTipoProductos] = useState([]);
     const [marcas, setMarcas] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
+    const [openStock, setOpenStock] = useState(false);
+    const [stock, setStock] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, success } = useProduct();
@@ -27,14 +30,19 @@ const Productos = () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
         const filtered = data.filter(i => !i.fechaInactivo);
         const sortedData = filtered.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+            if (a.descripcion < b.descripcion) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (a.descripcion > b.descripcion) {
                 return 1;
             }
             return 0;
         });
+        let cantStock = 0;
+        sortedData.forEach(item => {
+            cantStock = cantStock + Number(item.cantidad);
+        });
+        setStock(cantStock);
         setProductos(sortedData)
         return sortedData;
     };
@@ -92,6 +100,11 @@ const Productos = () => {
         setProductoAeliminar(productoAeliminar);
         setDialogRemoveConfirmOpen(true);
     };
+
+    const handleNewStock = () => {
+        setOpenStock(true);
+    };
+
     const handleClose = async (aceptar) => {
         if (aceptar) {
             const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
@@ -100,17 +113,32 @@ const Productos = () => {
         setDialogRemoveConfirmOpen(false);
         setProductoAeliminar(null);
     };
+    const handleCloseStock = () => {
+        setOpenStock(false);
+    };
 
     return (
         <>
             {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
+            {openStock ? <AgregarStock open={openStock} productos={productos} handleClose={handleCloseStock} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                <Grid item sm={12}>
+                    <Button color="primary" sx={{ mr: '10px' }} variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                    <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
+
                 </Grid>
-                <Grid item sm={10}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Productos</Typography>
+                <Grid item sm={12}>
+                    <Typography variant="h4" textAlign="center" >Productos</Typography>
                 </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Current Stock</Typography>
+                        <Typography variant="h6" textAlign="end" >{stock}</Typography>
+                    </Card>
+                </Grid>
+
+
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">

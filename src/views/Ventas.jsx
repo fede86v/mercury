@@ -2,8 +2,9 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card
 } from '@mui/material';
+import dayjs from 'dayjs';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -17,6 +18,10 @@ const Ventas = () => {
     const [vendedores, setVendedores] = useState([]);
     const [productos, setProductos] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
+    const [totalHoy, setTotalHoy] = useState(0);
+    const [totalSemana, setTotalSemana] = useState(0);
+    const [totalMes, setTotalMes] = useState(0);
+    const [total, setTotal] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
@@ -26,24 +31,48 @@ const Ventas = () => {
         const filterData = data.filter(i => !i.fechaAnulacion);
 
         const sortedData = filterData.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+            if (dayjs(a.fechaCreacion) > dayjs(b.fechaCreacion)) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (dayjs(a.fechaCreacion) < dayjs(b.fechaCreacion)) {
                 return 1;
             }
             return 0;
         });
+        let hoy = 0;
+        let semana = 0;
+        let mes = 0;
+        let todo = 0;
+        sortedData.forEach(item => {
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
+                hoy = hoy + Number(item.total);
+            }
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("week")) {
+                semana = semana + Number(item.total);
+            }
+            if (dayjs(item.fechaCreacion) > dayjs().startOf("month")) {
+                mes = mes + Number(item.total);
+            }
+            todo = todo + Number(item.total);
+        });
+
+        setTotalHoy(hoy);
+        setTotalSemana(semana);
+        setTotalMes(mes);
+        setTotal(todo);
+
         setVentas(sortedData)
         return sortedData;
     };
+
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const sortedData = data.sort((a, b) => {
-            if (a.nombre < b.nombre) {
+        const filtered = data.filter(i => !i.fechaInactivo);
+        const sortedData = filtered.sort((a, b) => {
+            if (a.descripcion < b.descripcion) {
                 return -1;
             }
-            if (a.nombre > b.nombre) {
+            if (a.descripcion > b.descripcion) {
                 return 1;
             }
             return 0;
@@ -51,6 +80,7 @@ const Ventas = () => {
         setProductos(sortedData)
         return sortedData;
     };
+
     const getEmployeeList = async () => {
         const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {
@@ -108,6 +138,34 @@ const Ventas = () => {
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
                 </Grid>
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Hoy</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Semana</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Mes</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Ventas Totales</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {total}</Typography>
+                    </Card>
+                </Grid>
+
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -127,7 +185,7 @@ const Ventas = () => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{item.fechaCreacion}</TableCell>
+                                        <TableCell align="left">{dayjs(item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>

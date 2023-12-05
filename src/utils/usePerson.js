@@ -55,14 +55,6 @@ export const usePerson = () => {
             setAlert(`Debe ingresar un Tipo de Documento`);
             return;
         }
-        if (data.numeroDocumento.trim() === "") {
-            setAlert(`Debe ingresar un Numero de Documento`);
-            return;
-        }
-        if (data.fechaNacimiento === Date.now()) {
-            setAlert(`Debe ingresar una Fecha de Nacimiento anterior a Hoy.`);
-            return;
-        }
 
         const object = {
             persona: data,
@@ -79,6 +71,7 @@ export const usePerson = () => {
         error,
         alert,
         success,
+        mutation,
         result,
         onSave,
         onSetAlert,

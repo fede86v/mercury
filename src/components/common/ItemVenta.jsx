@@ -12,17 +12,18 @@ const DEFAULT_ITEM_VENTA = {
     importe: 0
 };
 
-const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
+const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
 
     const { formState: itemVenta, onInputChange, setFormState } = useForm(DEFAULT_ITEM_VENTA);
     const { id, codigo, cantidad, precio, importe } = itemVenta;
     const [cod, setCod] = useState(codigo);
     const [prod, setProd] = useState(null);
     const [desc, setDesc] = useState(0);
+    const [descMonto, setDescMonto] = useState(0);
 
     useEffect(() => {
         if (codigo) {
-            const producto = productos.find(i => i.codigo === codigo);
+            const producto = productos.find(i => i.codigo.toLowerCase() === codigo.toLowerCase());
 
             if (producto && producto !== itemVenta) {
                 const item =
@@ -80,8 +81,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
 
         const importe = Number(precio) * Number(cantidad);
         const montoDesc = importe * item.target.value / 100;
-
-        console.log(item.target.value);
+        setDescMonto(montoDesc);
 
         setFormState(
             {
@@ -93,6 +93,22 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         setDesc(item.target.value);
     };
 
+    const handleDescMonto = (item) => {
+        if (!item) return;
+
+        const importe = Number(precio) * Number(cantidad);
+        const porDesc = Number(item.target.value) * 100 / importe;
+        setDesc(porDesc);
+
+        setFormState(
+            {
+                ...itemVenta,
+                descuento: item.target.value,
+                importe: importe - item.target.value
+            }
+        );
+        setDescMonto(item.target.value);
+    };
     const handleNewItem = async () => {
         if (!id) {
             setAlert("Producto invalido");
@@ -107,6 +123,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
         setAlert(null);
         setProd(null);
         setDesc(0);
+        setDescMonto(0);
         setDetalleVenta(itemVenta);
     };
 
@@ -118,7 +135,7 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     value={cod}
                     onChange={(v) => setCod(v.target.value)}
                     onKeyUp={(event) => {
-                        if (event.keyCode === 13) {
+                        if (event.keyCode === 13 && cod !== codigo) {
                             setFormState(
                                 {
                                     ...itemVenta,
@@ -154,13 +171,25 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
             </Grid>
 
             {/* Descuento */}
-            <Grid item xs={12} sm={6} md={2}>
-                <TextField id="txt-descuento" label="Descuento" type="number"
+            <Grid item xs={12} sm={6} md={1}>
+                <TextField id="txt-descuento" label="Desc %" type="number"
                     value={desc}
                     onChange={handleDesc}
                     min={0} max={100}
                     InputProps={{
                         endAdornment: <InputAdornment position="end">%</InputAdornment>
+                    }}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* Descuento */}
+            <Grid item xs={12} sm={6} md={1}>
+                <TextField id="txt-descuentomonto" label="Desc $" type="number"
+                    value={descMonto}
+                    onChange={handleDescMonto}
+                    min={0} max={100}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>
                     }}
                     sx={{ width: '100%' }} />
             </Grid>
@@ -172,17 +201,19 @@ const ItemVenta = ({ setDetalleVenta, productos, setAlert }) => {
                     InputProps={{ readOnly: true, }}
                     sx={{ width: '100%' }} />
             </Grid>
-
-            <Grid item xs={12} sm={6} md={1}>
-                <Box display="flex" justifyContent="flex-end">
-                    <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
-                </Box>
-            </Grid>
+            {!idVenta ? (
+                <Grid item xs={12} sm={6} md={1}>
+                    <Box display="flex" justifyContent="flex-end">
+                        <Button color="secondary" variant="contained" onClick={handleNewItem}>Agregar</Button>
+                    </Box>
+                </Grid>
+            ) : null}
         </Grid>
     )
 }
 
 ItemVenta.propTypes = {
+    idVenta: PropTypes.string,
     setDetalleVenta: PropTypes.func.isRequired,
     productos: PropTypes.array.isRequired,
     setAlert: PropTypes.func.isRequired

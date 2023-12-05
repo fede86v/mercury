@@ -1,44 +1,35 @@
 import { useContext, useState } from 'react'
-import { ProductService } from './databaseService'
+import { TransactionService, TransactionDetailService, PaymentService, ProductService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
 
-export const useProduct = () => {
+export const useStock = () => {
     const [alert, setAlert] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const { user } = useContext(UserContext);
 
-    const saveData = (data) => {
+    const saveData = async (data) => {
         setAlert(null);
-        if (!data.id) {
-            return ProductService.create(data, user);
-        }
-        else {
-            return ProductService.update(data.id, data, user);
-        }
+        const stock = [];
+        data.forEach(async (item) => {
+            /* Update Stock */
+            const producto = await ProductService.getOne(item.id);
+            const newProd = { ...producto, cantidad: Number(producto.cantidad) + Number(item.cantidad) };
+            ProductService.update(producto.id, newProd, user);            
+            stock.push(newProd);
+        });
+    };
 
-    }
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
         onError: (error) => setError(error.message),
         onSuccess: () => setSuccess(true)
-    })
+    });
 
     const onSave = (data) => {
-        // 1. Validate
-        let validation = data.precioVenta < data.precioCompra;
-        if (validation) setAlert(`Precio de Venta debe ser mayor al de compra`);
-
-        validation = data.precioVenta < 0
-        if (validation) setAlert(`Precio de Venta invalido`);
-
-        validation = data.precioCompra < 0
-        if (validation) setAlert(`Precio de Compra invalido`);
-
-        // 2. if Success then save
-        if (!validation) mutation.mutate(data);
-    }
+        mutation.mutate(data);
+    };
 
     const onSetAlert = (data) => setAlert(data);
     const onSetError = (data) => setError(data);

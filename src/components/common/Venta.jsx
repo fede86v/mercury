@@ -31,31 +31,19 @@ const Venta = ({ venta, setVenta, productos }) => {
         });
     };
 
-    const calcularImporte = (detalle) => {
-        let importe = 0;
-        for (let i of detalle) importe += Number(i.importe);
-
-        setVenta({
-            ...venta,
-            "detalleVenta": detalle,
-            "subtotal": importe,
-            "total": importe - descuento
-        });
-    };
-
-    const calcularMontos = (detVenta) => {
+    const calcularMontos = (detalle) => {
         let precio = 0;
         let descuento = 0;
         let total = 0;
-        for (let i of detVenta) {
-            precio += Number(i.precio);
+        for (let i of detalle) {
+            precio += Number(i.cantidad) * Number(i.precio);
             descuento += Number(i.descuento);
             total += Number(i.importe);
         }
 
         setVenta({
             ...venta,
-            "detalleVenta": detVenta,
+            "detalleVenta": detalle,
             "subtotal": precio,
             "descuento": descuento,
             "total": total
@@ -63,9 +51,8 @@ const Venta = ({ venta, setVenta, productos }) => {
     };
 
     const setDetalleVenta = (data) => {
-        let detalle = detalleVenta;
-        detalle.push(data);
-        calcularMontos(detalle);
+        detalleVenta.push(data);
+        calcularMontos(detalleVenta);
     };
 
     const handleDelete = (item) => {
@@ -79,7 +66,7 @@ const Venta = ({ venta, setVenta, productos }) => {
     const handleClose = (aceptar) => {
         if (aceptar) {
             const array = detalleVenta.filter(i => i !== itemToDelete);
-            calcularImporte(array);
+            calcularMontos(array);
         }
         setDialogRemoveConfirmOpen(false);
     };
@@ -105,7 +92,7 @@ const Venta = ({ venta, setVenta, productos }) => {
                 <Grid item xs={12} sm={12} md={12}>
                     <Paper sx={{ p: 2 }}  >
                         <Alerts alert={alert} />
-                        <ItemVenta productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
+                        <ItemVenta idVenta={venta.id} productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
                         <TableContainer>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
@@ -131,9 +118,13 @@ const Venta = ({ venta, setVenta, productos }) => {
                                             <TableCell align="left">$ {item.importe}</TableCell>
                                             <TableCell align="right">
                                                 <>
-                                                    <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
-                                                        <DeleteIcon color="error" />
-                                                    </ IconButton>
+                                                    {
+                                                        !venta.id ? (
+                                                            <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                                <DeleteIcon color="error" />
+                                                            </ IconButton>
+                                                        ) : null
+                                                    }
                                                 </>
                                             </TableCell>
                                         </TableRow>

@@ -9,18 +9,17 @@ import { PaymentMethods } from '../../utils/enums';
 import { useForm } from '../../utils';
 import Alerts from '../common/Alerts';
 
-const DEFAULT_PAYMENT_METHOD = { key: "Efectivo", value: "Efectivo" };
 const DEFAULT_PAYMENT = {
-    metodoPago: "Efectivo",
+    metodoPago: 'Efectivo',
     monto: 0,
     comprobante: ""
 };
 
-const Pagos = ({ pagos, setPagos, montoTotal }) => {
+const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
 
     const { formState: pago, onInputChange, setFormState: setPago } = useForm({ ...DEFAULT_PAYMENT, monto: montoTotal });
-    const { monto, comprobante, cuotas } = pago;
-    const [metodo, setMetodo] = useState(DEFAULT_PAYMENT_METHOD);
+    const { monto, comprobante } = pago;
+    const [metodo, setMetodo] = useState('Efectivo');
     const [alert, setAlert] = useState(null);
     const [montoTotalPagos, setMontoTotalPagos] = useState(0);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -37,7 +36,10 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
 
     const agregarPago = () => {
         let pagosActualizado = pagos;
-        pagosActualizado.push(pago);
+        pagosActualizado.push({
+            ...pago,
+            metodoPago: metodo
+        });
         setPagos(pagosActualizado);
 
         let total = 0;
@@ -49,14 +51,11 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
 
     const handleNewItem = () => {
         let validacion = "";
-        if ((metodo.key === "Credito" || metodo.key === "Debito") && monto === 0) {
+        if ((metodo === "Credito" || metodo === "Debito") && monto === 0) {
             validacion = "Monto es requerido."
         }
-        if ((metodo.key === "Credito" || metodo.key === "Debito") && !comprobante) {
+        if ((metodo === "Credito" || metodo === "Debito") && !comprobante) {
             validacion = "Comprobante es requerido."
-        }
-        if (metodo.key === "Credito" && !cuotas) {
-            validacion = "Ingrese la cantidad de cuotas en que realizará el pago."
         }
 
         if (validacion) {
@@ -99,11 +98,13 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                             {/* Metodo de Pago */}
                             <Grid item xs={12} sm={6} md={4}>
                                 <Autocomplete
-                                    id="autocomplete-descripcion"
-                                    options={PaymentMethods}
-                                    onChange={(event, newValue) => { setMetodo(newValue); }}
-                                    getOptionLabel={(option) => option.value}
+                                    id="autocomplete-metodoPago"
                                     value={metodo}
+                                    onChange={(event, newValue) => {
+                                        setMetodo(newValue);
+                                    }}
+                                    inputValue={metodo}
+                                    options={PaymentMethods.map((option) => option.value)}
                                     sx={{ width: '100%' }}
                                     renderInput={(params) => <TextField {...params} label="Método de Pago" />}
                                 />
@@ -126,11 +127,12 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                             </Grid>
 
                             {/* Boton Agregar */}
-                            <Grid item xs={12} sm={6} md={4}>
-                                <Box display="flex" justifyContent="flex-end">
-                                    <Button color="secondary" variant="contained" disabled={montoTotalPagos === montoTotal} onClick={handleNewItem}>Agregar</Button>
-                                </Box>
-                            </Grid>
+                            {!idVenta ? (
+                                <Grid item xs={12} sm={6} md={4}>
+                                    <Box display="flex" justifyContent="flex-end">
+                                        <Button color="secondary" variant="contained" disabled={montoTotalPagos === montoTotal} onClick={handleNewItem}>Agregar</Button>
+                                    </Box>
+                                </Grid>) : null}
 
                         </Grid>
                         <TableContainer>
@@ -144,9 +146,9 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {pagos.map((item) => (
+                                    {pagos.map((item, index) => (
                                         <TableRow
-                                            key={item.id}
+                                            key={item.index}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="left">{item.metodoPago}</TableCell>
@@ -154,9 +156,11 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
                                             <TableCell align="left">{item.comprobante}</TableCell>
                                             <TableCell align="right">
                                                 <>
-                                                    <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
-                                                        <DeleteIcon color="error" />
-                                                    </ IconButton>
+                                                    {!idVenta ? (
+                                                        <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                            <DeleteIcon color="error" />
+                                                        </ IconButton>
+                                                    ) : null}
                                                 </>
                                             </TableCell>
                                         </TableRow>
@@ -195,6 +199,7 @@ const Pagos = ({ pagos, setPagos, montoTotal }) => {
 }
 
 Pagos.propTypes = {
+    idVenta: PropTypes.string,
     pagos: PropTypes.array.isRequired,
     setPagos: PropTypes.func.isRequired,
     montoTotal: PropTypes.number
