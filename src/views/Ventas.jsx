@@ -86,10 +86,13 @@ const Ventas = () => {
 
     const getPaymentsForToday = async () => {
         var start = new Date();
-        start.setUTCHours(0, 0, 0, 0);
+        start.setHours(0, 0, 0, 0);
 
         const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.valueOf() }]
         const data = await PaymentService.getQueryMultiple(query);
+
+        console.log(data);
+
         let eff = 0;
         let deb = 0;
         let cred = 0;
