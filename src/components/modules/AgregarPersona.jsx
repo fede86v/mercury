@@ -27,7 +27,7 @@ const DEFAULT_PERSONA = {
 
 const AgregarPersona = (props) => {
     const { formState: persona, onInputChange, onInputDateChange, } = useForm(DEFAULT_PERSONA)
-    const { error, alert, onSave, success, result } = usePerson();
+    const { error, alert, onSave, success } = usePerson();
 
     const handleSave = () => {
         onSave(persona, props.tipoPersona);
@@ -35,10 +35,10 @@ const AgregarPersona = (props) => {
 
     useEffect(() => {
         if (success) {
-            if (props.setPersona) props.setPersona(result);
+            if (props.setPersona) props.setPersona(persona);
             props.handleClose();
         }
-    }, [success, result]);
+    }, [success, persona, props]);
 
     return (
         <Dialog open={props.open} >
@@ -51,7 +51,7 @@ const AgregarPersona = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" onClick={() => props.handleClose()}>Cancelar</Button>
-                <Button color="primary" variant="contained" endIcon={< SaveIcon />}  onClick={handleSave} >Guardar</Button>
+                <Button color="primary" variant="contained" endIcon={< SaveIcon />} onClick={handleSave} >Guardar</Button>
             </DialogActions>
         </Dialog>
     )
