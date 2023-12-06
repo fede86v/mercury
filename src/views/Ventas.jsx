@@ -88,7 +88,7 @@ const Ventas = () => {
         var start = new Date();
         start.setUTCHours(0, 0, 0, 0);
 
-        const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.getTime() }]
+        const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.valueOf() }]
         const data = await PaymentService.getQueryMultiple(query);
         let eff = 0;
         let deb = 0;
