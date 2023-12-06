@@ -38,6 +38,25 @@ class DatabaseService {
             });
     };
 
+    getQueryMultiple = async (conditions) => {
+        let q = query(this.currentCollection);
+
+        conditions.forEach((condition) => {
+            q = query(q, where(condition.field, condition.condition, condition.value));
+        });
+
+        const snapshot = await getDocs(q);
+
+        return snapshot.empty
+            ? []
+            : snapshot.docs.map((doc) => {
+                return {
+                    ...doc.data(),
+                    id: doc.id,
+                };
+            });
+    };
+
     //This returns one document
     getSubcollection = async (id, subcollectionName) => {
         if (!id) return null;

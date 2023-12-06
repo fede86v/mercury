@@ -10,7 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
-import { TransactionService, useTransaction, ProductService, EmployeeService } from '../utils';
+import { TransactionService, useTransaction, ProductService, EmployeeService, PaymentService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 
 const Ventas = () => {
@@ -22,6 +22,9 @@ const Ventas = () => {
     const [totalSemana, setTotalSemana] = useState(0);
     const [totalMes, setTotalMes] = useState(0);
     const [total, setTotal] = useState(0);
+    const [debito, setDebito] = useState(0);
+    const [credito, setCredito] = useState(0);
+    const [efectivo, setEfectivo] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
@@ -81,6 +84,32 @@ const Ventas = () => {
         return sortedData;
     };
 
+    const getPaymentsForToday = async () => {
+        var start = new Date();
+        start.setUTCHours(0, 0, 0, 0);
+
+        const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.getTime() }]
+        const data = await PaymentService.getQueryMultiple(query);
+        let eff = 0;
+        let deb = 0;
+        let cred = 0;
+
+        data.forEach(item => {
+            if (item.metodoPago === "Efectivo") {
+                eff = eff + Number(item.monto);
+            }
+            if (item.metodoPago === "Debito" || item.metodoPago === "Transferencia") {
+                deb = deb + Number(item.monto);
+            }
+            if (item.metodoPago === "Credito") {
+                cred = cred + Number(item.monto);
+            }
+        });
+        setCredito(cred);
+        setDebito(deb);
+        setEfectivo(eff);
+    };
+
     const getEmployeeList = async () => {
         const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {
@@ -104,6 +133,7 @@ const Ventas = () => {
         query.refetch();
         queryProductos.refetch();
         queryVendedores.refetch();
+        getPaymentsForToday();
     }, []);
 
     const handleDelete = async (itemAeliminar) => {
@@ -147,19 +177,40 @@ const Ventas = () => {
 
                 <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Efectivo</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Debito / Transferencia</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3}>
+                    <Card sx={{ p: 1 }} >
+                        <Typography textAlign="end" >Credito</Typography>
+                        <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                    <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Semana</Typography>
                         <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Mes</Typography>
                         <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
                     </Card>
                 </Grid>
 
-                <Grid item xs={12} sm={3}>
+                <Grid item xs={12} sm={4}>
                     <Card sx={{ p: 1 }} >
                         <Typography textAlign="end" >Ventas Totales</Typography>
                         <Typography variant="h6" textAlign="end" >$ {total}</Typography>
