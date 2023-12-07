@@ -125,6 +125,7 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
         setDesc(0);
         setDescMonto(0);
         setDetalleVenta(itemVenta);
+        document.getElementById("txt-codigo").focus();
     };
 
     return (
