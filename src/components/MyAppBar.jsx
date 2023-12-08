@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react'
-import { Box, CssBaseline, AppBar, Toolbar, IconButton, Typography, Button, Tooltip, Avatar, Menu, MenuItem } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
+import React, { useContext, useState } from 'react';
+import { Box, CssBaseline, AppBar, Toolbar, IconButton, Typography, Button, Tooltip, Avatar, Menu, MenuItem } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { NavLink } from "react-router-dom";
 import { UserContext } from '../context/UserProvider';
-
+import { useNavigate } from "react-router-dom";
 
 function MyAppBar({ title, openCloseDrawer, drawerWidth, drawerOpen }) {
 
     const { user, signOutUser } = useContext(UserContext);
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const navigate = useNavigate();
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
@@ -70,6 +72,8 @@ function MyAppBar({ title, openCloseDrawer, drawerWidth, drawerOpen }) {
                                 >
                                     <MenuItem key="perfil" onClick={() => {
                                         handleCloseUserMenu();
+                                        navigate("/Perfil");
+
                                     }}>
                                         <Typography textAlign="center">Perfil</Typography>
                                     </MenuItem>
