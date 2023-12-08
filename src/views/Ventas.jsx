@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card, Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -171,55 +172,71 @@ const Ventas = () => {
                 <Grid item sm={10}>
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
                 </Grid>
-                <Grid item xs={12} sm={3}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Ventas Hoy</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
-                    </Card>
-                </Grid>
 
-                <Grid item xs={12} sm={3}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Efectivo</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
-                    </Card>
-                </Grid>
+                <Grid item sm={12}>
+                    <Accordion  >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography variant="h4" sx={{ padding: 1 }} textAlign="center" >Resumen</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
+                                <Grid item xs={12} sm={3}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Ventas Hoy</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
+                                    </Card>
+                                </Grid>
 
-                <Grid item xs={12} sm={3}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Debito / Transferencia</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
-                    </Card>
-                </Grid>
+                                <Grid item xs={12} sm={3}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Efectivo</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
+                                    </Card>
+                                </Grid>
 
-                <Grid item xs={12} sm={3}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Credito</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
-                    </Card>
-                </Grid>
+                                <Grid item xs={12} sm={3}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Debito / Transferencia</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
+                                    </Card>
+                                </Grid>
 
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Ventas Semana</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
-                    </Card>
-                </Grid>
+                                <Grid item xs={12} sm={3}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Credito</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
+                                    </Card>
+                                </Grid>
 
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Ventas Mes</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
-                    </Card>
-                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Ventas Semana</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
+                                    </Card>
+                                </Grid>
 
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ p: 1 }} >
-                        <Typography textAlign="end" >Ventas Totales</Typography>
-                        <Typography variant="h6" textAlign="end" >$ {total}</Typography>
-                    </Card>
-                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Ventas Mes</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
+                                    </Card>
+                                </Grid>
 
+                                <Grid item xs={12} sm={4}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Ventas Totales</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {total}</Typography>
+                                    </Card>
+                                </Grid>
+
+                            </Grid>
+                        </AccordionDetails>
+                    </Accordion>
+                </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -282,7 +299,7 @@ const Ventas = () => {
                         </Button>
                     </DialogActions>
                 </Dialog>
-            </Grid>
+            </Grid >
         </>
 
     )
