@@ -72,7 +72,6 @@ const DetalleProducto = () => {
         queryMarcas.refetch();
 
         return () => {
-            console.log("destructor");
             setProducto(DEFAULT_PRODUCT);
         }
     }, []);
