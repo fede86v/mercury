@@ -12,6 +12,7 @@ import Vendedores from "./views/Vendedores";
 import DetalleVendedor from "./views/DetalleVendedor";
 import Productos from "./views/Productos";
 import DetalleProducto from "./views/DetalleProducto";
+import Perfil from "./views/Perfil";
 import RequireAuth from "./components/RequireAuth"
 import Main from "./components/Main";
 import { UserContext } from './context/UserProvider';
@@ -79,6 +80,9 @@ const App = () => {
                 <Route index element={<RequireAuth><Productos /></RequireAuth>} />
               </Route>
 
+              <Route path="Perfil" >
+                <Route index element={<RequireAuth><Perfil /></RequireAuth>} />
+              </Route>
             </Route>
 
             <Route path="/Login" element={<Login />} />

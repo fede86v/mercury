@@ -52,6 +52,19 @@ const ItemVenta = ({ idVenta, setDetalleVenta, productos, setAlert }) => {
     }, [codigo]);
 
     useEffect(() => {
+        let des = 0;
+
+        if (desc !== 0) {
+            des = Number(precio) * Number(cantidad) * desc / 100;
+            setDescMonto(des);
+        }
+        const importe = Number(precio) * Number(cantidad) - des;
+
+        setFormState({
+            ...itemVenta,
+            importe: importe,
+            descuento: des,
+        });
         const target = {
             name: "importe",
             value: precio * cantidad
