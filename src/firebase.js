@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// DEV
+// // DEV
 // const firebaseConfig = {
 //   apiKey: "AIzaSyBkNQRCYF3EwkhSPNJqzFJS36KREvhrPro",
 //   authDomain: "mercury-fe382.firebaseapp.com",
