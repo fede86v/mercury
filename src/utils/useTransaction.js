@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { TransactionService, TransactionDetailService, PaymentService, ProductService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
+import { Afip } from '@afipsdk/afip.js';
 
 export const useTransaction = () => {
     const [alert, setAlert] = useState("");
@@ -9,10 +10,18 @@ export const useTransaction = () => {
     const [success, setSuccess] = useState(false);
     const { user } = useContext(UserContext);
 
-    const saveData = async (data) => {
+    const saveData = async ({ data, empresa }) => {
         setAlert(null);
 
         if (!data.id) {
+
+            const afip = new Afip(
+                {
+                    CUIT: empresa.cuit,
+                    cert: empresa.certificado,
+                    key: empresa.key
+                });
+
             /* Crear venta */
             const venta = {
                 total: data.total,
@@ -64,12 +73,12 @@ export const useTransaction = () => {
     }
 
     // create mutation
-    const mutation = useMutation((data) => saveData(data), {
+    const mutation = useMutation(({ data, empresa }) => saveData({ data, empresa }), {
         onError: (error) => setError(error.message),
         onSuccess: () => setSuccess(true)
     })
 
-    const onSave = (data) => {
+    const onSave = ({ data, empresa }) => {
         setAlert(null);
         setError(null);
 
@@ -92,7 +101,7 @@ export const useTransaction = () => {
             return;
         }
         // 2. if Success then save
-        mutation.mutate(data);
+        mutation.mutate({ data, empresa });
     }
 
     const onSetAlert = (data) => setAlert(data);

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useQuery } from '@tanstack/react-query';
-import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService } from '../utils';
+import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService, CompanyService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
 import Alerts from '../components/common/Alerts';
@@ -26,6 +26,7 @@ const DetalleVenta = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [productos, setProductos] = useState([]);
+    const [empresa, setEmpresa] = useState({});
     const { formState: venta, setFormState: setVenta } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success, mutation } = useTransaction();
@@ -73,6 +74,14 @@ const DetalleVenta = () => {
         }
     };
 
+    const getEmpresa = async () => {
+        if (user.empresaId) {
+            const data = await CompanyService.getOne(user.empresaId);
+            setEmpresa(data);
+            console.log(data)
+            return data;
+        }
+    };
     const handleCancel = () => {
         venta.detalleVenta.length = 0;
         setVenta(DEFAULT_VENTA);
@@ -81,11 +90,12 @@ const DetalleVenta = () => {
 
     const handleSave = () => {
         const ventaFinal = { ...venta, pagos: pagos };
-        onSave(ventaFinal);
+        onSave(ventaFinal, empresa);
     };
 
     const queryProductos = useQuery(['products'], getProductList);
     const queryVenta = useQuery(["ventas"], getVenta, id);
+    const queryEmpresa = useQuery(["Empresa"], getEmpresa, user.empresaId);
 
     useEffect(() => {
         queryProductos.refetch();
