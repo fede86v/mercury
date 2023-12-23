@@ -24,6 +24,7 @@ const Ventas = () => {
     const [totalMes, setTotalMes] = useState(0);
     const [total, setTotal] = useState(0);
     const [debito, setDebito] = useState(0);
+    const [transferencia, setTransferencia] = useState(0);
     const [credito, setCredito] = useState(0);
     const [efectivo, setEfectivo] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
@@ -96,6 +97,7 @@ const Ventas = () => {
 
         let eff = 0;
         let deb = 0;
+        let tra = 0;
         let cred = 0;
 
         data.forEach(item => {
@@ -105,6 +107,9 @@ const Ventas = () => {
             if (item.metodoPago === "Debito" || item.metodoPago === "Transferencia") {
                 deb = deb + Number(item.monto);
             }
+            if (item.metodoPago === "Transferencia") {
+                tra = tra + Number(item.monto);
+            }
             if (item.metodoPago === "Credito") {
                 cred = cred + Number(item.monto);
             }
@@ -112,6 +117,7 @@ const Ventas = () => {
         setCredito(cred);
         setDebito(deb);
         setEfectivo(eff);
+        setTransferencia(tra);
     };
 
     const getEmployeeList = async () => {
@@ -184,28 +190,35 @@ const Ventas = () => {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-                                <Grid item xs={12} sm={3}>
+                                <Grid item xs={12} sm={4}>
                                     <Card sx={{ p: 1 }} >
                                         <Typography textAlign="end" >Ventas Hoy</Typography>
                                         <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
                                     </Card>
                                 </Grid>
 
-                                <Grid item xs={12} sm={3}>
+                                <Grid item xs={12} sm={2}>
                                     <Card sx={{ p: 1 }} >
                                         <Typography textAlign="end" >Efectivo</Typography>
                                         <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
                                     </Card>
                                 </Grid>
 
-                                <Grid item xs={12} sm={3}>
+                                <Grid item xs={12} sm={2}>
                                     <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Debito / Transferencia</Typography>
+                                        <Typography textAlign="end" >Debito</Typography>
                                         <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
                                     </Card>
                                 </Grid>
 
-                                <Grid item xs={12} sm={3}>
+                                <Grid item xs={12} sm={2}>
+                                    <Card sx={{ p: 1 }} >
+                                        <Typography textAlign="end" >Transferencia</Typography>
+                                        <Typography variant="h6" textAlign="end" >$ {transferencia}</Typography>
+                                    </Card>
+                                </Grid>
+
+                                <Grid item xs={12} sm={2}>
                                     <Card sx={{ p: 1 }} >
                                         <Typography textAlign="end" >Credito</Typography>
                                         <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
