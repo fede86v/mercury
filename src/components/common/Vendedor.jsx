@@ -54,7 +54,6 @@ const Vendedor = ({ persona, setPersona }) => {
             const persona = vendedores.find(v => v.nombre.toLower() === "caja");
             if (persona) {
                 setPersona(persona);
-                console.log(persona);
             }
         }
     }, []);

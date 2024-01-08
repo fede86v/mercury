@@ -60,7 +60,6 @@ export const useFirestore = () => {
       return querySnapshot.data();
     }
     catch (error) {
-      console.log(error);
       setError(error.code);
       setLoading(false);
     }
@@ -90,7 +89,6 @@ export const useFirestore = () => {
       })
       .catch(error => {
         hasError = true;
-        console.log("createUsuario" + error);
         setError(error.code);
         setLoading(false);
       });
@@ -131,8 +129,6 @@ export const useFirestore = () => {
       setUsuario(us);
     }
     catch (error) {
-
-      console.log("createUsuarioFull" + error);
       hasError = true;
       setError(error.code);
       setLoading(false);
@@ -193,7 +189,6 @@ export const useFirestore = () => {
       setUsuario(us);
       setLoading(false);
     }).catch((error) => {
-      console.log("updateUsuarioFull" + error);
       hasError = true;
       setError(error.code);
       setLoading(false);
@@ -227,7 +222,6 @@ export const useFirestore = () => {
         setLoading(false);
       })
       .catch(function (error) {
-        console.log(error)
         setError(error.code);
         setLoading(false);
       });
@@ -259,7 +253,6 @@ export const useFirestore = () => {
     const horaAsistencia = splitted.join(':');
 
     const asistenciaRef = doc(db, "usuarios", email, "asistencia", fechaAsistencia);
-    console.log(asistenciaRef);
     let asistenciaFlat = {};
 
     // 1 - Validar si el usuario ya marco entrada 
@@ -302,7 +295,6 @@ export const useFirestore = () => {
         setLoading(false);
       })
       .catch(function (error) {
-        console.log(error)
         setError(error.code);
         setLoading(false);
       });
@@ -370,7 +362,6 @@ export const useFirestore = () => {
         setLoading(false);
       })
       .catch(error => {
-        console.log(error);
         setError(error.code);
         setLoading(false);
       });
@@ -407,13 +398,11 @@ export const useFirestore = () => {
     try {
       setLoading(true);
       const peronaRef = collection(db, "personas");
-      console.log("email " + email);
       if (email) {
         const q = query(peronaRef,
           where("email", "==", email));
         const querySnapshot = await getDocs(q);
 
-        console.log(querySnapshot.empty ? null : { ...querySnapshot.docs[0].data(), uid: querySnapshot.docs[0].id });
 
         return querySnapshot.empty ? null : { ...querySnapshot.docs[0].data(), uid: querySnapshot.docs[0].id };
       }
@@ -426,7 +415,6 @@ export const useFirestore = () => {
       }
     }
     catch (error) {
-      console.log(error);
       setError(error.code);
       setLoading(false);
       return null;
@@ -455,7 +443,6 @@ export const useFirestore = () => {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log("Coleccion vacia");
         return [];
       }
       else {
@@ -472,7 +459,6 @@ export const useFirestore = () => {
       }
     }
     catch (error) {
-      console.log(error);
       setError(error.code);
       setLoading(false);
       return null;
@@ -546,7 +532,6 @@ export const useFirestore = () => {
       return querySnapshot.empty ? null : querySnapshot.docs[0].data();
     }
     catch (error) {
-      console.log(error);
       setError(error.code);
       setLoading(false);
       return null;

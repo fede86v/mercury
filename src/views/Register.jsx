@@ -127,7 +127,6 @@ const Register = () => {
 
     const handleNext = e => {
         e.preventDefault()
-        console.log(usuario);
         if (activeStep === 0) {
             if (email.trim().length === 0) {
                 setAlert(`Debe ingresar un email valido`);

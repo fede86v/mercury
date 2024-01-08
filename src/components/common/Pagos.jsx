@@ -101,8 +101,11 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
                                     id="autocomplete-metodoPago"
                                     value={metodo}
                                     onChange={(event, newValue) => {
-                                        setMetodo(newValue);
-                                    }}
+                                        if (newValue)
+                                        {
+                                            setMetodo(newValue);
+                                        }
+                                    }}                             
                                     inputValue={metodo}
                                     options={PaymentMethods.map((option) => option.value)}
                                     sx={{ width: '100%' }}
@@ -148,7 +151,7 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
                                 <TableBody>
                                     {pagos.map((item, index) => (
                                         <TableRow
-                                            key={item.index}
+                                            key={index}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="left">{item.metodoPago}</TableCell>

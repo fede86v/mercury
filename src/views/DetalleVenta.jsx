@@ -115,7 +115,6 @@ const DetalleVenta = () => {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
-
             {alert ? (<Box sx={{ p: 2 }}  >
                 <Paper sx={{ p: 2 }}  >
                     <Alerts alert={alert} error={error} />
