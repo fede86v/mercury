@@ -48,6 +48,7 @@ const Ventas = () => {
         let semana = 0;
         let mes = 0;
         let todo = 0;
+        
         sortedData.forEach(item => {
             if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
                 hoy = hoy + Number(item.total);
@@ -93,8 +94,6 @@ const Ventas = () => {
         const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.valueOf() }]
         const data = await PaymentService.getQueryMultiple(query);
 
-        console.log(data);
-
         let eff = 0;
         let deb = 0;
         let tra = 0;
@@ -104,7 +103,7 @@ const Ventas = () => {
             if (item.metodoPago === "Efectivo") {
                 eff = eff + Number(item.monto);
             }
-            if (item.metodoPago === "Debito" || item.metodoPago === "Transferencia") {
+            if (item.metodoPago === "Debito") {
                 deb = deb + Number(item.monto);
             }
             if (item.metodoPago === "Transferencia") {
@@ -114,10 +113,10 @@ const Ventas = () => {
                 cred = cred + Number(item.monto);
             }
         });
-        setCredito(cred);
-        setDebito(deb);
         setEfectivo(eff);
+        setDebito(deb);
         setTransferencia(tra);
+        setCredito(cred);
     };
 
     const getEmployeeList = async () => {

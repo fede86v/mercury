@@ -26,7 +26,9 @@ const Cliente = ({ persona, setPersona }) => {
     const handleNewClient = () => {
         setOpen(true);
     };
-    const handleClose = () => {
+    const handleClose = async () => {
+        await getClientList();
+        
         setAlert(null);
         setOpen(false);
     };
@@ -48,7 +50,6 @@ const Cliente = ({ persona, setPersona }) => {
                 setPersona(client);
             }
         }
-
     }, []);
 
     return (

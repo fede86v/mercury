@@ -65,7 +65,7 @@ export const useTransaction = () => {
 
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
-        onError: (error) => setError(error.message),
+        onError: (error) => setAlert(error.message),
         onSuccess: () => setSuccess(true)
     })
 

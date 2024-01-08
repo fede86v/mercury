@@ -4,9 +4,10 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
+    Backdrop,
     DialogTitle
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
 import { useForm, usePerson } from '../../utils';
@@ -27,7 +28,7 @@ const DEFAULT_PERSONA = {
 
 const AgregarPersona = (props) => {
     const { formState: persona, onInputChange, onInputDateChange, } = useForm(DEFAULT_PERSONA)
-    const { error, alert, onSave, success } = usePerson();
+    const { error, alert, onSave, success, result, mutation } = usePerson();
 
     const handleSave = () => {
         onSave(persona, props.tipoPersona);
@@ -35,17 +36,21 @@ const AgregarPersona = (props) => {
 
     useEffect(() => {
         if (success) {
-            if (props.setPersona) props.setPersona(persona);
+            if (props.setPersona) props.setPersona({...persona, id: result.id});
             props.handleClose();
         }
-    }, [success, persona, props]);
+    }, [success]);
 
     return (
         <Dialog open={props.open} >
             <DialogTitle>Persona</DialogTitle>
             <DialogContent>
-                <DialogContentText>
-                </DialogContentText>
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={mutation.isLoading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <Alerts alert={alert} error={error} />
                 <Persona persona={persona} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
             </DialogContent>

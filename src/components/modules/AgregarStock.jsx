@@ -82,7 +82,6 @@ const AgregarStock = ({ productos, handleClose, open }) => {
     }, [success]);
 
     const handleNewItem = async () => {
-        console.log(item);
         if (!id) {
             setAlert("Producto invalido");
             return;
