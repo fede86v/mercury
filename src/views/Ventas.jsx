@@ -48,7 +48,7 @@ const Ventas = () => {
         let semana = 0;
         let mes = 0;
         let todo = 0;
-        
+
         sortedData.forEach(item => {
             if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
                 hoy = hoy + Number(item.total);
