@@ -16,7 +16,7 @@ import { useForm, useStock } from '../../utils';
 import Alerts from '../common/Alerts';
 
 const DEFAULT_ITEM = {
-    item:null,
+    item: null,
     codigo: "",
     descripcion: "",
     precio: 0,
@@ -26,7 +26,7 @@ const DEFAULT_ITEM = {
 const AgregarStock = ({ productos, handleClose, open }) => {
     const { error, onSave, success } = useStock();
     const { formState: item, onInputChange, setFormState } = useForm(DEFAULT_ITEM);
-    const { id, codigo, cantidad, precio } = item;
+    const { id, codigo, cantidad } = item;
     const [alert, setAlert] = useState(null);
     const [cod, setCod] = useState(codigo);
     const [prod, setProd] = useState(null);
@@ -74,7 +74,7 @@ const AgregarStock = ({ productos, handleClose, open }) => {
             setCod("");
         }
     }, [prod]);
-    
+
     useEffect(() => {
         if (success) {
             handleClose();
@@ -90,20 +90,19 @@ const AgregarStock = ({ productos, handleClose, open }) => {
             setAlert("Cantidad debe ser mayor a 0");
             return;
         }
-        
+
         let existingItem = stock.find(i => i.id === id);
 
-        if (existingItem)
-        {
+        if (existingItem) {
             const newStock = stock.map(obj =>
                 obj.id === id ? { ...obj, cantidad: existingItem.cantidad + item.cantidad } : obj
             );
             setStock(newStock);
         }
-        else{
+        else {
             stock.push(item);
         }
-        
+
         setFormState(DEFAULT_ITEM);
         setCod("");
         setAlert(null);
@@ -127,7 +126,7 @@ const AgregarStock = ({ productos, handleClose, open }) => {
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />
                 <Box sx={{ width: '100%', p: 1 }}>
-                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1}} sx={{mb:2}} >
+                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ mb: 2 }} >
                         {/* Codigo */}
                         <Grid item xs={12} sm={4} md={2}>
                             <TextField id="txt-codigo" label="Código"
@@ -171,42 +170,42 @@ const AgregarStock = ({ productos, handleClose, open }) => {
 
                         <Grid item xs={12} sm={8} md={2}>
                             <Box display="flex" justifyContent="flex-end" alignContent="center" >
-                                <Button color="secondary" variant="contained" onClick={handleNewItem} sx={{my:1}} >Agregar</Button>
+                                <Button color="secondary" variant="contained" onClick={handleNewItem} sx={{ my: 1 }} >Agregar</Button>
                             </Box>
                         </Grid>
                     </Grid>
-                <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 500}} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="left">Descripcion</TableCell>
-                                    <TableCell align="left">Cantidad</TableCell>
-                                    <TableCell align="right">Acción</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {stock.map((producto) => (
-                                    <TableRow
-                                        key={producto.id}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell align="left">{producto.descripcion}</TableCell>
-                                        <TableCell align="left">{producto.cantidad}</TableCell>
-                                        <TableCell align="right">
-                                            <>
-                                                <IconButton aria-label="delete" onClick={() => handleDeleteProduct(producto)} >
-                                                    <DeleteIcon color="error" />
-                                                </ IconButton>
-                                            </>
-
-                                        </TableCell>
+                    <Grid item sm={12}>
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="left">Descripcion</TableCell>
+                                        <TableCell align="left">Cantidad</TableCell>
+                                        <TableCell align="right">Acción</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
+                                </TableHead>
+                                <TableBody>
+                                    {stock.map((producto) => (
+                                        <TableRow
+                                            key={producto.id}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell align="left">{producto.descripcion}</TableCell>
+                                            <TableCell align="left">{producto.cantidad}</TableCell>
+                                            <TableCell align="right">
+                                                <>
+                                                    <IconButton aria-label="delete" onClick={() => handleDeleteProduct(producto)} >
+                                                        <DeleteIcon color="error" />
+                                                    </ IconButton>
+                                                </>
+
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
 
                 </Box>
 

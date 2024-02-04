@@ -87,7 +87,7 @@ const Productos = () => {
 
     useEffect(() => {
         query.refetch();
-    }, [success]);
+    }, [success, query]);
 
     const handleNewProduct = () => {
         setOpenProducto(true);
@@ -111,9 +111,11 @@ const Productos = () => {
             onSave(producto);
         }
         setDialogRemoveConfirmOpen(false);
+        query.refetch();
         setProductoAeliminar(null);
     };
     const handleCloseStock = () => {
+        query.refetch();
         setOpenStock(false);
     };
 
@@ -145,11 +147,11 @@ const Productos = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Descripcion</TableCell>
-                                    <TableCell align="left">Tipo</TableCell>
                                     <TableCell align="left">Marca</TableCell>
                                     <TableCell align="left">Cantidad</TableCell>
                                     <TableCell align="left">Precio</TableCell>
                                     <TableCell align="left">Fecha Actualizacion</TableCell>
+                                    <TableCell align="right">Codigo</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -160,11 +162,12 @@ const Productos = () => {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell align="left">{producto.descripcion}</TableCell>
-                                        <TableCell align="left">{producto.tipo}</TableCell>
                                         <TableCell align="left">{producto.marca}</TableCell>
                                         <TableCell align="left">{producto.cantidad}</TableCell>
                                         <TableCell align="left">{"$" + producto.precioVenta}</TableCell>
                                         <TableCell align="left">{dayjs(producto.fechaActualizacion).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{producto.codigo}</TableCell>
+
                                         <TableCell align="right">
                                             <>
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Productos/" + producto.id} >
