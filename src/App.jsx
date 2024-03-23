@@ -4,6 +4,7 @@ import Login from "./views/Login";
 import Config from "./views/Config";
 import Home from "./views/Home";
 import Register from "./views/Register";
+import Reportes from "./views/Reportes";
 import Clientes from "./views/Clientes";
 import DetalleCliente from "./views/DetalleCliente";
 import Ventas from "./views/Ventas";
@@ -55,6 +56,7 @@ const App = () => {
             <Route path="/" element={<Main />}>
               <Route index element={<RequireAuth><Home /></RequireAuth>} />
               <Route path="Config" element={<RequireAuth><Config /></RequireAuth>} />
+              <Route path="Reportes" element={<RequireAuth><Reportes /></RequireAuth>} />
 
               <Route path="Clientes">
                 <Route path=":id" element={<RequireAuth><DetalleCliente /></RequireAuth>} />
