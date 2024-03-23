@@ -52,6 +52,7 @@ const MyNavBar = ({ title }) => {
                 nombre: 'Ventas',
                 children: [
                     { id: 22, nombre: 'Ventas', icon: <LocalGroceryStore />, link: '/Ventas' },
+                    { id: 22, nombre: 'Reportes', icon: <LocalGroceryStore />, link: '/Reportes' },
                 ],
             });
 

@@ -1,28 +1,21 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card, Accordion, AccordionSummary, AccordionDetails
-} from '@mui/material';
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Backdrop, Card } from '@mui/material';
 import dayjs from 'dayjs';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
-import { TransactionService, useTransaction, ProductService, EmployeeService, PaymentService } from '../utils';
+import { TransactionService, useTransaction, PaymentService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 
 const Ventas = () => {
     const [ventas, setVentas] = useState([]);
-    const [vendedores, setVendedores] = useState([]);
-    const [productos, setProductos] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
     const [totalHoy, setTotalHoy] = useState(0);
-    const [totalSemana, setTotalSemana] = useState(0);
-    const [totalMes, setTotalMes] = useState(0);
-    const [total, setTotal] = useState(0);
     const [debito, setDebito] = useState(0);
     const [transferencia, setTransferencia] = useState(0);
     const [credito, setCredito] = useState(0);
@@ -32,7 +25,14 @@ const Ventas = () => {
     const { onSave, mutation } = useTransaction();
 
     const getTransactionList = async () => {
-        const data = await TransactionService.getQuery("empresaId", "==", user.empresaId);
+        let desde = new Date();
+        desde = new Date(desde.setHours(0, 0, 0, 0))
+        const query = [
+            { field: "empresaId", condition: "==", value: user.empresaId }, 
+            { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+        ]
+        
+        const data = await TransactionService.getQueryMultiple(query);
         const filterData = data.filter(i => !i.fechaAnulacion);
 
         const sortedData = filterData.sort((a, b) => {
@@ -44,54 +44,25 @@ const Ventas = () => {
             }
             return 0;
         });
-        let hoy = 0;
-        let semana = 0;
-        let mes = 0;
-        let todo = 0;
+        let total = 0;
 
         sortedData.forEach(item => {
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("day")) {
-                hoy = hoy + Number(item.total);
-            }
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("week")) {
-                semana = semana + Number(item.total);
-            }
-            if (dayjs(item.fechaCreacion) > dayjs().startOf("month")) {
-                mes = mes + Number(item.total);
-            }
-            todo = todo + Number(item.total);
+            total = total + Number(item.total);
         });
 
-        setTotalHoy(hoy);
-        setTotalSemana(semana);
-        setTotalMes(mes);
-        setTotal(todo);
-
+        setTotalHoy(total);
         setVentas(sortedData)
         return sortedData;
     };
 
-    const getProductList = async () => {
-        const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => !i.fechaInactivo);
-        const sortedData = filtered.sort((a, b) => {
-            if (a.descripcion < b.descripcion) {
-                return -1;
-            }
-            if (a.descripcion > b.descripcion) {
-                return 1;
-            }
-            return 0;
-        });
-        setProductos(sortedData)
-        return sortedData;
-    };
-
     const getPaymentsForToday = async () => {
-        var start = new Date();
-        start.setHours(0, 0, 0, 0);
+        let desde = new Date();
+        desde = new Date(desde.setHours(0, 0, 0, 0))
+        const query = [
+            { field: "empresaId", condition: "==", value: user.empresaId }, 
+            { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+        ]
 
-        const query = [{ field: "empresaId", condition: "==", value: user.empresaId }, { field: "fechaCreacion", condition: ">", value: start.valueOf() }]
         const data = await PaymentService.getQueryMultiple(query);
 
         let eff = 0;
@@ -119,29 +90,10 @@ const Ventas = () => {
         setCredito(cred);
     };
 
-    const getEmployeeList = async () => {
-        const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
-        const sortedData = data.sort((a, b) => {
-            if (a.nombre < b.nombre) {
-                return -1;
-            }
-            if (a.nombre > b.nombre) {
-                return 1;
-            }
-            return 0;
-        });
-        setVendedores(sortedData)
-        return sortedData;
-    };
-
     const query = useQuery(['ventas'], getTransactionList);
-    const queryProductos = useQuery(['productos'], getProductList);
-    const queryVendedores = useQuery(['vendedores'], getEmployeeList);
 
     useEffect(() => {
         query.refetch();
-        queryProductos.refetch();
-        queryVendedores.refetch();
         getPaymentsForToday();
     }, []);
 
@@ -178,76 +130,44 @@ const Ventas = () => {
                     <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <Accordion  >
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                        >
-                            <Typography variant="h4" sx={{ padding: 1 }} textAlign="center" >Resumen</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
-                                <Grid item xs={12} sm={4}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Ventas Hoy</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
-                                    </Card>
-                                </Grid>
+                <Grid item sm={12}> 
+                    <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
+                        <Grid item xs={12} sm={4}>
+                            <Card sx={{ p: 1 }} >
+                                <Typography textAlign="end" >Ventas Hoy</Typography>
+                                <Typography variant="h6" textAlign="end" >$ {totalHoy}</Typography>
+                            </Card>
+                        </Grid>
 
-                                <Grid item xs={12} sm={2}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Efectivo</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
-                                    </Card>
-                                </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Card sx={{ p: 1 }} >
+                                <Typography textAlign="end" >Efectivo</Typography>
+                                <Typography variant="h6" textAlign="end" >$ {efectivo}</Typography>
+                            </Card>
+                        </Grid>
 
-                                <Grid item xs={12} sm={2}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Debito</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
-                                    </Card>
-                                </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Card sx={{ p: 1 }} >
+                                <Typography textAlign="end" >Debito</Typography>
+                                <Typography variant="h6" textAlign="end" >$ {debito}</Typography>
+                            </Card>
+                        </Grid>
 
-                                <Grid item xs={12} sm={2}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Transferencia</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {transferencia}</Typography>
-                                    </Card>
-                                </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Card sx={{ p: 1 }} >
+                                <Typography textAlign="end" >Transferencia</Typography>
+                                <Typography variant="h6" textAlign="end" >$ {transferencia}</Typography>
+                            </Card>
+                        </Grid>
 
-                                <Grid item xs={12} sm={2}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Credito</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
-                                    </Card>
-                                </Grid>
+                        <Grid item xs={12} sm={2}>
+                            <Card sx={{ p: 1 }} >
+                                <Typography textAlign="end" >Credito</Typography>
+                                <Typography variant="h6" textAlign="end" >$ {credito}</Typography>
+                            </Card>
+                        </Grid>
 
-                                <Grid item xs={12} sm={4}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Ventas Semana</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {totalSemana}</Typography>
-                                    </Card>
-                                </Grid>
-
-                                <Grid item xs={12} sm={4}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Ventas Mes</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {totalMes}</Typography>
-                                    </Card>
-                                </Grid>
-
-                                <Grid item xs={12} sm={4}>
-                                    <Card sx={{ p: 1 }} >
-                                        <Typography textAlign="end" >Ventas Totales</Typography>
-                                        <Typography variant="h6" textAlign="end" >$ {total}</Typography>
-                                    </Card>
-                                </Grid>
-
-                            </Grid>
-                        </AccordionDetails>
-                    </Accordion>
+                    </Grid>
                 </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
