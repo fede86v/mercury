@@ -7,13 +7,16 @@ import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useQuery } from '@tanstack/react-query';
-import { TransactionService, PaymentService } from '../utils';
+import { TransactionService, PaymentService, TransactionDetailService } from '../utils';
 import { UserContext } from '../context/UserProvider';
+import {ExportToExcel} from './../utils/exportToExcel';
 
 const Reportes = () => {
 
 const [ventas, setVentas] = useState([]);
 const [ventasFiltradas, setVentasFiltradas] = useState([]);
+const [pagosFiltrados, setPagosFiltrados] = useState([]);
+const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
 const [total, setTotal] = useState(0);
 const [debito, setDebito] = useState(0);
 const [transferencia, setTransferencia] = useState(0);
@@ -85,13 +88,34 @@ const getPayments = async () => {
     });
 
     const filteredTransactions = ventas.filter(i => i.fechaCreacion > d && i.fechaCreacion < h)
-    
+    setPagosFiltrados(filteredData);
     setEfectivo(eff);
     setDebito(deb);
     setTransferencia(tra);
     setCredito(cred);
     setTotal(tot);
     setVentasFiltradas(filteredTransactions)
+};
+
+const getDetalleVenta = async () => {
+    let d = new Date(desde);
+    let h = new Date(hasta);
+
+    d = new Date(d.setHours(0, 0, 0, 0))
+    h = new Date(h.setHours(23, 59, 59))
+
+    setDesde(d);
+    setHasta(h);
+
+    const query = [
+        { field: "empresaId", condition: "==", value: user.empresaId }, 
+        { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+    ]
+
+    const data = await TransactionDetailService.getQueryMultiple(query);
+    const filteredData = data.filter(i => i.fechaCreacion < hasta)
+
+    setDetalleVentasFiltradas(filteredData);
 };
 
 useEffect(() => {
@@ -110,7 +134,7 @@ useEffect(() => {
                 <Grid item sm={12}>
                     <Card sx={{ p: 1 }} >
                         <Grid container  columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} >
-                            <Grid item xs={4} sm={2}>
+                            <Grid item xs={3} sm={2}>
                                 <DatePicker
                                     id="date-desde"
                                     label="Desde"
@@ -121,7 +145,7 @@ useEffect(() => {
                                 />
                             </Grid>
 
-                            <Grid item xs={4} sm={2}>
+                            <Grid item xs={3} sm={2}>
                                 <DatePicker
                                     id="date-hasta"
                                     label="Hasta"
@@ -131,8 +155,20 @@ useEffect(() => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-                            <Grid item xs={4} sm={2}>
-                                <Button color="primary" variant="contained"  onClick={() => getPayments()}  >Buscar</Button>
+                            <Grid item xs={3} sm={1}>
+                                <Button color="primary" variant="contained"  onClick={() => {
+                                    getPayments();
+                                    getDetalleVenta();
+                                }}  >Buscar</Button>
+                            </Grid>
+                            <Grid item xs={3} sm={2}>
+                                <ExportToExcel apiData={ventasFiltradas} fileName={"Ventas"} label={"Exportar Ventas"} />
+                            </Grid>
+                            <Grid item xs={3} sm={2}>
+                                <ExportToExcel apiData={pagosFiltrados} fileName={"Pagos"} label={"Exportar Pagos"} />
+                            </Grid>
+                            <Grid item xs={4} sm={3}>
+                                <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exportar Detalle Ventas"} />
                             </Grid>
                         </Grid>
                     </Card>

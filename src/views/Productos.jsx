@@ -13,6 +13,7 @@ import { ProductService, ProductTypeService, BrandService } from '../utils';
 import { useProduct } from '../utils'
 import { UserContext } from '../context/UserProvider';
 import AgregarStock from '../components/modules/AgregarStock';
+import {ExportToExcel} from './../utils/exportToExcel';
 
 const Productos = () => {
     const [productos, setProductos] = useState([]);
@@ -127,7 +128,7 @@ const Productos = () => {
                 <Grid item sm={12}>
                     <Button color="primary" sx={{ mr: '10px' }} variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                     <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
-
+                    <ExportToExcel apiData={productos} fileName={"productos"} label={"Exportar Productos"} />
                 </Grid>
                 <Grid item sm={12}>
                     <Typography variant="h4" textAlign="center" >Productos</Typography>
@@ -139,7 +140,6 @@ const Productos = () => {
                         <Typography variant="h6" textAlign="end" >{stock}</Typography>
                     </Card>
                 </Grid>
-
 
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
