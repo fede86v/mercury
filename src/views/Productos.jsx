@@ -88,7 +88,7 @@ const Productos = () => {
 
     useEffect(() => {
         query.refetch();
-    }, [success, query]);
+    }, [success]);
 
     const handleNewProduct = () => {
         setOpenProducto(true);
@@ -101,11 +101,9 @@ const Productos = () => {
         setProductoAeliminar(productoAeliminar);
         setDialogRemoveConfirmOpen(true);
     };
-
     const handleNewStock = () => {
         setOpenStock(true);
     };
-
     const handleClose = async (aceptar) => {
         if (aceptar) {
             const producto = { ...productoAeliminar, fechaInactivo: Date.now() };
