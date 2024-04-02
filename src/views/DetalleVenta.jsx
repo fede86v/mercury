@@ -17,6 +17,7 @@ const DEFAULT_VENTA = {
     total: 0,
     subtotal: 0,
     descuento: 0,
+    fechaVenta: new Date(),
     vendedor: { nombre: "Caja", id: "0" },
     cliente: { nombre: "Consumidor", apellido: "Final", numeroDocumento: "0", id: 0 },
     detalleVenta: []
@@ -26,7 +27,7 @@ const DetalleVenta = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [productos, setProductos] = useState([]);
-    const { formState: venta, setFormState: setVenta } = useForm(DEFAULT_VENTA);
+    const { formState: venta, setFormState: setVenta, onInputDateChange } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success, mutation } = useTransaction();
     const { user } = useContext(UserContext);
@@ -118,12 +119,11 @@ const DetalleVenta = () => {
             {alert ? (<Box sx={{ p: 2 }}  >
                 <Paper sx={{ p: 2 }}  >
                     <Alerts alert={alert} error={error} />
-
                 </Paper>
             </Box>) : null}
 
             <Box  >
-                <Venta venta={venta} setVenta={setVenta} productos={productos} />
+                <Venta venta={venta} setVenta={setVenta} productos={productos} onInputDateChange={onInputDateChange} />
             </Box>
             <Box  >
                 <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />

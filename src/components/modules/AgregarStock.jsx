@@ -9,7 +9,6 @@ import {
     Box, TextField, Autocomplete, Grid, TableContainer, Paper, TableHead, TableRow, TableCell, TableBody, Table, IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import dayjs from 'dayjs';
 import SaveIcon from '@mui/icons-material/Save';
 import PropTypes from 'prop-types'
 import { useForm, useStock } from '../../utils';

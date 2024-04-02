@@ -30,11 +30,35 @@ export const useProduct = () => {
         let validation = data.precioVenta < data.precioCompra;
         if (validation) setAlert(`Precio de Venta debe ser mayor al de compra`);
 
+        validation = data.descripcion === ""
+        if (validation) {
+            setAlert(`Debe ingresar una descripcion`);
+            return;
+        }
+
+        validation = data.tipo === ""
+        if (validation) {
+            setAlert(`Debe ingresar un tipo de producto`);
+            return;
+        }
+
         validation = data.precioVenta < 0
-        if (validation) setAlert(`Precio de Venta invalido`);
+        if (validation) {
+            setAlert(`Precio de Venta invalido`);
+            return;
+        }
 
         validation = data.precioCompra < 0
-        if (validation) setAlert(`Precio de Compra invalido`);
+        if (validation) {
+            setAlert(`Precio de Compra invalido`);
+            return;
+        }
+        
+        validation = data.codigo === ""
+        if (validation) {
+            setAlert(`Debe ingresar un Codigo`);
+            return;
+        }
 
         // 2. if Success then save
         if (!validation) mutation.mutate(data);

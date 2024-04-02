@@ -232,7 +232,7 @@ useEffect(() => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{dayjs(item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{dayjs(item.FechaVenta??item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>
@@ -243,7 +243,6 @@ useEffect(() => {
                                                     <ModeEditIcon color="secondary" />
                                                 </ IconButton>
                                             </>
-
                                         </TableCell>
                                     </TableRow>
                                 ))}

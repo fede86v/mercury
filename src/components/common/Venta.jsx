@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import {
     Grid, Box, Card, Typography, Divider, Paper, TableContainer, Table,
-    TableCell, TableHead, TableRow, TableBody, IconButton, Dialog,
+    TableCell, TableHead, TableRow, TableBody, IconButton, Dialog, TextField,
     DialogTitle, DialogContent, Button, DialogContentText, DialogActions
 } from '@mui/material'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types'
 import Cliente from '../common/Cliente'
@@ -11,8 +12,8 @@ import Vendedor from '../common/Vendedor'
 import ItemVenta from './ItemVenta';
 import Alerts from './Alerts';
 
-const Venta = ({ venta, setVenta, productos }) => {
-    const { total, subtotal, descuento, cliente, vendedor, detalleVenta } = venta;
+const Venta = ({ venta, setVenta, productos, onInputDateChange }) => {
+    const { total, subtotal, descuento, cliente, vendedor, detalleVenta, fechaVenta } = venta;
     const [alert, setAlert] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
@@ -85,6 +86,24 @@ const Venta = ({ venta, setVenta, productos }) => {
                 <Grid item xs={12} sm={12} md={6}>
                     <Paper sx={{ p: 2 }}  >
                         <Vendedor persona={vendedor} setPersona={setVendedor} />
+                    </Paper>
+                </Grid>
+
+                {/* Vendedor */}
+                <Grid item xs={12} sm={12} md={6}>
+                    <Paper sx={{ p: 2 }}  >
+                        <DatePicker
+                            id="date-dateOfBird"
+                            label="Fecha de Venta"
+                            inputFormat="DD/MM/YYYY"
+                            value={fechaVenta} name="fechaVenta"
+                            onChange={(newValue) => {
+                                const target = { name: "fechaVenta", value: newValue };
+                                onInputDateChange({ target })
+                                }
+                            }
+                            renderInput={(props) => <TextField variant="standard" {...props} />}
+                        />
                     </Paper>
                 </Grid>
 
