@@ -31,10 +31,10 @@ const getTransactionList = async () => {
     const filterData = data.filter(i => !i.fechaAnulacion);
 
     const sortedData = filterData.sort((a, b) => {
-        if (dayjs(a.fechaCreacion) > dayjs(b.fechaCreacion)) {
+        if (dayjs(a.FechaVenta) > dayjs(b.FechaVenta)) {
             return -1;
         }
-        if (dayjs(a.fechaCreacion) < dayjs(b.fechaCreacion)) {
+        if (dayjs(a.FechaVenta) < dayjs(b.FechaVenta)) {
             return 1;
         }
         return 0;
@@ -58,11 +58,11 @@ const getPayments = async () => {
 
     const query = [
         { field: "empresaId", condition: "==", value: user.empresaId }, 
-        { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+        { field: "fechaPago", condition: ">=", value: desde.valueOf() }
     ]
 
     const data = await PaymentService.getQueryMultiple(query);
-    const filteredData = data.filter(i => i.fechaCreacion < hasta)
+    const filteredData = data.filter(i => (i.fechaPago??i.fechaCreacion) < hasta)
 
     let eff = 0;
     let deb = 0;
@@ -87,7 +87,7 @@ const getPayments = async () => {
         }
     });
 
-    const filteredTransactions = ventas.filter(i => i.fechaCreacion > d && i.fechaCreacion < h)
+    const filteredTransactions = ventas.filter(i => (i.FechaVenta??i.fechaCreacion) > d && (i.FechaVenta??i.fechaCreacion) < h)
     setPagosFiltrados(filteredData);
     setEfectivo(eff);
     setDebito(deb);
