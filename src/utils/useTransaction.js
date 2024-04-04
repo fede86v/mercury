@@ -17,6 +17,7 @@ export const useTransaction = () => {
             const venta = {
                 total: data.total,
                 subtotal: data.subtotal,
+                fechaVenta: data.fechaVenta,
                 descuento: data.descuento,
                 vendedorId: data.vendedor.id,
                 vendedor: data.vendedor.nombre,
@@ -51,6 +52,7 @@ export const useTransaction = () => {
             pagos.forEach(async (item) => {
                 const itemPago = {
                     ventaId: newVenta.id,
+                    fechaPago: data.fechaVenta,
                     metodoPago: item.metodoPago,
                     monto: item.monto,
                     comprobante: item.comprobante

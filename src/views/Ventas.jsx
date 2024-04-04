@@ -29,17 +29,17 @@ const Ventas = () => {
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
             { field: "empresaId", condition: "==", value: user.empresaId }, 
-            { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+            { field: "fechaVenta", condition: ">=", value: desde.valueOf() }
         ]
         
         const data = await TransactionService.getQueryMultiple(query);
         const filterData = data.filter(i => !i.fechaAnulacion);
 
         const sortedData = filterData.sort((a, b) => {
-            if (dayjs(a.fechaCreacion) > dayjs(b.fechaCreacion)) {
+            if (dayjs(a.fechaVenta) > dayjs(b.fechaVenta)) {
                 return -1;
             }
-            if (dayjs(a.fechaCreacion) < dayjs(b.fechaCreacion)) {
+            if (dayjs(a.fechaVenta) < dayjs(b.fechaVenta)) {
                 return 1;
             }
             return 0;
@@ -50,6 +50,7 @@ const Ventas = () => {
             total = total + Number(item.total);
         });
 
+        console.log(sortedData);
         setTotalHoy(total);
         setVentas(sortedData)
         return sortedData;
@@ -60,7 +61,7 @@ const Ventas = () => {
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
             { field: "empresaId", condition: "==", value: user.empresaId }, 
-            { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+            { field: "fechaPago", condition: ">=", value: desde.valueOf() }
         ]
 
         const data = await PaymentService.getQueryMultiple(query);
@@ -178,17 +179,17 @@ const Ventas = () => {
                                     <TableCell align="left">Subtotal</TableCell>
                                     <TableCell align="left">Descuento</TableCell>
                                     <TableCell align="left">Total</TableCell>
-                                    <TableCell align="left">Vendedor</TableCell>
+                                    <TableCell align="left">V endedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventas.map((item) => (
+                                {ventas && ventas.map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{dayjs(item.FechaVenta??item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{dayjs(item.FechaVenta).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>
