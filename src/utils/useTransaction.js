@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { TransactionService, TransactionDetailService, PaymentService, ProductService } from './databaseService'
 import { useMutation } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
+import dayjs from 'dayjs';
 
 export const useTransaction = () => {
     const [alert, setAlert] = useState("");
@@ -17,13 +18,13 @@ export const useTransaction = () => {
             const venta = {
                 total: data.total,
                 subtotal: data.subtotal,
-                fechaVenta: data.fechaVenta,
+                fechaVenta: dayjs(data.fechaVenta).valueOf(),
                 descuento: data.descuento,
                 vendedorId: data.vendedor.id,
                 vendedor: data.vendedor.nombre,
                 clienteId: data.cliente.id
             };
-
+            
             const newVenta = await TransactionService.create(venta, user);
 
             const { detalleVenta, pagos } = data;
@@ -52,7 +53,7 @@ export const useTransaction = () => {
             pagos.forEach(async (item) => {
                 const itemPago = {
                     ventaId: newVenta.id,
-                    fechaPago: data.fechaVenta,
+                    fechaPago: dayjs(data.fechaVenta).valueOf(),
                     metodoPago: item.metodoPago,
                     monto: item.monto,
                     comprobante: item.comprobante

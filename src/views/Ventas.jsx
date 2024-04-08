@@ -26,14 +26,15 @@ const Ventas = () => {
 
     const getTransactionList = async () => {
         let desde = new Date();
-        desde = new Date(desde.setHours(0, 0, 0, 0))
+        desde = new Date(desde.setHours(0, 0, 0, 0));
+
         const query = [
-            { field: "empresaId", condition: "==", value: user.empresaId }, 
-            { field: "fechaVenta", condition: ">=", value: desde.valueOf() }
+            { field: "empresaId", condition: "==", value: user.empresaId }
         ]
         
         const data = await TransactionService.getQueryMultiple(query);
-        const filterData = data.filter(i => !i.fechaAnulacion);
+        
+        const filterData = data.filter(i => !i.fechaAnulacion && (i.fechaVenta >= desde));
 
         const sortedData = filterData.sort((a, b) => {
             if (dayjs(a.fechaVenta) > dayjs(b.fechaVenta)) {
@@ -50,7 +51,6 @@ const Ventas = () => {
             total = total + Number(item.total);
         });
 
-        console.log(sortedData);
         setTotalHoy(total);
         setVentas(sortedData)
         return sortedData;
