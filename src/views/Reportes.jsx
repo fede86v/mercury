@@ -57,12 +57,11 @@ const getPayments = async () => {
     setHasta(h);
 
     const query = [
-        { field: "empresaId", condition: "==", value: user.empresaId }, 
-        { field: "fechaPago", condition: ">=", value: desde.valueOf() }
+        { field: "empresaId", condition: "==", value: user.empresaId }
     ]
 
     const data = await PaymentService.getQueryMultiple(query);
-    const filteredData = data.filter(i => (i.fechaPago??i.fechaCreacion) < hasta)
+    const filteredData = data.filter(i => (i.fechaPago??i.fechaCreacion) < hasta && (i.fechaPago??i.fechaCreacion) >= desde)
 
     let eff = 0;
     let deb = 0;
