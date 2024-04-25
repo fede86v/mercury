@@ -60,18 +60,18 @@ const Ventas = () => {
         let desde = new Date();
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
-            { field: "empresaId", condition: "==", value: user.empresaId }, 
-            { field: "fechaPago", condition: ">=", value: desde.valueOf() }
+            { field: "empresaId", condition: "==", value: user.empresaId }
         ]
 
         const data = await PaymentService.getQueryMultiple(query);
+        const filterData = data.filter(i => !i.fechaAnulacion && (i.fechaPago >= desde));
 
         let eff = 0;
         let deb = 0;
         let tra = 0;
         let cred = 0;
 
-        data.forEach(item => {
+        filterData.forEach(item => {
             if (item.metodoPago === "Efectivo") {
                 eff = eff + Number(item.monto);
             }
