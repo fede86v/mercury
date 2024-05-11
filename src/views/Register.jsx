@@ -259,7 +259,7 @@ const Register = () => {
 
                                             {/* Email */}
                                             <TextField label='Email' placeholder='Email' margin='normal' type='email'
-                                                onChange={onInputChange} value={email} name='email' required sx={{ width: "100%" }}
+                                                name='email' value={email} onChange={onInputChange} required sx={{ width: "100%" }}
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
