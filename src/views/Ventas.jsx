@@ -179,7 +179,7 @@ const Ventas = () => {
                                     <TableCell align="left">Subtotal</TableCell>
                                     <TableCell align="left">Descuento</TableCell>
                                     <TableCell align="left">Total</TableCell>
-                                    <TableCell align="left">V endedor</TableCell>
+                                    <TableCell align="left">Vendedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
