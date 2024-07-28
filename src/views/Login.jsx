@@ -20,7 +20,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import React, { useContext, useEffect } from 'react';
 import { UserContext } from '../context/UserProvider';
-import { useFirestore } from '../utils/useFirestore';
 
 const Login = () => {
     const { loginUserByMail, error: authError, user, signInWithGoogle } = useContext(UserContext);
@@ -32,7 +31,6 @@ const Login = () => {
     });
     const [error, setError] = useState(null);
     const [alert, setAlert] = useState(null);
-    const { usuario } = useFirestore();
     const navigate = useNavigate();
 
     const handleChange = (prop) => (event) => {

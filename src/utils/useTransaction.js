@@ -33,7 +33,7 @@ export const useTransaction = () => {
             detalleVenta.forEach(async (item) => {
                 /* Update Stock */
                 const producto = await ProductService.getOne(item.id);
-                await ProductService.update(producto.id, { ...producto, cantidad: producto.cantidad - 1 }, user);
+                await ProductService.update(producto.id, { ...producto, cantidad: producto.cantidad - Number(item.cantidad) }, user);
 
                 const itemVenta = {
                     ventaId: newVenta.id,
