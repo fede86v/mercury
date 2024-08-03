@@ -18,8 +18,8 @@ import RequireAuth from "./components/RequireAuth"
 import Main from "./components/Main";
 import { UserContext } from './context/UserProvider';
 import MySpinner from './components/MySpinner';
-import Backdrop from '@mui/material/Backdrop';
-import CircularProgress from '@mui/material/CircularProgress';
+import { LoadingProvider } from './utils/LoadingContext';
+import BusyIndicator from './components/common/BusyIndicator';
 import { useFirestore } from './utils/useFirestore';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -45,53 +45,52 @@ const App = () => {
   return user !== false ? (
     <>
       <QueryClientProvider client={queryClient}>
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-        <BrowserRouter >
-          <Routes>
-            <Route path="/" element={<Main />}>
-              <Route index element={<RequireAuth><Home /></RequireAuth>} />
-              <Route path="Config" element={<RequireAuth><Config /></RequireAuth>} />
-              <Route path="Reportes" element={<RequireAuth><Reportes /></RequireAuth>} />
+        <LoadingProvider>
+          <div className="App">
+            <BrowserRouter >
+              <Routes>
+                <Route path="/" element={<Main />}>
+                  <Route index element={<RequireAuth><Home /></RequireAuth>} />
+                  <Route path="Config" element={<RequireAuth><Config /></RequireAuth>} />
+                  <Route path="Reportes" element={<RequireAuth><Reportes /></RequireAuth>} />
 
-              <Route path="Clientes">
-                <Route path=":id" element={<RequireAuth><DetalleCliente /></RequireAuth>} />
-                <Route index element={<RequireAuth><Clientes /></RequireAuth>} />
-              </Route>
+                  <Route path="Clientes">
+                    <Route path=":id" element={<RequireAuth><DetalleCliente /></RequireAuth>} />
+                    <Route index element={<RequireAuth><Clientes /></RequireAuth>} />
+                  </Route>
 
-              <Route path="Vendedores" >
-                <Route path=":id" element={<RequireAuth><DetalleVendedor /></RequireAuth>} />
-                <Route index element={<RequireAuth><Vendedores /></RequireAuth>} />
-              </Route>
+                  <Route path="Vendedores" >
+                    <Route path=":id" element={<RequireAuth><DetalleVendedor /></RequireAuth>} />
+                    <Route index element={<RequireAuth><Vendedores /></RequireAuth>} />
+                  </Route>
 
-              <Route path="Ventas" >
-                <Route path=":id" element={<RequireAuth><DetalleVenta /></RequireAuth>} />
-                <Route index element={<RequireAuth><Ventas /></RequireAuth>} />
-              </Route>
+                  <Route path="Ventas" >
+                    <Route path=":id" element={<RequireAuth><DetalleVenta /></RequireAuth>} />
+                    <Route index element={<RequireAuth><Ventas /></RequireAuth>} />
+                  </Route>
 
-              <Route path="DetalleVenta" >
-                <Route index element={<RequireAuth><DetalleVenta /></RequireAuth>} />
-              </Route>
+                  <Route path="DetalleVenta" >
+                    <Route index element={<RequireAuth><DetalleVenta /></RequireAuth>} />
+                  </Route>
 
-              <Route path="Productos" >
-                <Route path=":id" element={<RequireAuth><DetalleProducto /></RequireAuth>} />
-                <Route index element={<RequireAuth><Productos /></RequireAuth>} />
-              </Route>
+                  <Route path="Productos" >
+                    <Route path=":id" element={<RequireAuth><DetalleProducto /></RequireAuth>} />
+                    <Route index element={<RequireAuth><Productos /></RequireAuth>} />
+                  </Route>
 
-              <Route path="Perfil" >
-                <Route index element={<RequireAuth><Perfil /></RequireAuth>} />
-              </Route>
-            </Route>
+                  <Route path="Perfil" >
+                    <Route index element={<RequireAuth><Perfil /></RequireAuth>} />
+                  </Route>
+                </Route>
 
-            <Route path="/Login" element={<Login />} />
-            <Route path="/Register" element={<Register />} />
+                <Route path="/Login" element={<Login />} />
+                <Route path="/Register" element={<Register />} />
 
-          </Routes>
-        </BrowserRouter >
+              </Routes>
+            </BrowserRouter >
+          <BusyIndicator />
+        </div>
+        </LoadingProvider>
       </QueryClientProvider>
     </>
 
