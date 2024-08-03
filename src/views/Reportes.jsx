@@ -6,16 +6,17 @@ import {
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { useQuery } from '@tanstack/react-query';
+//import { useQuery } from '@tanstack/react-query';
+import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { TransactionService, PaymentService, TransactionDetailService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import {ExportToExcel} from './../utils/exportToExcel';
+import { useLoading } from '../utils/LoadingContext';
 
 const Reportes = () => {
 
 const [ventas, setVentas] = useState([]);
-const [ventasFiltradas, setVentasFiltradas] = useState([]);
-const [pagosFiltrados, setPagosFiltrados] = useState([]);
+const [pagos, setPagos] = useState([]);
 const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
 const [total, setTotal] = useState(0);
 const [debito, setDebito] = useState(0);
@@ -25,10 +26,23 @@ const [efectivo, setEfectivo] = useState(0);
 const [desde, setDesde] = useState(new Date());
 const [hasta, setHasta] = useState(new Date());
 const { user } = useContext(UserContext);
+const { setIsLoading } = useLoading();
 
 const getTransactionList = async () => {
-    const data = await TransactionService.getQuery("empresaId", "==", user.empresaId);
-    const filterData = data.filter(i => !i.fechaAnulacion);
+    setIsLoading(true);
+    let d = new Date(desde);
+    let h = new Date(hasta);
+
+    d = dayjs(d.setHours(0, 0, 0)).valueOf()
+    h = dayjs(h.setHours(23, 59, 59)).valueOf()
+    
+    const query = [
+        { field: "empresaId", condition: "==", value: user.empresaId },
+        { field: "fechaVenta", condition: ">=", value: d }
+    ]
+
+    const data = await TransactionService.getQueryMultiple(query);
+    const filterData = data.filter(i => !i.fechaAnulacion && i.fechaVenta <= h);
 
     const sortedData = filterData.sort((a, b) => {
         if (dayjs(a.FechaVenta) > dayjs(b.FechaVenta)) {
@@ -40,28 +54,26 @@ const getTransactionList = async () => {
         return 0;
     });
     setVentas(sortedData)
-    setVentasFiltradas(sortedData)
     return sortedData;
 };
 
-const query = useQuery(['ventas'], getTransactionList);
+const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
 
 const getPayments = async () => {
+    setIsLoading(true);
     let d = new Date(desde);
     let h = new Date(hasta);
 
-    d = new Date(d.setHours(0, 0, 0, 0))
-    h = new Date(h.setHours(23, 59, 59))
-
-    setDesde(d);
-    setHasta(h);
+    d = dayjs(d.setHours(0, 0, 0)).valueOf()
+    h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
     const query = [
-        { field: "empresaId", condition: "==", value: user.empresaId }
+        { field: "empresaId", condition: "==", value: user.empresaId },
+        { field: "fechaPago", condition: ">=", value: d }
     ]
 
     const data = await PaymentService.getQueryMultiple(query);
-    const filteredData = data.filter(i => (i.fechaPago??i.fechaCreacion) < hasta && (i.fechaPago??i.fechaCreacion) >= desde)
+    const filteredData = data.filter(i => i.fechaPago < h)
 
     let eff = 0;
     let deb = 0;
@@ -86,40 +98,41 @@ const getPayments = async () => {
         }
     });
 
-    const filteredTransactions = ventas.filter(i => (i.FechaVenta??i.fechaCreacion) > d && (i.FechaVenta??i.fechaCreacion) < h)
-    setPagosFiltrados(filteredData);
+    setPagos(filteredData);
     setEfectivo(eff);
     setDebito(deb);
     setTransferencia(tra);
     setCredito(cred);
     setTotal(tot);
-    setVentasFiltradas(filteredTransactions)
+    return filteredData;
 };
+
+const queryPayments = useFirebaseQuery(['pagos'], getPayments)
 
 const getDetalleVenta = async () => {
     let d = new Date(desde);
     let h = new Date(hasta);
 
-    d = new Date(d.setHours(0, 0, 0, 0))
-    h = new Date(h.setHours(23, 59, 59))
+    d = dayjs(d.setHours(0, 0, 0)).valueOf()
+    h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
     setDesde(d);
     setHasta(h);
 
     const query = [
         { field: "empresaId", condition: "==", value: user.empresaId }, 
-        { field: "fechaCreacion", condition: ">=", value: desde.valueOf() }
+        { field: "fechaCreacion", condition: ">=", value: d }
     ]
 
     const data = await TransactionDetailService.getQueryMultiple(query);
-    const filteredData = data.filter(i => i.fechaCreacion < hasta)
+    const filteredData = data.filter(i => i.fechaCreacion < h)
 
     setDetalleVentasFiltradas(filteredData);
 };
 
 useEffect(() => {
-    query.refetch();
-    getPayments();
+    queryPayments.refetch();
+    queryVentas.refetch();
 }, []);
 
     return (
@@ -132,7 +145,7 @@ useEffect(() => {
 
                 <Grid item sm={12}>
                     <Card sx={{ p: 1 }} >
-                        <Grid container  columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} >
+                        <Grid container  columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
                             <Grid item xs={3} sm={2}>
                                 <DatePicker
                                     id="date-desde"
@@ -143,7 +156,6 @@ useEffect(() => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-
                             <Grid item xs={3} sm={2}>
                                 <DatePicker
                                     id="date-hasta"
@@ -154,20 +166,21 @@ useEffect(() => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-                            <Grid item xs={3} sm={1}>
+                            <Grid item xs={3} sm={2}>
                                 <Button color="primary" variant="contained"  onClick={() => {
-                                    getPayments();
+                                    queryVentas.refetch();
+                                    queryPayments.refetch();
                                     getDetalleVenta();
                                 }}  >Buscar</Button>
                             </Grid>
                             <Grid item xs={3} sm={2}>
-                                <ExportToExcel apiData={ventasFiltradas} fileName={"Ventas"} label={"Exportar Ventas"} />
+                                <ExportToExcel apiData={ventas} fileName={"Ventas"} label={"Exp. Ventas"} />
                             </Grid>
                             <Grid item xs={3} sm={2}>
-                                <ExportToExcel apiData={pagosFiltrados} fileName={"Pagos"} label={"Exportar Pagos"} />
+                                <ExportToExcel apiData={pagos} fileName={"Pagos"} label={"Exp. Pagos"} />
                             </Grid>
-                            <Grid item xs={4} sm={3}>
-                                <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exportar Detalle Ventas"} />
+                            <Grid item xs={4} sm={2}>
+                                <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exp. Detalle"} />
                             </Grid>
                         </Grid>
                     </Card>
@@ -226,12 +239,12 @@ useEffect(() => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventasFiltradas.map((item) => (
+                                {ventas.map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{dayjs(item.FechaVenta??item.fechaCreacion).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{dayjs(item.fechaVenta).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>
