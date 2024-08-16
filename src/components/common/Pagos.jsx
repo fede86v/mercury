@@ -65,16 +65,14 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
         agregarPago();
     };
 
-    const handleDelete = (item) => {
-        if (item) {
-            setItemToDelete(item);
-            setDialogRemoveConfirmOpen(true);
-        }
+    const handleDelete = (index) => {
+        setItemToDelete(index);
+        setDialogRemoveConfirmOpen(true);
     };
 
     const handleClose = (aceptar) => {
         if (aceptar) {
-            const array = pagos.filter(i => i.id !== itemToDelete.id);
+            const array = pagos.filter((i,index) => index !== itemToDelete);
             setPagos(array);
             let total = 0;
             for (let i of array) total += Number(i.monto);
@@ -160,7 +158,7 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
                                             <TableCell align="right">
                                                 <>
                                                     {!idVenta ? (
-                                                        <IconButton aria-label="delete" onClick={() => handleDelete(item)} >
+                                                        <IconButton aria-label="delete" onClick={() => handleDelete(index)} >
                                                             <DeleteIcon color="error" />
                                                         </ IconButton>
                                                     ) : null}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, TextField, Typography, Button, Paper, Backdrop } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 
 const Empresa = ({ empresa, onInputChange }) => {
     const { nombre, cuit, token, sign } = empresa;
@@ -14,7 +14,6 @@ const Empresa = ({ empresa, onInputChange }) => {
 
             {/* CUIT */}
             <Grid item xs={12} sm={6}>
-
                 <TextField id="txt-cuit" label="CUIT" variant="standard"
                     value={cuit} name="cuit" required
                     onChange={onInputChange}

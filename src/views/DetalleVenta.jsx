@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
-import Alerts from '../components/common/Alerts';
+import AlertDialog from '../components/common/AlertDialog';
 import Venta from '../components/common/Venta';
 import Pagos from '../components/common/Pagos';
 import { useNavigate } from "react-router-dom";
@@ -29,9 +29,16 @@ const DetalleVenta = () => {
     const [productos, setProductos] = useState([]);
     const { formState: venta, setFormState: setVenta, onInputDateChange } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
-    const { error, alert, onSave, success, mutation } = useTransaction();
+    const { error, alert, onSave, success, mutation, onSetAlert, onSetError } = useTransaction();
     const { user } = useContext(UserContext);
     const { total } = venta;
+    const [ openDialog, setOpenDialog ] = useState(false);
+
+    const handleClose = async () => {
+        onSetAlert(null);
+        onSetError(null);
+        setOpenDialog(false);
+    };
 
     const getProductList = async () => {
         const data = await ProductService.getQuery("empresaId", "==", user.empresaId);
@@ -107,6 +114,10 @@ const DetalleVenta = () => {
         }
     }, [success]);
 
+    useEffect(() => {
+        if (alert) setOpenDialog(true);
+    }, [alert]);
+
     return (
         <Box sx={{ width: '100%', p: 1 }}>
             <Backdrop
@@ -116,11 +127,7 @@ const DetalleVenta = () => {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
-            {alert ? (<Box sx={{ p: 2 }}  >
-                <Paper sx={{ p: 2 }}  >
-                    <Alerts alert={alert} error={error} />
-                </Paper>
-            </Box>) : null}
+            <AlertDialog  open={ openDialog } handleClose={ handleClose } alert={alert} error={error} />
 
             <Box  >
                 <Venta venta={venta} setVenta={setVenta} productos={productos} onInputDateChange={onInputDateChange} />
