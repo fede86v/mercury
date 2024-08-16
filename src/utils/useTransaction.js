@@ -88,6 +88,12 @@ export const useTransaction = () => {
             setAlert(`No ha ingresado el pago para esta compra.`);
             return;
         }
+        const totalPago = data.pagos.map(i=>Number(i.monto)).reduce((a,b)=>a+b);
+        validation = (totalPago !== data.total);
+        if (validation) {
+            setAlert(`El monto del pago no coincide con el total de la compra.`);
+            return;
+        }
 
         validation = data.vendedor === null
         if (validation) {
@@ -108,6 +114,6 @@ export const useTransaction = () => {
         mutation,
         onSave,
         onSetAlert,
-        onSetError,
+        onSetError
     }
 }
