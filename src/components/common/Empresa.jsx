@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, TextField, Typography, Button, Paper, Backdrop } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 
 const Empresa = ({ empresa, onInputChange }) => {
-    const { nombre, cuit } = empresa;
+    const { nombre, cuit, token, sign } = empresa;
     return (
         <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
             {/* Email */}
@@ -14,9 +14,24 @@ const Empresa = ({ empresa, onInputChange }) => {
 
             {/* Nombre */}
             <Grid item xs={12} sm={6}>
-
                 <TextField id="txt-cuit" label="CUIT" variant="standard"
                     value={cuit} name="cuit" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* token */}
+            <Grid item xs={12} sm={6}>
+                <TextField id="txt-token" label="Token" variant="standard"
+                    value={token} name="token" required
+                    onChange={onInputChange}
+                    sx={{ width: '100%' }} />
+            </Grid>
+
+            {/* sign */}
+            <Grid item xs={12} sm={6}>
+                <TextField id="txt-sign" label="Sign" variant="standard"
+                    value={sign} name="sign" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
