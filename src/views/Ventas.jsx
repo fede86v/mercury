@@ -26,15 +26,16 @@ const Ventas = () => {
 
     const getTransactionList = async () => {
         let desde = new Date();
-        desde = new Date(desde.setHours(0, 0, 0, 0));
+        desde = dayjs(desde.setHours(0,0,0)).valueOf();
 
         const query = [
-            { field: "empresaId", condition: "==", value: user.empresaId }
+            { field: "empresaId", condition: "==", value: user.empresaId },
+            { field: "fechaVenta", condition: ">=", value: desde }
         ]
         
         const data = await TransactionService.getQueryMultiple(query);
         
-        const filterData = data.filter(i => !i.fechaAnulacion && (i.fechaVenta >= desde));
+        const filterData = data.filter(i => !i.fechaAnulacion);
 
         const sortedData = filterData.sort((a, b) => {
             if (dayjs(a.fechaVenta) > dayjs(b.fechaVenta)) {
@@ -179,7 +180,7 @@ const Ventas = () => {
                                     <TableCell align="left">Subtotal</TableCell>
                                     <TableCell align="left">Descuento</TableCell>
                                     <TableCell align="left">Total</TableCell>
-                                    <TableCell align="left">V endedor</TableCell>
+                                    <TableCell align="left">Vendedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -189,7 +190,7 @@ const Ventas = () => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{dayjs(item.FechaVenta).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{dayjs(item.fechaVenta).format('DD-M-YYYY')}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>

@@ -12,29 +12,32 @@ const Empresa = ({ empresa, onInputChange }) => {
                     onChange={onInputChange} value={nombre} name="nombre" sx={{ width: "100%" }} />
             </Grid>
 
-            {/* Nombre */}
+            {/* CUIT */}
             <Grid item xs={12} sm={6}>
                 <TextField id="txt-cuit" label="CUIT" variant="standard"
                     value={cuit} name="cuit" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
-
-            {/* token */}
+            
+            {/* TOKEN */}
             <Grid item xs={12} sm={6}>
-                <TextField id="txt-token" label="Token" variant="standard"
+
+                <TextField id="txt-token" label="Token AFIP" variant="standard"
                     value={token} name="token" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
 
-            {/* sign */}
+            {/* Sign */}
             <Grid item xs={12} sm={6}>
-                <TextField id="txt-sign" label="Sign" variant="standard"
+
+                <TextField id="txt-sign" label="Sign AFIP" variant="standard"
                     value={sign} name="sign" required
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>
+
         </Grid>
     );
 }

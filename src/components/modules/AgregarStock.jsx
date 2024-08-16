@@ -94,7 +94,7 @@ const AgregarStock = ({ productos, handleClose, open }) => {
 
         if (existingItem) {
             const newStock = stock.map(obj =>
-                obj.id === id ? { ...obj, cantidad: existingItem.cantidad + item.cantidad } : obj
+                obj.id === id ? { ...obj, cantidad: Number.parseInt(existingItem.cantidad) + Number.parseInt(item.cantidad) } : obj
             );
             setStock(newStock);
         }

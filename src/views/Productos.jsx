@@ -93,10 +93,12 @@ const Productos = () => {
     const handleNewProduct = () => {
         setOpenProducto(true);
     };
+
     const handleCloseProducto = () => {
         setOpenProducto(false);
         query.refetch();
     };
+
     const handleDeleteProduct = async (productoAeliminar) => {
         setProductoAeliminar(productoAeliminar);
         setDialogRemoveConfirmOpen(true);
@@ -114,8 +116,8 @@ const Productos = () => {
         setProductoAeliminar(null);
     };
     const handleCloseStock = () => {
-        query.refetch();
         setOpenStock(false);
+        query.refetch();
     };
 
     return (
