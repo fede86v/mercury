@@ -12,7 +12,7 @@ import Vendedor from '../common/Vendedor'
 import ItemVenta from './ItemVenta';
 import Alerts from './Alerts';
 
-const Venta = ({ venta, setVenta, productos, onInputDateChange }) => {
+const Venta = ({ venta, setVenta, productos, vendedores, onInputDateChange }) => {
     const { total, subtotal, descuento, cliente, vendedor, detalleVenta, fechaVenta } = venta;
     const [alert, setAlert] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -85,7 +85,7 @@ const Venta = ({ venta, setVenta, productos, onInputDateChange }) => {
                 {/* Vendedor */}
                 <Grid item xs={12} sm={12} md={6}>
                     <Paper sx={{ p: 2 }}  >
-                        <Vendedor persona={vendedor} setPersona={setVendedor} />
+                        <Vendedor persona={vendedor} vendedores={vendedores} setPersona={setVendedor} />
                     </Paper>
                 </Grid>
 
@@ -210,6 +210,7 @@ const Venta = ({ venta, setVenta, productos, onInputDateChange }) => {
 
 Venta.propTypes = {
     venta: PropTypes.object.isRequired,
+    vendedores: PropTypes.array.isRequired,
     setVenta: PropTypes.func.isRequired,
 }
 

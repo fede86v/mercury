@@ -6,7 +6,6 @@ import {
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-//import { useQuery } from '@tanstack/react-query';
 import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { TransactionService, PaymentService, TransactionDetailService } from '../utils';
 import { UserContext } from '../context/UserProvider';

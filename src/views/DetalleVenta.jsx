@@ -18,7 +18,7 @@ const DEFAULT_VENTA = {
     subtotal: 0,
     descuento: 0,
     fechaVenta: new Date(),
-    vendedor: { nombre: "Caja", id: "0" },
+    vendedor: { nombre: "", id: "" },
     cliente: { nombre: "Consumidor", apellido: "Final", numeroDocumento: "0", id: 0 },
     detalleVenta: []
 };
@@ -32,7 +32,8 @@ const DetalleVenta = () => {
     const { error, alert, onSave, success, mutation, onSetAlert, onSetError } = useTransaction();
     const { user } = useContext(UserContext);
     const { total } = venta;
-    const [ openDialog, setOpenDialog ] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [vendedores, setVendedores] = useState([]);
 
     const handleClose = async () => {
         onSetAlert(null);
@@ -67,18 +68,43 @@ const DetalleVenta = () => {
             const detalle1 = await TransactionDetailService.getQuery("ventaId", "==", id);
             const detalle2 = await PaymentService.getQuery("ventaId", "==", id);
             const final = { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, id: data.vendedorId }, cliente: cliente };
-            setVenta({ ...data, detalleVenta: detalle1, vendedor: { nombre: data.vendedor, id: data.vendedorId }, cliente: cliente });
+            setVenta(final);
             setPagos(detalle2);
             return final;
         }
         else {
-            const data = await EmployeeService.getQuery("numeroDocumento", "==", "0");
-            const v = data[0];
-            setVenta({ ...DEFAULT_VENTA, vendedor: v });
-            venta.detalleVenta.length = 0;
+            const empleado_caja = await EmployeeService.getQuery("numeroDocumento", "==", "0");
+            const empleado_user = await EmployeeService.getQuery("email", "==", user.email);
+
+            const v_caja = empleado_caja[0];
+            const v_user = empleado_user[0];
+
+            const venta_base = { ...DEFAULT_VENTA, vendedor: v_user ?? v_caja }
+            venta_base.detalleVenta.length = 0;
+
+            setVenta(venta_base);
             setPagos([]);
-            return DEFAULT_VENTA;
+
+            return venta_base;
         }
+    };
+
+    const getEmployeeList = async () => {
+        const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
+        const filtered = data.filter(i => !i.fechaInactivo);
+        const sortedData = filtered.sort((a, b) => {
+            if (a.nombre < b.nombre) {
+                return -1;
+            }
+            if (a.nombre > b.nombre) {
+                return 1;
+            }
+            return 0;
+        });
+
+        setVendedores(sortedData)
+
+        return sortedData;
     };
 
     const handleCancel = () => {
@@ -94,10 +120,13 @@ const DetalleVenta = () => {
 
     const queryProductos = useQuery(['products'], getProductList);
     const queryVenta = useQuery(["ventas"], getVenta, id);
+    const queryVendedores = useQuery(['vendedor'], getEmployeeList);
 
     useEffect(() => {
         queryProductos.refetch();
         queryVenta.refetch();
+        queryVendedores.refetch();
+
         return () => {
             setPagos([]);
             venta.detalleVenta.length = 0;
@@ -127,10 +156,10 @@ const DetalleVenta = () => {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
-            <AlertDialog  open={ openDialog } handleClose={ handleClose } alert={alert} error={error} />
+            <AlertDialog open={openDialog} handleClose={handleClose} alert={alert} error={error} />
 
             <Box  >
-                <Venta venta={venta} setVenta={setVenta} productos={productos} onInputDateChange={onInputDateChange} />
+                <Venta venta={venta} setVenta={setVenta} productos={productos} vendedores={vendedores} onInputDateChange={onInputDateChange} />
             </Box>
             <Box  >
                 <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />
