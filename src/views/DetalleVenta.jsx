@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Button, Backdrop, Paper } from '@mui/material';
+import { Box, Button, Backdrop } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,6 +11,8 @@ import AlertDialog from '../components/common/AlertDialog';
 import Venta from '../components/common/Venta';
 import Pagos from '../components/common/Pagos';
 import { useNavigate } from "react-router-dom";
+import { useLoading } from '../utils/LoadingContext';
+import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 
 const DEFAULT_VENTA = {
     id: null,
@@ -34,6 +36,7 @@ const DetalleVenta = () => {
     const { total } = venta;
     const [openDialog, setOpenDialog] = useState(false);
     const [vendedores, setVendedores] = useState([]);
+    const { setIsLoading } = useLoading();
 
     const handleClose = async () => {
         onSetAlert(null);
@@ -59,6 +62,7 @@ const DetalleVenta = () => {
 
     const getVenta = async () => {
         if (id) {
+            setIsLoading(true);
             const data = await TransactionService.getOne(id);
             let cliente = await ClientService.getOne(data.clienteId);
             if (!cliente) {
@@ -118,9 +122,9 @@ const DetalleVenta = () => {
         onSave(ventaFinal);
     };
 
-    const queryProductos = useQuery(['products'], getProductList);
-    const queryVenta = useQuery(["ventas"], getVenta, id);
-    const queryVendedores = useQuery(['vendedor'], getEmployeeList);
+    const queryProductos = useFirebaseQuery(['products'], getProductList);
+    const queryVenta = useFirebaseQuery(["ventas"], getVenta, id);
+    const queryVendedores = useFirebaseQuery(['vendedor'], getEmployeeList);
 
     useEffect(() => {
         queryProductos.refetch();
