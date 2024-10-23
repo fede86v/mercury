@@ -97,9 +97,7 @@ const MyNavBar = ({ title }) => {
                 <ListItem key="titleId" sx={{ ...item, ...itemCategory, fontSize: 22 }}>
                     {title}
                 </ListItem>
-                <ListItemButton sx={{
-                    ...item, ...itemCategory
-                }} component={NavLink} to="/" >
+                <ListItemButton sx={{...item, ...itemCategory }} component={NavLink} to="/" >
                     <ListItemIcon sx={{ minWidth: '30px' }}>
                         <Home />
                     </ListItemIcon>
@@ -120,14 +118,13 @@ const MyNavBar = ({ title }) => {
                     </Box>)
                     )
                 }
-                <ListItem key="li_Configuracion">
-                    <ListItemButton component={NavLink} to='/Config' >
-                        <ListItemIcon sx={{ minWidth: '30px' }}>
-                            <MiscellaneousServicesSharp />
-                        </ListItemIcon>
-                        <ListItemText primary="Configuracion" />
-                    </ ListItemButton>
-                </ListItem>
+                
+                <ListItemButton sx={{...item, ...itemCategory }} component={NavLink} to="/Config" >
+                    <ListItemIcon sx={{ minWidth: '30px' }}>
+                        <MiscellaneousServicesSharp />
+                    </ListItemIcon>
+                    <ListItemText>Config</ListItemText>
+                </ListItemButton>
             </List>
         </div>
     )

@@ -11,6 +11,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useQuery } from '@tanstack/react-query';
 import { TransactionService, useTransaction, PaymentService } from '../utils';
 import { UserContext } from '../context/UserProvider';
+import { useFirebaseQuery } from './../utils/useFirebaseQuery';
+import { useLoading } from '../utils/LoadingContext';
 
 const Ventas = () => {
     const [ventas, setVentas] = useState([]);
@@ -23,8 +25,10 @@ const Ventas = () => {
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
+    const { setIsLoading } = useLoading();
 
     const getTransactionList = async () => {
+        setIsLoading(true);
         let desde = new Date();
         desde = dayjs(desde.setHours(0,0,0)).valueOf();
 
@@ -58,6 +62,7 @@ const Ventas = () => {
     };
 
     const getPaymentsForToday = async () => {
+        setIsLoading(true);
         let desde = new Date();
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
@@ -90,9 +95,10 @@ const Ventas = () => {
         setDebito(deb);
         setTransferencia(tra);
         setCredito(cred);
+        setIsLoading(false);
     };
 
-    const query = useQuery(['ventas'], getTransactionList);
+    const query = useFirebaseQuery(['ventas'], getTransactionList);
 
     useEffect(() => {
         query.refetch();
@@ -173,13 +179,12 @@ const Ventas = () => {
                 </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="left">Fecha</TableCell>
+                                    <TableCell align="left">Total</TableCell>
                                     <TableCell align="left">Subtotal</TableCell>
                                     <TableCell align="left">Descuento</TableCell>
-                                    <TableCell align="left">Total</TableCell>
                                     <TableCell align="left">Vendedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
@@ -190,10 +195,9 @@ const Ventas = () => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{dayjs(item.fechaVenta).format('DD-M-YYYY')}</TableCell>
+                                        <TableCell align="left">{"$" + item.total}</TableCell>
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
-                                        <TableCell align="left">{"$" + item.total}</TableCell>
                                         <TableCell align="left">{item.vendedor}</TableCell>
                                         <TableCell align="right">
                                             <>

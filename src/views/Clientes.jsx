@@ -55,8 +55,8 @@ const Clientes = () => {
                     <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
                 </Grid>
                 <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table"  stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Nombre</TableCell>

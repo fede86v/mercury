@@ -6,146 +6,179 @@ import {
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-//import { useQuery } from '@tanstack/react-query';
 import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { TransactionService, PaymentService, TransactionDetailService } from '../utils';
 import { UserContext } from '../context/UserProvider';
-import {ExportToExcel} from './../utils/exportToExcel';
+import { ExportToExcel } from './../utils/exportToExcel';
 import { useLoading } from '../utils/LoadingContext';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const Reportes = () => {
 
-const [ventas, setVentas] = useState([]);
-const [pagos, setPagos] = useState([]);
-const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
-const [total, setTotal] = useState(0);
-const [debito, setDebito] = useState(0);
-const [transferencia, setTransferencia] = useState(0);
-const [credito, setCredito] = useState(0);
-const [efectivo, setEfectivo] = useState(0);
-const [desde, setDesde] = useState(new Date());
-const [hasta, setHasta] = useState(new Date());
-const { user } = useContext(UserContext);
-const { setIsLoading } = useLoading();
-
-const getTransactionList = async () => {
-    setIsLoading(true);
-    let d = new Date(desde);
-    let h = new Date(hasta);
-
-    d = dayjs(d.setHours(0, 0, 0)).valueOf()
-    h = dayjs(h.setHours(23, 59, 59)).valueOf()
+    const [ventas, setVentas] = useState([]);
+    const [pagos, setPagos] = useState([]);
+    const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
+    const [detalleVentas, setDetalleVentas] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [debito, setDebito] = useState(0);
+    const [transferencia, setTransferencia] = useState(0);
+    const [credito, setCredito] = useState(0);
+    const [efectivo, setEfectivo] = useState(0);
+    const [desde, setDesde] = useState(new Date());
+    const [hasta, setHasta] = useState(new Date());
+    const { user } = useContext(UserContext);
+    const { setIsLoading } = useLoading();
     
-    const query = [
-        { field: "empresaId", condition: "==", value: user.empresaId },
-        { field: "fechaVenta", condition: ">=", value: d }
-    ]
 
-    const data = await TransactionService.getQueryMultiple(query);
-    const filterData = data.filter(i => !i.fechaAnulacion && i.fechaVenta <= h);
+    const getTransactionList = async () => {
+        setIsLoading(true);
+        let d = new Date(desde);
+        let h = new Date(hasta);
 
-    const sortedData = filterData.sort((a, b) => {
-        if (dayjs(a.FechaVenta) > dayjs(b.FechaVenta)) {
-            return -1;
-        }
-        if (dayjs(a.FechaVenta) < dayjs(b.FechaVenta)) {
-            return 1;
-        }
-        return 0;
-    });
-    setVentas(sortedData)
-    return sortedData;
-};
+        d = dayjs(d.setHours(0, 0, 0)).valueOf()
+        h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
-const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
+        const query = [
+            { field: "empresaId", condition: "==", value: user.empresaId },
+            { field: "fechaVenta", condition: ">=", value: d }
+        ]
 
-const getPayments = async () => {
-    setIsLoading(true);
-    let d = new Date(desde);
-    let h = new Date(hasta);
+        const data = await TransactionService.getQueryMultiple(query);
+        const filterData = data.filter(i => !i.fechaAnulacion && i.fechaVenta <= h);
 
-    d = dayjs(d.setHours(0, 0, 0)).valueOf()
-    h = dayjs(h.setHours(23, 59, 59)).valueOf()
+        const sortedData = filterData.sort((a, b) => {
+            if (dayjs(a.FechaVenta) > dayjs(b.FechaVenta)) {
+                return -1;
+            }
+            if (dayjs(a.FechaVenta) < dayjs(b.FechaVenta)) {
+                return 1;
+            }
+            return 0;
+        });
+        setVentas(sortedData)
+        return sortedData;
+    };
 
-    const query = [
-        { field: "empresaId", condition: "==", value: user.empresaId },
-        { field: "fechaPago", condition: ">=", value: d }
-    ]
+    const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
 
-    const data = await PaymentService.getQueryMultiple(query);
-    const filteredData = data.filter(i => i.fechaPago < h)
+    const getPayments = async () => {
+        setIsLoading(true);
+        let d = new Date(desde);
+        let h = new Date(hasta);
 
-    let eff = 0;
-    let deb = 0;
-    let tra = 0;
-    let cred = 0;
-    let tot = 0;
+        d = dayjs(d.setHours(0, 0, 0)).valueOf()
+        h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
-    filteredData.forEach(item => {
-        tot = tot + Number(item.monto);
+        const query = [
+            { field: "empresaId", condition: "==", value: user.empresaId },
+            { field: "fechaPago", condition: ">=", value: d }
+        ]
 
-        if (item.metodoPago === "Efectivo") {
-            eff = eff + Number(item.monto);
-        }
-        if (item.metodoPago === "Debito") {
-            deb = deb + Number(item.monto);
-        }
-        if (item.metodoPago === "Transferencia") {
-            tra = tra + Number(item.monto);
-        }
-        if (item.metodoPago === "Credito") {
-            cred = cred + Number(item.monto);
-        }
-    });
+        const data = await PaymentService.getQueryMultiple(query);
+        const filteredData = data.filter(i => i.fechaPago < h)
 
-    setPagos(filteredData);
-    setEfectivo(eff);
-    setDebito(deb);
-    setTransferencia(tra);
-    setCredito(cred);
-    setTotal(tot);
-    return filteredData;
-};
+        let eff = 0;
+        let deb = 0;
+        let tra = 0;
+        let cred = 0;
+        let tot = 0;
 
-const queryPayments = useFirebaseQuery(['pagos'], getPayments)
+        filteredData.forEach(item => {
+            tot = tot + Number(item.monto);
 
-const getDetalleVenta = async () => {
-    let d = new Date(desde);
-    let h = new Date(hasta);
+            if (item.metodoPago === "Efectivo") {
+                eff = eff + Number(item.monto);
+            }
+            if (item.metodoPago === "Debito") {
+                deb = deb + Number(item.monto);
+            }
+            if (item.metodoPago === "Transferencia") {
+                tra = tra + Number(item.monto);
+            }
+            if (item.metodoPago === "Credito") {
+                cred = cred + Number(item.monto);
+            }
+        });
 
-    d = dayjs(d.setHours(0, 0, 0)).valueOf()
-    h = dayjs(h.setHours(23, 59, 59)).valueOf()
+        setPagos(filteredData);
+        setEfectivo(eff);
+        setDebito(deb);
+        setTransferencia(tra);
+        setCredito(cred);
+        setTotal(tot);
+        return filteredData;
+    };
 
-    setDesde(d);
-    setHasta(h);
+    const queryPayments = useFirebaseQuery(['pagos'], getPayments)
 
-    const query = [
-        { field: "empresaId", condition: "==", value: user.empresaId }, 
-        { field: "fechaCreacion", condition: ">=", value: d }
-    ]
+    const getTotalsByName = (data) => {
+        const totals = data.reduce((acc, curr) => {
+          if (!acc[curr.descripcion]) {
+            acc[curr.descripcion] = 0;
+          }
+          acc[curr.descripcion] += Number(curr.cantidad);
+          return acc;
+        }, {});
+      
+        // Convert to array format
+        return Object.entries(totals).map(([descripcion, cantidad]) => ({
+            descripcion,
+            cantidad
+        }));
+      };
 
-    const data = await TransactionDetailService.getQueryMultiple(query);
-    const filteredData = data.filter(i => i.fechaCreacion < h)
+    const getDetalleVenta = async () => {
+        let d = new Date(desde);
+        let h = new Date(hasta);
 
-    setDetalleVentasFiltradas(filteredData);
-};
+        d = dayjs(d.setHours(0, 0, 0)).valueOf()
+        h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
-useEffect(() => {
-    queryPayments.refetch();
-    queryVentas.refetch();
-}, []);
+        setDesde(d);
+        setHasta(h);
+
+        const query = [
+            { field: "empresaId", condition: "==", value: user.empresaId },
+            { field: "fechaCreacion", condition: ">=", value: d }
+        ]
+
+        const data = await TransactionDetailService.getQueryMultiple(query);
+        const filteredData = data.filter(i => i.fechaCreacion < h)
+
+        const data_graph = getTotalsByName(filteredData);
+        
+        setDetalleVentas(data_graph)
+        setDetalleVentasFiltradas(filteredData);
+    };
+
+    useEffect(() => {
+        queryPayments.refetch();
+        queryVentas.refetch();
+        getDetalleVenta();
+    }, []);
+
+    useEffect(() => {
+        if (desde > hasta)
+            setHasta(desde);
+    }, [desde]);
+
+    useEffect(() => {
+        if (desde > hasta)
+            setDesde(hasta);
+    }, [hasta]);
+
 
     return (
         <>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2}>
-                
+
                 <Grid item sm={12}>
                     <Typography variant="h4" padding={3} textAlign="center" >Reportes</Typography>
                 </Grid>
 
                 <Grid item sm={12}>
                     <Card sx={{ p: 1 }} >
-                        <Grid container  columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
+                        <Grid container columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
                             <Grid item xs={3} sm={2}>
                                 <DatePicker
                                     id="date-desde"
@@ -167,7 +200,7 @@ useEffect(() => {
                                 />
                             </Grid>
                             <Grid item xs={3} sm={2}>
-                                <Button color="primary" variant="contained"  onClick={() => {
+                                <Button color="primary" variant="contained" onClick={() => {
                                     queryVentas.refetch();
                                     queryPayments.refetch();
                                     getDetalleVenta();
@@ -226,8 +259,8 @@ useEffect(() => {
                 </Grid>
 
                 <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Fecha</TableCell>
@@ -261,6 +294,27 @@ useEffect(() => {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                </Grid>
+
+                <Grid item sm={12}>
+                    <Card className="w-full">
+                        <Typography variant="h5" padding={2} textAlign="center" >Productos vendidos</Typography>
+                            <Card className="h-96 w-full">
+                                <ResponsiveContainer width="100%" height={500}>
+                                    <BarChart data={detalleVentas} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+                                        <XAxis dataKey="descripcion" angle={-25} textAnchor="end" height={50} interval={0}/>
+                                        <YAxis label={{ value: 'Unidades vendidas', angle: -90, position: 'insideLeft', offset: 10 }}/>
+                                        <Tooltip formatter={(value) => [`${value} unidades`, 'Unidades Vendidas']}
+                                        />
+                                        <Bar dataKey="cantidad"  radius={[4, 4, 0, 0]}>
+                                        {detalleVentas.map((entry, index) => (
+                                            <Cell cursor="pointer" fill={'#FF4841'} key={`cell-${index}`} />
+                                        ))}
+                                        </Bar>
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Card>
+                    </Card>
                 </Grid>
             </Grid >
         </>

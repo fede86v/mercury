@@ -142,16 +142,14 @@ const Productos = () => {
                 </Grid>
 
                 <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Descripcion</TableCell>
-                                    <TableCell align="left">Marca</TableCell>
+                                    <TableCell align="left">Codigo</TableCell>
                                     <TableCell align="left">Cantidad</TableCell>
                                     <TableCell align="left">Precio</TableCell>
-                                    <TableCell align="left">Fecha Actualizacion</TableCell>
-                                    <TableCell align="right">Codigo</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -162,12 +160,9 @@ const Productos = () => {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell align="left">{producto.descripcion}</TableCell>
-                                        <TableCell align="left">{producto.marca}</TableCell>
+                                        <TableCell align="left">{producto.codigo}</TableCell>
                                         <TableCell align="left">{producto.cantidad}</TableCell>
                                         <TableCell align="left">{"$" + producto.precioVenta}</TableCell>
-                                        <TableCell align="left">{dayjs(producto.fechaActualizacion).format('DD-M-YYYY')}</TableCell>
-                                        <TableCell align="left">{producto.codigo}</TableCell>
-
                                         <TableCell align="right">
                                             <>
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Productos/" + producto.id} >
