@@ -217,7 +217,7 @@ const MyGrid = (props) => {
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%', mb: 2, overflow: 'hidden' }}>
                 <EnhancedTableToolbar numSelected={selected.length} />
-                <TableContainer sx={{ overflowX: 'auto' }}>
+                <TableContainer sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
                     <Table
                         sx={{ minWidth: 750 }}
                         aria-labelledby="tableTitle"

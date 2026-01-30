@@ -51,7 +51,7 @@ const Clientes = () => {
                     <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Clientes</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <TableContainer component={Paper} sx={{ overflowX: 'auto', maxHeight: { xs: 'none', sm: 640 } }}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 640 } }}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>

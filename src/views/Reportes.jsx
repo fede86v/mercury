@@ -259,7 +259,7 @@ const Reportes = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TableContainer component={Paper} sx={{ overflowX: 'auto', maxHeight: { xs: 'none', sm: 440 } }}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 440 } }}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>

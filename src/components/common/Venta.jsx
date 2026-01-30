@@ -112,7 +112,7 @@ const Venta = ({ venta, setVenta, productos, vendedores, onInputDateChange }) =>
                     <Paper sx={{ p: { xs: 1, sm: 2 } }}  >
                         <Alerts alert={alert} />
                         <ItemVenta idVenta={venta.id} productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
-                        <TableContainer sx={{ overflowX: 'auto' }}>
+                        <TableContainer sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
                             <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                                 <TableHead>
                                     <TableRow>

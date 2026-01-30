@@ -175,7 +175,7 @@ const Ventas = () => {
                     </Grid>
                 </Grid>
                 <Grid item sm={12}>
-                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
