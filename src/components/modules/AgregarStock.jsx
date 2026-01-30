@@ -173,9 +173,9 @@ const AgregarStock = ({ productos, handleClose, open }) => {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid item sm={12}>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                    <Grid item xs={12}>
+                        <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 500 }} aria-label="simple table" size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Descripcion</TableCell>

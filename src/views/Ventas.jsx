@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
@@ -99,10 +99,7 @@ const Ventas = () => {
     };
 
     const query = useFirebaseQuery(['ventas'], getTransactionList);
-
-    useEffect(() => {
-        getPaymentsForToday();
-    }, []);
+    const queryPayments = useFirebaseQuery(['paymentsToday'], getPaymentsForToday);
 
     const handleDelete = async (itemAeliminar) => {
         setItemAeliminar(itemAeliminar);
@@ -116,6 +113,7 @@ const Ventas = () => {
         setDialogRemoveConfirmOpen(false);
         setItemAeliminar(null);
         query.refetch();
+        queryPayments.refetch();
     };
 
     return (
@@ -177,8 +175,8 @@ const Ventas = () => {
                     </Grid>
                 </Grid>
                 <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Total</TableCell>

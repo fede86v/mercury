@@ -138,8 +138,8 @@ const Productos = () => {
                 </Grid>
 
                 <Grid item sm={12}>
-                    <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', maxHeight: { xs: 'none', sm: 640 } }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Descripcion</TableCell>

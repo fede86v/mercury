@@ -88,7 +88,7 @@ const Config = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                <Typography variant="h4" sx={{padding:1}} textAlign="center" >Categorias</Typography>
+                <Typography variant="h4" sx={{ p: { xs: 1, sm: 2 }, textAlign: 'center', fontSize: { xs: '1.25rem', sm: '2rem' } }}>Categorias</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
@@ -138,7 +138,7 @@ const Config = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                <Typography variant="h4" sx={{padding:1}} textAlign="center" >Marcas</Typography>
+                <Typography variant="h4" sx={{ p: { xs: 1, sm: 2 }, textAlign: 'center', fontSize: { xs: '1.25rem', sm: '2rem' } }}>Marcas</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >

@@ -3,7 +3,6 @@ import { Box, Button, Backdrop } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useQuery } from '@tanstack/react-query';
 import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
@@ -56,7 +55,6 @@ const DetalleVenta = () => {
             }
             return 0;
         });
-        setProductos(sortedData)
         return sortedData;
     };
 
@@ -123,14 +121,10 @@ const DetalleVenta = () => {
     };
 
     const queryProductos = useFirebaseQuery(['products'], getProductList);
-    const queryVenta = useFirebaseQuery(["ventas"], getVenta, id);
-    const queryVendedores = useFirebaseQuery(['vendedor'], getEmployeeList);
+    const queryVenta = useFirebaseQuery(['venta', id], getVenta);
+    const queryVendedores = useFirebaseQuery(['vendedores'], getEmployeeList);
 
     useEffect(() => {
-        queryProductos.refetch();
-        queryVenta.refetch();
-        queryVendedores.refetch();
-
         return () => {
             setPagos([]);
             venta.detalleVenta.length = 0;
@@ -163,7 +157,7 @@ const DetalleVenta = () => {
             <AlertDialog open={openDialog} handleClose={handleClose} alert={alert} error={error} />
 
             <Box  >
-                <Venta venta={venta} setVenta={setVenta} productos={productos} vendedores={vendedores} onInputDateChange={onInputDateChange} />
+                <Venta venta={venta} setVenta={setVenta} productos={queryProductos.data ?? []} vendedores={queryVendedores.data ?? []} onInputDateChange={onInputDateChange} />
             </Box>
             <Box  >
                 <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />

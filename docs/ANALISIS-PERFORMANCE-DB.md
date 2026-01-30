@@ -93,3 +93,28 @@ Así, si el usuario ya visitó Clientes o Vendedores, al abrir DetalleVenta se r
 5. **QueryClient:** `staleTime` por defecto (por ejemplo 2 * 60 * 1000 ms) para reducir refetches automáticos.
 
 Con estos cambios se reducen de forma importante las lecturas a Firestore al navegar y al abrir/cerrar pantallas y formularios, manteniendo la funcionalidad actual.
+
+---
+
+## Segunda ronda de análisis (performance)
+
+### 6. DetalleVenta: refetch en mount y cache keys
+
+**Problema:** En DetalleVenta se había vuelto a usar un `useEffect` que hacía `queryProductos.refetch()`, `queryVenta.refetch()` y `queryVendedores.refetch()` al montar, provocando de nuevo **doble fetch** (useQuery ya hace el fetch inicial). Además:
+
+- La query de la venta usaba key `["ventas"]` y el tercer argumento era `id` (en React Query el tercer argumento son opciones, no un id), por lo que la caché no distinguía por venta.
+- La query de vendedores usaba key `['vendedor']` en lugar de `['vendedores']`, así que no se compartía caché con la vista Vendedores y se volvían a leer todos los empleados al abrir una venta.
+
+**Solución:** Eliminar el `useEffect` que hace refetch al montar. Usar key `['venta', id]` para la venta (y pasar solo dos argumentos a useFirebaseQuery). Usar key `['vendedores']` para la lista de empleados para reutilizar la misma caché que la vista Vendedores.
+
+### 7. DetalleVenta: estado duplicado (productos y vendedores)
+
+**Problema:** `getProductList` y `getEmployeeList` hacían `setProductos` y `setVendedores` además de devolver los datos. Los mismos datos quedaban en la caché de React Query y en estado local, generando re-renders extra y lógica duplicada.
+
+**Solución:** Dejar que las queries sean la única fuente de verdad: quitar `setProductos` y `setVendedores` de los getters, eliminar el estado local `productos` y `vendedores`, y pasar a `Venta` `queryProductos.data ?? []` y `queryVendedores.data ?? []`.
+
+### 8. Ventas: pagos del día fuera de React Query
+
+**Problema:** `getPaymentsForToday()` se llamaba en un `useEffect` al montar. Cada vez que se entraba a Ventas se hacía: (1) fetch de ventas por useQuery, (2) fetch de pagos por el efecto. Al volver a la pantalla dentro del `staleTime`, las ventas no se refetcheaban pero los pagos sí, porque no estaban en una query.
+
+**Solución:** Usar `useFirebaseQuery(['paymentsToday'], getPaymentsForToday)` y quitar el `useEffect`. Así los pagos del día también se cachean y, dentro del `staleTime`, no se vuelven a leer al reentrar a Ventas. Tras anular una venta se llama a `queryPayments.refetch()` junto con `query.refetch()` para actualizar totales.

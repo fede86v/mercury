@@ -171,15 +171,15 @@ const Reportes = () => {
     return (
         <>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2}>
-                
-                <Grid item sm={12}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Reportes</Typography>
+
+                <Grid item xs={12}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Reportes</Typography>
                 </Grid>
 
                 <Grid item xs={12}>
                     <Card sx={{ p: 1 }} >
-                        <Grid container  columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
-                            <Grid item xs={3} sm={2}>
+                        <Grid container columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
+                            <Grid item xs={6} sm={2}>
                                 <DatePicker
                                     id="date-desde"
                                     label="Desde"
@@ -200,7 +200,7 @@ const Reportes = () => {
                                 />
                             </Grid>
                             <Grid item xs={3} sm={2}>
-                                <Button color="primary" variant="contained"  onClick={() => {
+                                <Button color="primary" variant="contained" onClick={() => {
                                     queryVentas.refetch();
                                     queryPayments.refetch();
                                     getDetalleVenta();
@@ -258,9 +258,9 @@ const Reportes = () => {
                     </Grid>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', maxHeight: { xs: 'none', sm: 440 } }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Fecha</TableCell>

@@ -50,7 +50,7 @@ const Vendedor = ({ persona, setPersona, vendedores }) => {
                             value={id} name="id"
                             onChange={(e) => { setPersona({ ...persona, id: e.target.value }) }}
                         >
-                            {(vendedoresList ?? []).map((dt) => (
+                            {(vendedores ?? []).map((dt) => (
                                 <MenuItem key={dt.id} value={dt.id}>{dt.nombre} {dt.apellido}</MenuItem>
                             ))}
                         </Select>

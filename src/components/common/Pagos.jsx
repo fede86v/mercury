@@ -136,8 +136,8 @@ const Pagos = ({ idVenta, pagos, setPagos, montoTotal }) => {
                                 </Grid>) : null}
 
                         </Grid>
-                        <TableContainer>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableContainer sx={{ overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Metodo de Pago</TableCell>
