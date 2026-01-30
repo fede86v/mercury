@@ -130,11 +130,6 @@ const getDetalleVenta = async () => {
     setDetalleVentasFiltradas(filteredData);
 };
 
-useEffect(() => {
-    queryPayments.refetch();
-    queryVentas.refetch();
-}, []);
-
     return (
         <>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2}>

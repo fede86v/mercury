@@ -81,13 +81,7 @@ const Productos = () => {
     const queryMarcas = useQuery(['marcas'], getMarcas);
 
     useEffect(() => {
-        query.refetch();
-        queryProdTypes.refetch();
-        queryMarcas.refetch();
-    }, []);
-
-    useEffect(() => {
-        query.refetch();
+        if (success) query.refetch();
     }, [success]);
 
     const handleNewProduct = () => {

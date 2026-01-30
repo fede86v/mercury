@@ -73,11 +73,6 @@ const Register = () => {
     const query = useQuery(['companies'], getCompanies);
 
     useEffect(() => {
-        setError(null);
-        query.refetch();
-    }, []);
-
-    useEffect(() => {
         if (!empresa) return;
         const value = companies.filter(c => c.nombre === empresa)[0].id
         const target = { name: "empresaId", value: value };

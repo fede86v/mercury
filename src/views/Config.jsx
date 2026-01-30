@@ -78,11 +78,6 @@ const Config = () => {
         setExpanded(isExpanded ? panel : false);
       };
 
-    useEffect(() => {
-        queryProdTypes.refetch();
-        queryMarcas.refetch();
-    }, []);
-
     return (
         <>
             {openTipo ? <AgregarTipoProducto open={openTipo} handleClose={()=>handleClose("Categoria")} tipoProducto={tipoProducto} /> : null}

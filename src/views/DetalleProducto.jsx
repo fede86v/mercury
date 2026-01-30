@@ -62,18 +62,14 @@ const DetalleProducto = () => {
         return sortedData;
     };
 
-    const query = useQuery(['producto'], getProducto, id);
+    const query = useQuery(['producto', id], getProducto);
     const queryProdTypes = useQuery(['productTypes'], getCategories);
     const queryMarcas = useQuery(['marcas'], getMarcas);
 
     useEffect(() => {
-        query.refetch();
-        queryProdTypes.refetch();
-        queryMarcas.refetch();
-
         return () => {
             setProducto(DEFAULT_PRODUCT);
-        }
+        };
     }, []);
 
     useEffect(() => {

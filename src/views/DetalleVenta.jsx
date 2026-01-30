@@ -93,16 +93,14 @@ const DetalleVenta = () => {
     };
 
     const queryProductos = useQuery(['products'], getProductList);
-    const queryVenta = useQuery(["ventas"], getVenta, id);
+    const queryVenta = useQuery(['venta', id], getVenta, { enabled: true });
 
     useEffect(() => {
-        queryProductos.refetch();
-        queryVenta.refetch();
         return () => {
             setPagos([]);
             venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
-        }
+        };
     }, []);
 
     useEffect(() => {

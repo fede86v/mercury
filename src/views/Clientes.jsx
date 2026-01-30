@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarPersona from '../components/modules/AgregarPersona'
 import {
@@ -31,10 +31,6 @@ const Clientes = () => {
     };
 
     const query = useQuery(['clientes'], getClientList);
-
-    useEffect(() => {
-        query.refetch();
-    }, []);
 
     const handleNewClient = () => {
         setOpen(true);

@@ -21,36 +21,28 @@ const Cliente = ({ persona, setPersona }) => {
         setClientes(data)
         return data;
     };
-    const query = useQuery(['client'], getClientList);
+    const query = useQuery(['clientes'], getClientList);
 
     const handleNewClient = () => {
         setOpen(true);
     };
     const handleClose = async () => {
-        await getClientList();
-        
+        await query.refetch();
         setAlert(null);
         setOpen(false);
     };
 
-    useEffect(() => {
-        if (numeroDocumento) {
-            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
-            if (client) {
-                setPersona(client);
-            }
-        }
-    }, [numeroDocumento]);
+    const clientesList = query.data ?? clientes;
 
     useEffect(() => {
-        query.refetch();
-        if (numeroDocumento) {
-            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
+        if (numeroDocumento && clientesList?.length) {
+            const client = clientesList.find(c => c.numeroDocumento === numeroDocumento);
             if (client) {
                 setPersona(client);
             }
         }
-    }, []);
+    }, [numeroDocumento, clientesList]);
+
 
     return (
         <>

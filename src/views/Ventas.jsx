@@ -95,7 +95,6 @@ const Ventas = () => {
     const query = useQuery(['ventas'], getTransactionList);
 
     useEffect(() => {
-        query.refetch();
         getPaymentsForToday();
     }, []);
 

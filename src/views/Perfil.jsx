@@ -22,14 +22,12 @@ const Perfil = () => {
         return data;
     };
 
-    const query = useQuery(["companies"], getEmpresa, user.empresaId);
+    const query = useQuery(['empresa', user?.empresaId], getEmpresa, { enabled: !!user?.empresaId });
 
     useEffect(() => {
-        query.refetch();
-
         return () => {
             setEmpresa(DEFAULT_COMPANY);
-        }
+        };
     }, []);
 
     return (

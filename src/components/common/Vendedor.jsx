@@ -29,34 +29,21 @@ const Vendedor = ({ persona, setPersona }) => {
         return sortedData;
     };
 
-    const query = useQuery(['vendedor'], getEmployeeList);
+    const query = useQuery(['vendedores'], getEmployeeList);
+
+    const vendedoresList = query.data ?? vendedores;
 
     useEffect(() => {
-        if (id) {
+        if (id && vendedoresList?.length) {
             if (id === 0) {
-                const persona = vendedores.find(v => v.nombre.toLower() === "caja");
-                if (persona) {
-                    setPersona(persona);
-                }
-            }
-            else {
-                const persona = vendedores.find(v => v.id === id);
-                if (persona) {
-                    setPersona(persona);
-                }
+                const found = vendedoresList.find(v => v.nombre?.toLowerCase() === "caja");
+                if (found) setPersona(found);
+            } else {
+                const found = vendedoresList.find(v => v.id === id);
+                if (found) setPersona(found);
             }
         }
-    }, [id]);
-
-    useEffect(() => {
-        query.refetch();
-        if (id === 0) {
-            const persona = vendedores.find(v => v.nombre.toLower() === "caja");
-            if (persona) {
-                setPersona(persona);
-            }
-        }
-    }, []);
+    }, [id, vendedoresList]);
 
     return (
         <>
@@ -77,7 +64,7 @@ const Vendedor = ({ persona, setPersona }) => {
                             value={id} name="id"
                             onChange={(e) => { setPersona({ ...persona, id: e.target.value }) }}
                         >
-                            {vendedores.map((dt) => (
+                            {(vendedoresList ?? []).map((dt) => (
                                 <MenuItem key={dt.id} value={dt.id}>{dt.nombre} {dt.apellido}</MenuItem>
                             ))}
                         </Select>
