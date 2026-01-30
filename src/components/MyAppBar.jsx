@@ -25,21 +25,21 @@ function MyAppBar({ title, openCloseDrawer, drawerWidth, drawerOpen }) {
             <CssBaseline />
             <AppBar position="fixed"
                 sx={{
-                    width: { m: `calc(100% - ${drawerWidth}px)` },
-                    ml: { sm: `${drawerWidth}px` },
+                    width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
+                    ml: { xs: 0, sm: `${drawerWidth}px` },
                 }}>
-                <Toolbar>
+                <Toolbar sx={{ minHeight: { xs: 48, sm: 64 }, px: { xs: 1, sm: 2 } }}>
                     <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
                         aria-label="menu"
                         onClick={() => openCloseDrawer()}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
+                        sx={{ mr: 1, display: { xs: 'block', sm: 'none' } }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, paddingLeft: 30 }}>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, pl: { xs: 0, sm: 3 }, fontSize: { xs: '1rem', sm: '1.25rem' }, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {user ? user.empresa : title}
                     </Typography>
                     {

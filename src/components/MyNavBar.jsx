@@ -92,7 +92,7 @@ const MyNavBar = ({ title }) => {
     };
 
     return (
-        <div sx={{ m2: 2 }}>
+        <Box sx={{ m: 2 }}>
             <List disablePadding>
                 <ListItem key="titleId" sx={{ ...item, ...itemCategory, fontSize: 22 }}>
                     {title}
@@ -129,7 +129,7 @@ const MyNavBar = ({ title }) => {
                     </ ListItemButton>
                 </ListItem>
             </List>
-        </div>
+        </Box>
     )
 }
 

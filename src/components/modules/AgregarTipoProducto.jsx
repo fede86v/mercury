@@ -39,9 +39,9 @@ const AgregarTipoProducto = (props) => {
     }, [success]);
 
     return (
-        <Dialog open={props.open} >
+        <Dialog open={props.open} fullWidth maxWidth="sm" PaperProps={{ sx: { m: { xs: 1 } } }}>
             <DialogTitle>Categoria de Producto</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
                 <DialogContentText>
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />

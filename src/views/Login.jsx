@@ -86,17 +86,26 @@ const Login = () => {
     return (
         <>
             <form onSubmit={processLogin}>
-                <Box display="flex"
-                    flexDirection={"column"}
-                    alignItems={"stretch"}
-                    maxWidth={600}
-                    justifyContent={"center"}
-                    margin={"auto"}
-                    marginTop={20}
-                    padding={3} sx={{ boxShadow: 3 }}
-                    borderRadius={3} borderColor="InactiveBorder" >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'stretch',
+                        width: '100%',
+                        maxWidth: 600,
+                        mx: 'auto',
+                        mt: { xs: 2, sm: 3 },
+                        px: { xs: 2, sm: 3 },
+                        py: 3,
+                        boxShadow: 3,
+                        borderRadius: 3,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        boxSizing: 'border-box',
+                    }}
+                >
                     {/* Title */}
-                    <Typography variant="h4" padding={3} textAlign="center" >Login</Typography>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Login</Typography>
 
                     {/* Alerts */}
                     {

@@ -48,15 +48,15 @@ const Clientes = () => {
         <>
             {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewClient(); }}>Crear</Button>
+                <Grid item xs={12} sm={2}>
+                    <Button color="primary" variant="contained" fullWidth sx={{ mb: { xs: 1, sm: 0 } }} onClick={() => { handleNewClient(); }}>Crear</Button>
                 </Grid>
-                <Grid item sm={10}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
+                <Grid item xs={12} sm={10}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Clientes</Typography>
                 </Grid>
-                <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Nombre</TableCell>

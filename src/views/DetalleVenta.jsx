@@ -136,7 +136,7 @@ const DetalleVenta = () => {
                 <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />
             </Box>
 
-            <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1, p: { xs: 1, sm: 2 } }}>
                 <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
                 {!id ? (<Button color="primary" variant="contained" onClick={() => handleSave()}
                     endIcon={< SaveIcon />} >Guardar</Button>) : null}

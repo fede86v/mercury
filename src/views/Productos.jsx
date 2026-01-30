@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarProducto from '../components/modules/AgregarProducto'
 import {
-    Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
+    Grid, Box, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
     Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -125,13 +125,15 @@ const Productos = () => {
             {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
             {openStock ? <AgregarStock open={openStock} productos={productos} handleClose={handleCloseStock} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={12}>
-                    <Button color="primary" sx={{ mr: '10px' }} variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
-                    <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
-                    <ExportToExcel apiData={productos} fileName={"productos"} label={"Exportar Productos"} />
+                <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                        <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
+                        <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
+                        <ExportToExcel apiData={productos} fileName={"productos"} label={"Exportar Productos"} />
+                    </Box>
                 </Grid>
-                <Grid item sm={12}>
-                    <Typography variant="h4" textAlign="center" >Productos</Typography>
+                <Grid item xs={12}>
+                    <Typography variant="h4" sx={{ textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Productos</Typography>
                 </Grid>
 
                 <Grid item xs={12} sm={3}>
@@ -141,9 +143,9 @@ const Productos = () => {
                     </Card>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Descripcion</TableCell>

@@ -27,7 +27,14 @@ const Main = (props) => {
             <MySideBar container={container} open={open} openCloseDrawer={openCloseDrawer} drawerWidth={drawerWidth} title={title} />
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
+                sx={{
+                    flexGrow: 1,
+                    p: { xs: 1, sm: 2, md: 3 },
+                    width: { xs: '100%', sm: `calc(100% - ${drawerWidth}px)` },
+                    maxWidth: '100%',
+                    overflowX: 'hidden',
+                    boxSizing: 'border-box',
+                }}
             >
                 <Toolbar />
                 <Backdrop

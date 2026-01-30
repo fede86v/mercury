@@ -118,9 +118,9 @@ const AgregarStock = ({ productos, handleClose, open }) => {
     };
 
     return (
-        <Dialog open={open} >
+        <Dialog open={open} fullWidth maxWidth="sm" PaperProps={{ sx: { m: { xs: 1 }, maxHeight: { xs: 'calc(100% - 16px)', sm: '90vh' } } }}>
             <DialogTitle>Stock</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ overflowY: 'auto', px: { xs: 2, sm: 3 } }}>
                 <DialogContentText>
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />

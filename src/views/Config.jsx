@@ -100,9 +100,9 @@ const Config = () => {
                         <Grid item sm={12}>
                             <Button color="primary" variant="contained" onClick={() => { handleNew("Categoria"); }}>Crear Nuevo</Button>
                         </Grid>
-                        <Grid item sm={12}>
-                            <TableContainer component={Paper} sx={{maxHeight: 450 }} >
-                                <Table sx={{ minWidth: 650}} aria-label="simple table" stickyHeader >
+                        <Grid item xs={12}>
+                            <TableContainer component={Paper} sx={{ maxHeight: { xs: 'none', sm: 450 }, overflowX: 'auto' }}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell align="left">Nombre</TableCell>
@@ -150,9 +150,9 @@ const Config = () => {
                         <Grid item sm={12}>
                             <Button color="primary" variant="contained" onClick={() => { handleNew("Marca"); }}>Crear Nuevo</Button>
                         </Grid>
-                        <Grid item sm={12}>
-                        <TableContainer component={Paper} sx={{maxHeight: 450 }} >
-                            <Table sx={{ minWidth: 650}} aria-label="simple table" stickyHeader >
+                        <Grid item xs={12}>
+                        <TableContainer component={Paper} sx={{ maxHeight: { xs: 'none', sm: 450 }, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Nombre</TableCell>

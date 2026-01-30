@@ -139,14 +139,14 @@ useEffect(() => {
         <>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2}>
                 
-                <Grid item sm={12}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Reportes</Typography>
+                <Grid item xs={12}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Reportes</Typography>
                 </Grid>
 
-                <Grid item sm={12}>
+                <Grid item xs={12}>
                     <Card sx={{ p: 1 }} >
-                        <Grid container  columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
-                            <Grid item xs={3} sm={2}>
+                        <Grid container columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
+                            <Grid item xs={6} sm={2}>
                                 <DatePicker
                                     id="date-desde"
                                     label="Desde"
@@ -156,7 +156,7 @@ useEffect(() => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-                            <Grid item xs={3} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <DatePicker
                                     id="date-hasta"
                                     label="Hasta"
@@ -166,27 +166,27 @@ useEffect(() => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-                            <Grid item xs={3} sm={2}>
-                                <Button color="primary" variant="contained"  onClick={() => {
+                            <Grid item xs={6} sm={2}>
+                                <Button color="primary" variant="contained" fullWidth onClick={() => {
                                     queryVentas.refetch();
                                     queryPayments.refetch();
                                     getDetalleVenta();
                                 }}  >Buscar</Button>
                             </Grid>
-                            <Grid item xs={3} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <ExportToExcel apiData={ventas} fileName={"Ventas"} label={"Exp. Ventas"} />
                             </Grid>
-                            <Grid item xs={3} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <ExportToExcel apiData={pagos} fileName={"Pagos"} label={"Exp. Pagos"} />
                             </Grid>
-                            <Grid item xs={4} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exp. Detalle"} />
                             </Grid>
                         </Grid>
                     </Card>
                 </Grid>
 
-                <Grid item sm={12}>
+                <Grid item xs={12}>
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={1} >
                         <Grid item xs={12} sm={4}>
                             <Card sx={{ p: 1 }} >
@@ -225,9 +225,9 @@ useEffect(() => {
                     </Grid>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Fecha</TableCell>
