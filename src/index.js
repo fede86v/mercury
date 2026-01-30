@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import App from './App.jsx';
-import UserProvider from './context/UserProvider';
+import UserProvider from './context/UserProvider.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

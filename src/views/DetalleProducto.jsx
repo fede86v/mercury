@@ -33,6 +33,7 @@ const DetalleProducto = () => {
         setProducto(data);
         return data;
     };
+    
     const getCategories = async () => {
         const data = await ProductTypeService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {
@@ -47,6 +48,7 @@ const DetalleProducto = () => {
         setCategories(sortedData);
         return sortedData;
     };
+
     const getMarcas = async () => {
         const data = await BrandService.getQuery("empresaId", "==", user.empresaId);
         const sortedData = data.sort((a, b) => {

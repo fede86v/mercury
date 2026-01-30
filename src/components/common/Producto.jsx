@@ -47,7 +47,7 @@ const Producto = ({ producto, onInputChange, tipoProductos, marcas }) => {
             {/* cantidad */}
             <Grid item xs={6} sm={6}>
                 <TextField id="txt-cantidad" label="Cantidad" variant="standard"
-                    value={Number(cantidad)} name="cantidad" required type="number"
+                    value={cantidad} name="cantidad" required type="number"
                     onChange={onInputChange}
                     sx={{ width: '100%' }} />
             </Grid>

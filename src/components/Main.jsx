@@ -6,7 +6,7 @@ import MyAppBar from './MyAppBar'
 import MySideBar from './MySideBar'
 import { useFirestore } from '../utils/useFirestore.js';
 
-const drawerWidth = 240;
+const drawerWidth = 180;
 
 const Main = (props) => {
     const { window } = props;

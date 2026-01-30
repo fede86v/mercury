@@ -1,49 +1,35 @@
 import React, { useEffect, useContext, useState } from 'react'
 import { Grid, FormControl, Typography, Select, InputLabel, MenuItem } from '@mui/material'
-import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
-import { EmployeeService } from '../../utils/databaseService'
 import { UserContext } from '../../context/UserProvider'
 import Alerts from './Alerts'
 
-const Vendedor = ({ persona, setPersona }) => {
+const Vendedor = ({ persona, setPersona, vendedores }) => {
 
     const { id } = persona;
     const { user } = useContext(UserContext);
-    const [vendedores, setVendedores] = useState([]);
     const [alert, setAlert] = useState(null)
-
-    const getEmployeeList = async () => {
-        const data = await EmployeeService.getQuery("empresaId", "==", user.empresaId);
-        const filtered = data.filter(i => !i.fechaInactivo);
-        const sortedData = filtered.sort((a, b) => {
-            if (a.nombre < b.nombre) {
-                return -1;
-            }
-            if (a.nombre > b.nombre) {
-                return 1;
-            }
-            return 0;
-        });
-        setVendedores(sortedData)
-        return sortedData;
-    };
-
-    const query = useQuery(['vendedores'], getEmployeeList);
-
-    const vendedoresList = query.data ?? vendedores;
+    
 
     useEffect(() => {
-        if (id && vendedoresList?.length) {
-            if (id === 0) {
-                const found = vendedoresList.find(v => v.nombre?.toLowerCase() === "caja");
-                if (found) setPersona(found);
-            } else {
-                const found = vendedoresList.find(v => v.id === id);
-                if (found) setPersona(found);
+        if (vendedores.length > 0) {
+            if (id === "0") {
+                const persona_caja = vendedores.find(v => v.email === "");
+                const persona_user = vendedores.find(v => v.email === user.email);
+                console.log(persona_user)
+                console.log(persona_caja)
+                if (persona_user || persona_caja) {
+                setPersona(persona_user ?? persona_caja);
+                }
+            }
+            else {
+                const persona = vendedores.find(v => v.id === id);
+                if (persona) {
+                    setPersona(persona);
+                }
             }
         }
-    }, [id, vendedoresList]);
+    }, [id]);
 
     return (
         <>
@@ -78,6 +64,7 @@ const Vendedor = ({ persona, setPersona }) => {
 
 Vendedor.propTypes = {
     persona: PropTypes.object.isRequired,
+    vendedores: PropTypes.array.isRequired,
     setPersona: PropTypes.func.isRequired
 }
 
