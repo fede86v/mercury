@@ -13,9 +13,7 @@ import AgregarTipoProducto from '../components/modules/AgregarTipoProducto';
 import AgregarMarca from '../components/modules/AgregarMarca';
 
 const Config = () => {
-    const [tipoProductos, setTipoProductos] = useState([]);
     const [tipoProducto, setTipoProducto] = useState(null);
-    const [marcas, setMarcas] = useState([]);
     const [marca, setMarca] = useState(null);
     const [openTipo, setOpenTipo] = useState(false);
     const [openMarca, setOpenMarca] = useState(false);
@@ -33,7 +31,6 @@ const Config = () => {
             }
             return 0;
           });
-        setTipoProductos(sortedData);
         return sortedData;
     };
     const getMarcas = async () => {
@@ -47,7 +44,6 @@ const Config = () => {
             }
             return 0;
           });
-        setMarcas(sortedData);
         return sortedData;
     };
 
@@ -106,7 +102,7 @@ const Config = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {tipoProductos.map((tp) => (
+                                        {(queryProdTypes.data ?? []).map((tp) => (
                                             <TableRow
                                                 key={tp.id}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -156,7 +152,7 @@ const Config = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {marcas.map((m) => (
+                                    {(queryMarcas.data ?? []).map((m) => (
                                         <TableRow
                                             key={m.id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

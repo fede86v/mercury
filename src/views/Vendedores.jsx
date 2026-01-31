@@ -14,7 +14,6 @@ import { usePerson } from '../utils'
 import { UserContext } from '../context/UserProvider';
 
 const Vendedores = () => {
-    const [vendedores, setVendedores] = useState([]);
     const [open, setOpen] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
@@ -32,7 +31,6 @@ const Vendedores = () => {
             }
             return 0;
         });
-        setVendedores(sortedData)
         return sortedData;
     };
 
@@ -78,7 +76,7 @@ const Vendedores = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {vendedores.map((item) => (
+                                {(query.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

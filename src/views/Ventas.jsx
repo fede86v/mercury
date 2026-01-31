@@ -15,20 +15,13 @@ import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { useLoading } from '../utils/LoadingContext';
 
 const Ventas = () => {
-    const [ventas, setVentas] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
-    const [totalHoy, setTotalHoy] = useState(0);
-    const [debito, setDebito] = useState(0);
-    const [transferencia, setTransferencia] = useState(0);
-    const [credito, setCredito] = useState(0);
-    const [efectivo, setEfectivo] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
     const { setIsLoading } = useLoading();
 
     const getTransactionList = async () => {
-        setIsLoading(true);
         let desde = new Date();
         desde = dayjs(desde.setHours(0,0,0)).valueOf();
 
@@ -50,19 +43,10 @@ const Ventas = () => {
             }
             return 0;
         });
-        let total = 0;
-
-        sortedData.forEach(item => {
-            total = total + Number(item.total);
-        });
-
-        setTotalHoy(total);
-        setVentas(sortedData)
         return sortedData;
     };
 
     const getPaymentsForToday = async () => {
-        setIsLoading(true);
         let desde = new Date();
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
@@ -71,35 +55,21 @@ const Ventas = () => {
 
         const data = await PaymentService.getQueryMultiple(query);
         const filterData = data.filter(i => !i.fechaAnulacion && (i.fechaPago >= desde));
-
-        let eff = 0;
-        let deb = 0;
-        let tra = 0;
-        let cred = 0;
-
-        filterData.forEach(item => {
-            if (item.metodoPago === "Efectivo") {
-                eff = eff + Number(item.monto);
-            }
-            if (item.metodoPago === "Debito") {
-                deb = deb + Number(item.monto);
-            }
-            if (item.metodoPago === "Transferencia") {
-                tra = tra + Number(item.monto);
-            }
-            if (item.metodoPago === "Credito") {
-                cred = cred + Number(item.monto);
-            }
-        });
-        setEfectivo(eff);
-        setDebito(deb);
-        setTransferencia(tra);
-        setCredito(cred);
-        setIsLoading(false);
+        return filterData;
     };
 
     const query = useFirebaseQuery(['ventas'], getTransactionList);
     const queryPayments = useFirebaseQuery(['paymentsToday'], getPaymentsForToday);
+
+    // Calcular totales de ventas
+    const totalHoy = (query.data ?? []).reduce((total, item) => total + Number(item.total), 0);
+    
+    // Calcular totales de pagos
+    const pagosHoy = queryPayments.data ?? [];
+    const efectivo = pagosHoy.filter(p => p.metodoPago === "Efectivo").reduce((sum, p) => sum + Number(p.monto), 0);
+    const debito = pagosHoy.filter(p => p.metodoPago === "Debito").reduce((sum, p) => sum + Number(p.monto), 0);
+    const transferencia = pagosHoy.filter(p => p.metodoPago === "Transferencia").reduce((sum, p) => sum + Number(p.monto), 0);
+    const credito = pagosHoy.filter(p => p.metodoPago === "Credito").reduce((sum, p) => sum + Number(p.monto), 0);
 
     const handleDelete = async (itemAeliminar) => {
         setItemAeliminar(itemAeliminar);
@@ -187,7 +157,7 @@ const Ventas = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventas && ventas.map((item) => (
+                                {(query.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

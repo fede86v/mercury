@@ -16,13 +16,9 @@ import AgregarStock from '../components/modules/AgregarStock';
 import {ExportToExcel} from './../utils/exportToExcel';
 
 const Productos = () => {
-    const [productos, setProductos] = useState([]);
     const [productoAeliminar, setProductoAeliminar] = useState(null);
-    const [tipoProductos, setTipoProductos] = useState([]);
-    const [marcas, setMarcas] = useState([]);
     const [openProducto, setOpenProducto] = useState(false);
     const [openStock, setOpenStock] = useState(false);
-    const [stock, setStock] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, success } = useProduct();
@@ -39,12 +35,6 @@ const Productos = () => {
             }
             return 0;
         });
-        let cantStock = 0;
-        sortedData.forEach(item => {
-            cantStock = cantStock + Number(item.cantidad);
-        });
-        setStock(cantStock);
-        setProductos(sortedData)
         return sortedData;
     };
     const getProductTypeList = async () => {
@@ -58,7 +48,6 @@ const Productos = () => {
             }
             return 0;
         });
-        setTipoProductos(sortedData);
         return sortedData;
     };
     const getMarcas = async () => {
@@ -72,13 +61,15 @@ const Productos = () => {
             }
             return 0;
         });
-        setMarcas(sortedData);
         return sortedData;
     };
 
     const query = useQuery(['products'], getProductList);
     const queryProdTypes = useQuery(['productTypes'], getProductTypeList);
     const queryMarcas = useQuery(['marcas'], getMarcas);
+
+    // Calcular stock total
+    const stock = (query.data ?? []).reduce((total, item) => total + Number(item.cantidad), 0);
 
     useEffect(() => {
         if (success) query.refetch();
@@ -116,14 +107,14 @@ const Productos = () => {
 
     return (
         <>
-            {openProducto ? <AgregarProducto open={openProducto} tipoProductos={tipoProductos} marcas={marcas} handleClose={handleCloseProducto} /> : null}
-            {openStock ? <AgregarStock open={openStock} productos={productos} handleClose={handleCloseStock} /> : null}
+            {openProducto ? <AgregarProducto open={openProducto} tipoProductos={queryProdTypes.data ?? []} marcas={queryMarcas.data ?? []} productos={query.data ?? []} handleClose={handleCloseProducto} /> : null}
+            {openStock ? <AgregarStock open={openStock} productos={query.data ?? []} handleClose={handleCloseStock} /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
                         <Button color="primary" variant="contained" onClick={() => { handleNewProduct(); }}>Crear</Button>
                         <Button color="secondary" variant="contained" onClick={() => { handleNewStock(); }}>Agregar Stock</Button>
-                        <ExportToExcel apiData={productos} fileName={"productos"} label={"Exportar Productos"} />
+                        <ExportToExcel apiData={query.data ?? []} fileName={"productos"} label={"Exportar Productos"} />
                     </Box>
                 </Grid>
                 <Grid item xs={12}>
@@ -150,7 +141,7 @@ const Productos = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {productos.map((producto) => (
+                                {(query.data ?? []).map((producto) => (
                                     <TableRow
                                         key={producto.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

@@ -27,14 +27,12 @@ const DEFAULT_VENTA = {
 const DetalleVenta = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [productos, setProductos] = useState([]);
     const { formState: venta, setFormState: setVenta, onInputDateChange } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success, mutation, onSetAlert, onSetError } = useTransaction();
     const { user } = useContext(UserContext);
     const { total } = venta;
     const [openDialog, setOpenDialog] = useState(false);
-    const [vendedores, setVendedores] = useState([]);
     const { setIsLoading } = useLoading();
 
     const handleClose = async () => {
@@ -60,7 +58,6 @@ const DetalleVenta = () => {
 
     const getVenta = async () => {
         if (id) {
-            setIsLoading(true);
             const data = await TransactionService.getOne(id);
             let cliente = await ClientService.getOne(data.clienteId);
             if (!cliente) {
@@ -103,9 +100,6 @@ const DetalleVenta = () => {
             }
             return 0;
         });
-
-        setVendedores(sortedData)
-
         return sortedData;
     };
 

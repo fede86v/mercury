@@ -15,15 +15,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const Reportes = () => {
 
-    const [ventas, setVentas] = useState([]);
-    const [pagos, setPagos] = useState([]);
     const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
     const [detalleVentas, setDetalleVentas] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [debito, setDebito] = useState(0);
-    const [transferencia, setTransferencia] = useState(0);
-    const [credito, setCredito] = useState(0);
-    const [efectivo, setEfectivo] = useState(0);
     const [desde, setDesde] = useState(new Date());
     const [hasta, setHasta] = useState(new Date());
     const { user } = useContext(UserContext);
@@ -31,7 +24,6 @@ const Reportes = () => {
     
 
     const getTransactionList = async () => {
-        setIsLoading(true);
         let d = new Date(desde);
         let h = new Date(hasta);
 
@@ -55,14 +47,12 @@ const Reportes = () => {
             }
             return 0;
         });
-        setVentas(sortedData)
         return sortedData;
     };
 
     const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
 
     const getPayments = async () => {
-        setIsLoading(true);
         let d = new Date(desde);
         let h = new Date(hasta);
 
@@ -76,40 +66,20 @@ const Reportes = () => {
 
         const data = await PaymentService.getQueryMultiple(query);
         const filteredData = data.filter(i => i.fechaPago < h)
-
-        let eff = 0;
-        let deb = 0;
-        let tra = 0;
-        let cred = 0;
-        let tot = 0;
-
-        filteredData.forEach(item => {
-            tot = tot + Number(item.monto);
-
-            if (item.metodoPago === "Efectivo") {
-                eff = eff + Number(item.monto);
-            }
-            if (item.metodoPago === "Debito") {
-                deb = deb + Number(item.monto);
-            }
-            if (item.metodoPago === "Transferencia") {
-                tra = tra + Number(item.monto);
-            }
-            if (item.metodoPago === "Credito") {
-                cred = cred + Number(item.monto);
-            }
-        });
-
-        setPagos(filteredData);
-        setEfectivo(eff);
-        setDebito(deb);
-        setTransferencia(tra);
-        setCredito(cred);
-        setTotal(tot);
         return filteredData;
     };
 
     const queryPayments = useFirebaseQuery(['pagos'], getPayments)
+
+    // Calcular totales de pagos
+    const pagos = queryPayments.data ?? [];
+    const total = pagos.reduce((tot, item) => tot + Number(item.monto), 0);
+    const efectivo = pagos.filter(p => p.metodoPago === "Efectivo").reduce((sum, p) => sum + Number(p.monto), 0);
+    const debito = pagos.filter(p => p.metodoPago === "Debito").reduce((sum, p) => sum + Number(p.monto), 0);
+    const transferencia = pagos.filter(p => p.metodoPago === "Transferencia").reduce((sum, p) => sum + Number(p.monto), 0);
+    const credito = pagos.filter(p => p.metodoPago === "Credito").reduce((sum, p) => sum + Number(p.monto), 0);
+    
+    const ventas = queryVentas.data ?? [];
 
     const getTotalsByName = (data) => {
         const totals = data.reduce((acc, curr) => {
@@ -151,11 +121,6 @@ const Reportes = () => {
         setDetalleVentasFiltradas(filteredData);
     };
 
-    useEffect(() => {
-        queryPayments.refetch();
-        queryVentas.refetch();
-        getDetalleVenta();
-    }, []);
 
     useEffect(() => {
         if (desde > hasta)
@@ -207,10 +172,10 @@ const Reportes = () => {
                                 }}  >Buscar</Button>
                             </Grid>
                             <Grid item xs={6} sm={2}>
-                                <ExportToExcel apiData={ventas} fileName={"Ventas"} label={"Exp. Ventas"} />
+                                <ExportToExcel apiData={queryVentas.data ?? []} fileName={"Ventas"} label={"Exp. Ventas"} />
                             </Grid>
                             <Grid item xs={6} sm={2}>
-                                <ExportToExcel apiData={pagos} fileName={"Pagos"} label={"Exp. Pagos"} />
+                                <ExportToExcel apiData={queryPayments.data ?? []} fileName={"Pagos"} label={"Exp. Pagos"} />
                             </Grid>
                             <Grid item xs={6} sm={2}>
                                 <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exp. Detalle"} />
@@ -272,7 +237,7 @@ const Reportes = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventas.map((item) => (
+                                {(queryVentas.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

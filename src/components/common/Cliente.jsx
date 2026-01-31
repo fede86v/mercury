@@ -11,14 +11,12 @@ import AgregarPersona from '../modules/AgregarPersona'
 const Cliente = ({ persona, setPersona }) => {
     const { nombre, apellido, numeroDocumento } = persona;
     const { user } = useContext(UserContext);
-    const [clientes, setClientes] = useState([]);
     const [alert, setAlert] = useState(null)
     const [error, setError] = useState(null)
     const [open, setOpen] = useState(false);
 
     const getClientList = async () => {
         const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
-        setClientes(data)
         return data;
     };
     const query = useQuery(['clientes'], getClientList);
@@ -32,7 +30,7 @@ const Cliente = ({ persona, setPersona }) => {
         setOpen(false);
     };
 
-    const clientesList = query.data ?? clientes;
+    const clientesList = query.data ?? [];
 
     useEffect(() => {
         if (numeroDocumento && clientesList?.length) {

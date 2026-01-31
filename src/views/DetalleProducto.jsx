@@ -22,8 +22,6 @@ const DetalleProducto = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const [categorias, setCategories] = useState([]);
-    const [marcas, setMarcas] = useState([]);
     const { onSave, mutation, success } = useProduct();
     const { formState: producto, onInputChange, onInputDateChange, setFormState: setProducto } = useForm(DEFAULT_PRODUCT)
     const { user } = useContext(UserContext);
@@ -45,7 +43,6 @@ const DetalleProducto = () => {
             }
             return 0;
         });
-        setCategories(sortedData);
         return sortedData;
     };
 
@@ -60,7 +57,6 @@ const DetalleProducto = () => {
             }
             return 0;
         });
-        setMarcas(sortedData);
         return sortedData;
     };
 
@@ -119,7 +115,7 @@ const DetalleProducto = () => {
                                 </Grid>
                                 <Grid item xs={12} sm={12} >
                                     <Paper sx={{ p: 2 }}  >
-                                        <Producto producto={producto} tipoProductos={categorias} marcas={marcas} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
+                                        <Producto producto={producto} tipoProductos={queryProdTypes.data ?? []} marcas={queryMarcas.data ?? []} onInputChange={onInputChange} onInputDateChange={onInputDateChange} />
                                     </Paper>
                                 </Grid>
                             </Grid>

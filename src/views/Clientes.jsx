@@ -11,7 +11,6 @@ import { ClientService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 
 const Clientes = () => {
-    const [clientes, setClientes] = useState([]);
     const [open, setOpen] = useState(false);
     const { user } = useContext(UserContext);
 
@@ -26,7 +25,6 @@ const Clientes = () => {
             }
             return 0;
         });
-        setClientes(sortedData)
         return sortedData;
     };
 
@@ -63,7 +61,7 @@ const Clientes = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {clientes.map((item) => (
+                                {(query.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

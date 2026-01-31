@@ -22,17 +22,43 @@ const DEFAULT_PRODUCT = {
 
 const AgregarProducto = (props) => {
     const { formState: producto, onInputChange, onInputDateChange, } = useForm(DEFAULT_PRODUCT)
-    const { error, alert, onSave, success, mutation } = useProduct(props.activePrices);
+    const { error, alert, onSave, success, mutation, onSetAlert } = useProduct(props.activePrices);
 
     const handleSave = () => {
+        // Validar que el código no exista (solo para productos nuevos, sin id)
+        if (!producto.id && producto.codigo) {
+            const codigoExiste = props.productos.some(
+                p => p.codigo && p.codigo.toLowerCase() === producto.codigo.toLowerCase() && !p.fechaInactivo
+            );
+            
+            if (codigoExiste) {
+                onSetAlert('Ya existe un producto con este código de barras');
+                return;
+            }
+        }
+        
+        // Si es edición, validar que el código no exista en otro producto
+        if (producto.id && producto.codigo) {
+            const codigoExisteEnOtro = props.productos.some(
+                p => p.id !== producto.id && p.codigo && p.codigo.toLowerCase() === producto.codigo.toLowerCase() && !p.fechaInactivo
+            );
+            
+            if (codigoExisteEnOtro) {
+                onSetAlert('Ya existe otro producto con este código de barras');
+                return;
+            }
+        }
+        
         onSave(producto);
     };
 
+    const { handleClose } = props;
+    
     useEffect(() => {
         if (success) {
-            props.handleClose();
+            handleClose();
         }
-    }, [success]);
+    }, [success, handleClose]);
 
     return (
         <Dialog open={props.open} fullWidth maxWidth="sm" PaperProps={{ sx: { m: { xs: 1 }, maxHeight: { xs: 'calc(100% - 16px)', sm: '90vh' } } }}>
@@ -60,6 +86,7 @@ const AgregarProducto = (props) => {
 AgregarProducto.propTypes = {
     tipoProductos: PropTypes.array.isRequired,
     marcas: PropTypes.array.isRequired,
+    productos: PropTypes.array.isRequired,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired
 };
