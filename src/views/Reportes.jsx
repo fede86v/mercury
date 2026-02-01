@@ -11,7 +11,7 @@ import { TransactionService, PaymentService, TransactionDetailService } from '..
 import { UserContext } from '../context/UserProvider';
 import { ExportToExcel } from './../utils/exportToExcel';
 import { useLoading } from '../utils/LoadingContext';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const Reportes = () => {
 
@@ -289,24 +289,41 @@ const Reportes = () => {
                     </TableContainer>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <Card className="w-full">
-                        <Typography variant="h5" padding={2} textAlign="center" >Productos vendidos</Typography>
-                            <Card className="h-96 w-full">
-                                <ResponsiveContainer width="100%" height={500}>
-                                    <BarChart data={detalleVentas} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
-                                        <XAxis dataKey="descripcion" angle={-25} textAnchor="end" height={50} interval={0}/>
-                                        <YAxis label={{ value: 'Unidades vendidas', angle: -90, position: 'insideLeft', offset: 10 }}/>
-                                        <Tooltip formatter={(value) => [`${value} unidades`, 'Unidades Vendidas']}
-                                        />
-                                        <Bar dataKey="cantidad"  radius={[4, 4, 0, 0]}>
+                <Grid item xs={12} sx={{ width: '100%', px: { xs: 0, sm: 1 } }}>
+                    <Card sx={{ width: '100%', p: { xs: 1, sm: 2 }, boxSizing: 'border-box' }}>
+                        <Typography variant="h5" sx={{ py: { xs: 1, sm: 2 }, textAlign: 'center' }}>Productos vendidos</Typography>
+                        <Card sx={{ width: '100%', height: { xs: 400, sm: 500 }, overflow: 'hidden', boxSizing: 'border-box' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart 
+                                    data={detalleVentas} 
+                                    margin={{ top: 20, right: 10, left: 10, bottom: 80 }}
+                                >
+                                    <XAxis 
+                                        dataKey="descripcion" 
+                                        angle={-25} 
+                                        textAnchor="end" 
+                                        height={50} 
+                                        interval={0}
+                                        tick={{ fontSize: 10 }}
+                                    />
+                                    <YAxis 
+                                        label={{ 
+                                            value: 'Unidades vendidas', 
+                                            angle: -90, 
+                                            position: 'insideLeft', 
+                                            offset: 10 
+                                        }}
+                                        tick={{ fontSize: 10 }}
+                                    />
+                                    <Tooltip formatter={(value) => [`${value} unidades`, 'Unidades Vendidas']} />
+                                    <Bar dataKey="cantidad" radius={[4, 4, 0, 0]}>
                                         {detalleVentas.map((entry, index) => (
                                             <Cell cursor="pointer" fill={'#FF4841'} key={`cell-${index}`} />
                                         ))}
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </Card>
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </Card>
                     </Card>
                 </Grid>
             </Grid >
