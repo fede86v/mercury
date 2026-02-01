@@ -3,7 +3,6 @@ import { Box, Button, Backdrop } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useQuery } from '@tanstack/react-query';
 import { ProductService, TransactionService, PaymentService, TransactionDetailService, ClientService, EmployeeService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useForm, useTransaction } from '../utils';
@@ -28,14 +27,12 @@ const DEFAULT_VENTA = {
 const DetalleVenta = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [productos, setProductos] = useState([]);
     const { formState: venta, setFormState: setVenta, onInputDateChange } = useForm(DEFAULT_VENTA);
     const { formState: pagos, setFormState: setPagos } = useForm([]);
     const { error, alert, onSave, success, mutation, onSetAlert, onSetError } = useTransaction();
     const { user } = useContext(UserContext);
     const { total } = venta;
     const [openDialog, setOpenDialog] = useState(false);
-    const [vendedores, setVendedores] = useState([]);
     const { setIsLoading } = useLoading();
 
     const handleClose = async () => {
@@ -56,13 +53,11 @@ const DetalleVenta = () => {
             }
             return 0;
         });
-        setProductos(sortedData)
         return sortedData;
     };
 
     const getVenta = async () => {
         if (id) {
-            setIsLoading(true);
             const data = await TransactionService.getOne(id);
             let cliente = await ClientService.getOne(data.clienteId);
             if (!cliente) {
@@ -105,9 +100,6 @@ const DetalleVenta = () => {
             }
             return 0;
         });
-
-        setVendedores(sortedData)
-
         return sortedData;
     };
 
@@ -123,19 +115,15 @@ const DetalleVenta = () => {
     };
 
     const queryProductos = useFirebaseQuery(['products'], getProductList);
-    const queryVenta = useFirebaseQuery(["ventas"], getVenta, id);
-    const queryVendedores = useFirebaseQuery(['vendedor'], getEmployeeList);
+    const queryVenta = useFirebaseQuery(['venta', id], getVenta);
+    const queryVendedores = useFirebaseQuery(['vendedores'], getEmployeeList);
 
     useEffect(() => {
-        queryProductos.refetch();
-        queryVenta.refetch();
-        queryVendedores.refetch();
-
         return () => {
             setPagos([]);
             venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
-        }
+        };
     }, []);
 
     useEffect(() => {
@@ -163,13 +151,13 @@ const DetalleVenta = () => {
             <AlertDialog open={openDialog} handleClose={handleClose} alert={alert} error={error} />
 
             <Box  >
-                <Venta venta={venta} setVenta={setVenta} productos={productos} vendedores={vendedores} onInputDateChange={onInputDateChange} />
+                <Venta venta={venta} setVenta={setVenta} productos={queryProductos.data ?? []} vendedores={queryVendedores.data ?? []} onInputDateChange={onInputDateChange} />
             </Box>
             <Box  >
                 <Pagos idVenta={id} pagos={pagos} setPagos={setPagos} montoTotal={total} />
             </Box>
 
-            <Box display="flex" justifyContent="flex-end" sx={{ p: 2 }} >
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end', gap: 1, p: { xs: 1, sm: 2 } }}>
                 <Button color="primary" onClick={() => handleCancel()}>Cancelar</Button>
                 {!id ? (<Button color="primary" variant="contained" onClick={() => handleSave()}
                     endIcon={< SaveIcon />} >Guardar</Button>) : null}

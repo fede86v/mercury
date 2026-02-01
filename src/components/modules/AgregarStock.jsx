@@ -118,9 +118,9 @@ const AgregarStock = ({ productos, handleClose, open }) => {
     };
 
     return (
-        <Dialog open={open} >
+        <Dialog open={open} fullWidth maxWidth="sm" PaperProps={{ sx: { m: { xs: 1 }, maxHeight: { xs: 'calc(100% - 16px)', sm: '90vh' } } }}>
             <DialogTitle>Stock</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ overflowY: 'auto', px: { xs: 2, sm: 3 } }}>
                 <DialogContentText>
                 </DialogContentText>
                 <Alerts alert={alert} error={error} />
@@ -173,9 +173,9 @@ const AgregarStock = ({ productos, handleClose, open }) => {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid item sm={12}>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 500 }} aria-label="simple table">
+                    <Grid item xs={12}>
+                        <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
+                            <Table sx={{ minWidth: 500 }} aria-label="simple table" size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Descripcion</TableCell>

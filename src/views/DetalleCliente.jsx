@@ -40,11 +40,7 @@ const DetalleCliente = () => {
         return data;
     };
 
-    const query = useQuery(['clientes'], getCliente, id);
-
-    useEffect(() => {
-        query.refetch();
-    }, []);
+    const query = useQuery(['cliente', id], getCliente);
 
     useEffect(() => {
         if (success) {

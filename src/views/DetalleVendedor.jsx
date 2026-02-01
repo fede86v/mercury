@@ -40,11 +40,7 @@ const DetalleVendedor = () => {
         return data;
     };
 
-    const query = useQuery(['vendedores'], getVendedor, id);
-
-    useEffect(() => {
-        query.refetch();
-    }, []);
+    const query = useQuery(['vendedor', id], getVendedor);
 
     useEffect(() => {
         if (success) {

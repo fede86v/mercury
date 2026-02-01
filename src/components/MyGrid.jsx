@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import {
@@ -215,13 +215,13 @@ const MyGrid = (props) => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Paper sx={{ width: '100%', mb: 2 }}>
+            <Paper sx={{ width: '100%', mb: 2, overflow: 'hidden' }}>
                 <EnhancedTableToolbar numSelected={selected.length} />
-                <TableContainer>
+                <TableContainer sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
                     <Table
                         sx={{ minWidth: 750 }}
                         aria-labelledby="tableTitle"
-                        size={'medium'}
+                        size='small'
                     >
                         <EnhancedTableHead
                             numSelected={selected.length}

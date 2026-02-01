@@ -13,9 +13,7 @@ import AgregarTipoProducto from '../components/modules/AgregarTipoProducto';
 import AgregarMarca from '../components/modules/AgregarMarca';
 
 const Config = () => {
-    const [tipoProductos, setTipoProductos] = useState([]);
     const [tipoProducto, setTipoProducto] = useState(null);
-    const [marcas, setMarcas] = useState([]);
     const [marca, setMarca] = useState(null);
     const [openTipo, setOpenTipo] = useState(false);
     const [openMarca, setOpenMarca] = useState(false);
@@ -33,7 +31,6 @@ const Config = () => {
             }
             return 0;
           });
-        setTipoProductos(sortedData);
         return sortedData;
     };
     const getMarcas = async () => {
@@ -47,7 +44,6 @@ const Config = () => {
             }
             return 0;
           });
-        setMarcas(sortedData);
         return sortedData;
     };
 
@@ -78,11 +74,6 @@ const Config = () => {
         setExpanded(isExpanded ? panel : false);
       };
 
-    useEffect(() => {
-        queryProdTypes.refetch();
-        queryMarcas.refetch();
-    }, []);
-
     return (
         <>
             {openTipo ? <AgregarTipoProducto open={openTipo} handleClose={()=>handleClose("Categoria")} tipoProducto={tipoProducto} /> : null}
@@ -93,16 +84,16 @@ const Config = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                <Typography variant="h4" sx={{padding:1}} textAlign="center" >Categorias</Typography>
+                <Typography variant="h4" sx={{ p: { xs: 1, sm: 2 }, textAlign: 'center', fontSize: { xs: '1.25rem', sm: '2rem' } }}>Categorias</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                         <Grid item sm={12}>
                             <Button color="primary" variant="contained" onClick={() => { handleNew("Categoria"); }}>Crear Nuevo</Button>
                         </Grid>
-                        <Grid item sm={12}>
-                            <TableContainer component={Paper} sx={{maxHeight: 450 }} >
-                                <Table sx={{ minWidth: 650}} aria-label="simple table" stickyHeader >
+                        <Grid item xs={12}>
+                            <TableContainer component={Paper} sx={{ minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 450 }, overflowX: 'auto' }}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader size="small">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell align="left">Nombre</TableCell>
@@ -111,7 +102,7 @@ const Config = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {tipoProductos.map((tp) => (
+                                        {(queryProdTypes.data ?? []).map((tp) => (
                                             <TableRow
                                                 key={tp.id}
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -143,16 +134,16 @@ const Config = () => {
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                 >
-                <Typography variant="h4" sx={{padding:1}} textAlign="center" >Marcas</Typography>
+                <Typography variant="h4" sx={{ p: { xs: 1, sm: 2 }, textAlign: 'center', fontSize: { xs: '1.25rem', sm: '2rem' } }}>Marcas</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                         <Grid item sm={12}>
                             <Button color="primary" variant="contained" onClick={() => { handleNew("Marca"); }}>Crear Nuevo</Button>
                         </Grid>
-                        <Grid item sm={12}>
-                        <TableContainer component={Paper} sx={{maxHeight: 450 }} >
-                            <Table sx={{ minWidth: 650}} aria-label="simple table" stickyHeader >
+                        <Grid item xs={12}>
+                        <TableContainer component={Paper} sx={{ minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 450 }, overflowX: 'auto' }}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Nombre</TableCell>
@@ -161,7 +152,7 @@ const Config = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {marcas.map((m) => (
+                                    {(queryMarcas.data ?? []).map((m) => (
                                         <TableRow
                                             key={m.id}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

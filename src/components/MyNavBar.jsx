@@ -82,17 +82,17 @@ const MyNavBar = ({ title }) => {
 
     const item = {
         py: '2px',
-        px: 3
+        px: { xs: 2, sm: 3 },
     };
 
     const itemCategory = {
         boxShadow: '0 -1px 0 rgb(255,255,255,0.1) inset',
         py: 1.5,
-        px: 3,
+        px: { xs: 2, sm: 3 },
     };
 
     return (
-        <div sx={{ m2: 2 }}>
+        <Box sx={{ m: 2 }}>
             <List disablePadding>
                 <ListItem key="titleId" sx={{ ...item, ...itemCategory, fontSize: 22 }}>
                     {title}
@@ -108,7 +108,7 @@ const MyNavBar = ({ title }) => {
                 {
                     enlaces.map(({ id, nombre, children }, i) =>
                     (<Box key={id} >
-                        <ListItem sx={{ py: 2, px: 3 }}>
+                        <ListItem sx={{ py: 2, px: { xs: 2, sm: 3 } }}>
                             <ListItemText>{nombre}</ListItemText>
                         </ListItem>
                         {children.map(({ id: childId, nombre, icon, link, action }, index) =>
@@ -126,7 +126,7 @@ const MyNavBar = ({ title }) => {
                     <ListItemText>Config</ListItemText>
                 </ListItemButton>
             </List>
-        </div>
+        </Box>
     )
 }
 
