@@ -22,7 +22,7 @@ const DEFAULT_PRODUCT = {
 
 const AgregarProducto = (props) => {
     const { formState: producto, onInputChange, onInputDateChange, } = useForm(DEFAULT_PRODUCT)
-    const { error, alert, onSave, success, mutation, onSetAlert } = useProduct(props.activePrices);
+    const { error, alert, onSave, success, mutation, onSetAlert } = useProduct();
 
     const handleSave = () => {
         // Validar que el código no exista (solo para productos nuevos, sin id)

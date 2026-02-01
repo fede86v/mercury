@@ -23,6 +23,10 @@ const Reportes = () => {
     const { setIsLoading } = useLoading();
     
 
+    // Normalizar fechas para usar en query keys
+    const desdeNormalizado = dayjs(desde).startOf('day').valueOf();
+    const hastaNormalizado = dayjs(hasta).endOf('day').valueOf();
+
     const getTransactionList = async () => {
         let d = new Date(desde);
         let h = new Date(hasta);
@@ -50,7 +54,7 @@ const Reportes = () => {
         return sortedData;
     };
 
-    const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
+    const queryVentas = useFirebaseQuery(['ventas', desdeNormalizado, hastaNormalizado], getTransactionList);
 
     const getPayments = async () => {
         let d = new Date(desde);
@@ -69,7 +73,7 @@ const Reportes = () => {
         return filteredData;
     };
 
-    const queryPayments = useFirebaseQuery(['pagos'], getPayments)
+    const queryPayments = useFirebaseQuery(['pagos', desdeNormalizado, hastaNormalizado], getPayments)
 
     // Calcular totales de pagos
     const pagos = queryPayments.data ?? [];
@@ -104,9 +108,6 @@ const Reportes = () => {
         d = dayjs(d.setHours(0, 0, 0)).valueOf()
         h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
-        setDesde(d);
-        setHasta(h);
-
         const query = [
             { field: "empresaId", condition: "==", value: user.empresaId },
             { field: "fechaCreacion", condition: ">=", value: d }
@@ -121,6 +122,33 @@ const Reportes = () => {
         setDetalleVentasFiltradas(filteredData);
     };
 
+    // Cargar datos iniciales al montar el componente
+    useEffect(() => {
+        const loadInitialData = async () => {
+            if (!user?.empresaId) return;
+            
+            let d = new Date(desde);
+            let h = new Date(hasta);
+
+            d = dayjs(d.setHours(0, 0, 0)).valueOf()
+            h = dayjs(h.setHours(23, 59, 59)).valueOf()
+
+            const query = [
+                { field: "empresaId", condition: "==", value: user.empresaId },
+                { field: "fechaCreacion", condition: ">=", value: d }
+            ]
+
+            const data = await TransactionDetailService.getQueryMultiple(query);
+            const filteredData = data.filter(i => i.fechaCreacion < h)
+
+            const data_graph = getTotalsByName(filteredData);
+            
+            setDetalleVentas(data_graph)
+            setDetalleVentasFiltradas(filteredData);
+        };
+        
+        loadInitialData();
+    }, [desde, hasta, user?.empresaId]);
 
     useEffect(() => {
         if (desde > hasta)

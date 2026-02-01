@@ -1,14 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarProducto from '../components/modules/AgregarProducto'
 import {
     Grid, Box, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
-    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card
+    Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Card, TextField, InputAdornment
 } from '@mui/material'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { ProductService, ProductTypeService, BrandService } from '../utils';
 import { useProduct } from '../utils'
 import { UserContext } from '../context/UserProvider';
@@ -20,6 +20,7 @@ const Productos = () => {
     const [openProducto, setOpenProducto] = useState(false);
     const [openStock, setOpenStock] = useState(false);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const { user } = useContext(UserContext);
     const { onSave, success } = useProduct();
 
@@ -68,11 +69,32 @@ const Productos = () => {
     const queryProdTypes = useQuery(['productTypes'], getProductTypeList);
     const queryMarcas = useQuery(['marcas'], getMarcas);
 
-    // Calcular stock total
+    // Filtrar productos basado en el término de búsqueda
+    const productosFiltrados = (query.data ?? []).filter((producto) => {
+        if (!searchTerm.trim()) return true;
+        
+        const termino = searchTerm.toLowerCase();
+        const descripcion = (producto.descripcion || '').toLowerCase();
+        const codigo = (producto.codigo || '').toLowerCase();
+        const precio = String(producto.precioVenta || '');
+        
+        return descripcion.includes(termino) || 
+               codigo.includes(termino) || 
+               precio.includes(termino);
+    });
+
+    // Calcular stock total (de todos los productos, no solo los filtrados)
     const stock = (query.data ?? []).reduce((total, item) => total + Number(item.cantidad), 0);
 
+    const prevSuccessRef = useRef(success);
+    
     useEffect(() => {
-        if (success) query.refetch();
+        // Solo refetch cuando success cambia de false a true
+        if (success && !prevSuccessRef.current) {
+            query.refetch();
+        }
+        prevSuccessRef.current = success;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [success]);
 
     const handleNewProduct = () => {
@@ -120,6 +142,23 @@ const Productos = () => {
                 <Grid item xs={12}>
                     <Typography variant="h4" sx={{ textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Productos</Typography>
                 </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        variant="outlined"
+                        placeholder="Buscar por descripción, código o precio..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                        sx={{ mb: 2 }}
+                    />
+                </Grid>
 
                 <Grid item xs={12} sm={3}>
                     <Card sx={{ p: 1 }} >
@@ -141,7 +180,7 @@ const Productos = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {(query.data ?? []).map((producto) => (
+                                {productosFiltrados.map((producto) => (
                                     <TableRow
                                         key={producto.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

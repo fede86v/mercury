@@ -15,7 +15,7 @@ const Vendedor = ({ persona, setPersona, vendedores }) => {
         if (vendedores.length > 0) {
             if (id === "0") {
                 const persona_caja = vendedores.find(v => v.email === "");
-                const persona_user = vendedores.find(v => v.email === user.email);
+                const persona_user = vendedores.find(v => v.email === user?.email);
                 console.log(persona_user)
                 console.log(persona_caja)
                 if (persona_user || persona_caja) {
@@ -29,7 +29,7 @@ const Vendedor = ({ persona, setPersona, vendedores }) => {
                 }
             }
         }
-    }, [id]);
+    }, [id, vendedores, user?.email, setPersona]);
 
     return (
         <>
