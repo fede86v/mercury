@@ -10,9 +10,12 @@ const loadingCallbacks = new Map();
 
 const updateGlobalLoading = () => {
   const shouldBeLoading = activeQueries.size > 0;
-  loadingCallbacks.forEach((count, callback) => {
+  // Map.forEach signature: (value, key, map)
+  // In our Map: key = setIsLoading (callback function), value = count
+  // So forEach passes: (count, setIsLoading)
+  loadingCallbacks.forEach((count, setIsLoadingCallback) => {
     if (count > 0) {
-      callback(shouldBeLoading);
+      setIsLoadingCallback(shouldBeLoading);
     }
   });
 };

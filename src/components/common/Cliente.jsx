@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext, useState, useMemo } from 'react'
 import { Grid, Typography, TextField, Button, Box } from '@mui/material'
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
@@ -30,7 +30,8 @@ const Cliente = ({ persona, setPersona }) => {
         setOpen(false);
     };
 
-    const clientesList = query.data ?? [];
+    // Memoizar clientesList para evitar recrear el array en cada render
+    const clientesList = useMemo(() => query.data ?? [], [query.data]);
 
     useEffect(() => {
         if (numeroDocumento && clientesList?.length) {
@@ -39,7 +40,7 @@ const Cliente = ({ persona, setPersona }) => {
                 setPersona(client);
             }
         }
-    }, [numeroDocumento, clientesList]);
+    }, [numeroDocumento, clientesList, setPersona]);
 
 
     return (
