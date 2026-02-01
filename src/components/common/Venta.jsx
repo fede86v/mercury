@@ -73,25 +73,25 @@ const Venta = ({ venta, setVenta, productos, vendedores, onInputDateChange }) =>
     };
 
     return (
-        <Box sx={{ p: 2 }} >
+        <Box sx={{ p: { xs: 1, sm: 2 } }} >
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 1, md: 1 }} spacing={2} >
                 {/* Cliente */}
                 <Grid item xs={12} sm={12} md={6}>
-                    <Paper sx={{ p: 2 }}  >
+                    <Paper sx={{ p: { xs: 1, sm: 2 } }}  >
                         <Cliente persona={cliente} setPersona={setCliente} />
                     </Paper>
                 </Grid>
 
                 {/* Vendedor */}
                 <Grid item xs={12} sm={12} md={6}>
-                    <Paper sx={{ p: 2 }}  >
+                    <Paper sx={{ p: { xs: 1, sm: 2 } }}  >
                         <Vendedor persona={vendedor} vendedores={vendedores} setPersona={setVendedor} />
                     </Paper>
                 </Grid>
 
                 {/* Vendedor */}
                 <Grid item xs={12} sm={12} md={6}>
-                    <Paper sx={{ p: 2 }}  >
+                    <Paper sx={{ p: { xs: 1, sm: 2 } }}  >
                         <DatePicker
                             id="date-dateOfBird"
                             label="Fecha de Venta"
@@ -109,11 +109,11 @@ const Venta = ({ venta, setVenta, productos, vendedores, onInputDateChange }) =>
 
                 {/* Detalle Compra */}
                 <Grid item xs={12} sm={12} md={12}>
-                    <Paper sx={{ p: 2 }}  >
+                    <Paper sx={{ p: { xs: 1, sm: 2 } }}  >
                         <Alerts alert={alert} />
                         <ItemVenta idVenta={venta.id} productos={productos} setDetalleVenta={setDetalleVenta} setAlert={setAlert} />
-                        <TableContainer>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableContainer sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
                                 <TableHead>
                                     <TableRow>
                                         <TableCell align="left">Descripcion</TableCell>

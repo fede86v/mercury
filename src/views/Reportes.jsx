@@ -15,23 +15,19 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const Reportes = () => {
 
-    const [ventas, setVentas] = useState([]);
-    const [pagos, setPagos] = useState([]);
     const [detalleVentasFiltradas, setDetalleVentasFiltradas] = useState([]);
     const [detalleVentas, setDetalleVentas] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [debito, setDebito] = useState(0);
-    const [transferencia, setTransferencia] = useState(0);
-    const [credito, setCredito] = useState(0);
-    const [efectivo, setEfectivo] = useState(0);
     const [desde, setDesde] = useState(new Date());
     const [hasta, setHasta] = useState(new Date());
     const { user } = useContext(UserContext);
     const { setIsLoading } = useLoading();
     
 
+    // Normalizar fechas para usar en query keys
+    const desdeNormalizado = dayjs(desde).startOf('day').valueOf();
+    const hastaNormalizado = dayjs(hasta).endOf('day').valueOf();
+
     const getTransactionList = async () => {
-        setIsLoading(true);
         let d = new Date(desde);
         let h = new Date(hasta);
 
@@ -55,14 +51,12 @@ const Reportes = () => {
             }
             return 0;
         });
-        setVentas(sortedData)
         return sortedData;
     };
 
-    const queryVentas = useFirebaseQuery(['ventas'], getTransactionList);
+    const queryVentas = useFirebaseQuery(['ventas', desdeNormalizado, hastaNormalizado], getTransactionList);
 
     const getPayments = async () => {
-        setIsLoading(true);
         let d = new Date(desde);
         let h = new Date(hasta);
 
@@ -76,40 +70,20 @@ const Reportes = () => {
 
         const data = await PaymentService.getQueryMultiple(query);
         const filteredData = data.filter(i => i.fechaPago < h)
-
-        let eff = 0;
-        let deb = 0;
-        let tra = 0;
-        let cred = 0;
-        let tot = 0;
-
-        filteredData.forEach(item => {
-            tot = tot + Number(item.monto);
-
-            if (item.metodoPago === "Efectivo") {
-                eff = eff + Number(item.monto);
-            }
-            if (item.metodoPago === "Debito") {
-                deb = deb + Number(item.monto);
-            }
-            if (item.metodoPago === "Transferencia") {
-                tra = tra + Number(item.monto);
-            }
-            if (item.metodoPago === "Credito") {
-                cred = cred + Number(item.monto);
-            }
-        });
-
-        setPagos(filteredData);
-        setEfectivo(eff);
-        setDebito(deb);
-        setTransferencia(tra);
-        setCredito(cred);
-        setTotal(tot);
         return filteredData;
     };
 
-    const queryPayments = useFirebaseQuery(['pagos'], getPayments)
+    const queryPayments = useFirebaseQuery(['pagos', desdeNormalizado, hastaNormalizado], getPayments)
+
+    // Calcular totales de pagos
+    const pagos = queryPayments.data ?? [];
+    const total = pagos.reduce((tot, item) => tot + Number(item.monto), 0);
+    const efectivo = pagos.filter(p => p.metodoPago === "Efectivo").reduce((sum, p) => sum + Number(p.monto), 0);
+    const debito = pagos.filter(p => p.metodoPago === "Debito").reduce((sum, p) => sum + Number(p.monto), 0);
+    const transferencia = pagos.filter(p => p.metodoPago === "Transferencia").reduce((sum, p) => sum + Number(p.monto), 0);
+    const credito = pagos.filter(p => p.metodoPago === "Credito").reduce((sum, p) => sum + Number(p.monto), 0);
+    
+    const ventas = queryVentas.data ?? [];
 
     const getTotalsByName = (data) => {
         const totals = data.reduce((acc, curr) => {
@@ -134,9 +108,6 @@ const Reportes = () => {
         d = dayjs(d.setHours(0, 0, 0)).valueOf()
         h = dayjs(h.setHours(23, 59, 59)).valueOf()
 
-        setDesde(d);
-        setHasta(h);
-
         const query = [
             { field: "empresaId", condition: "==", value: user.empresaId },
             { field: "fechaCreacion", condition: ">=", value: d }
@@ -151,11 +122,33 @@ const Reportes = () => {
         setDetalleVentasFiltradas(filteredData);
     };
 
+    // Cargar datos iniciales al montar el componente
     useEffect(() => {
-        queryPayments.refetch();
-        queryVentas.refetch();
-        getDetalleVenta();
-    }, []);
+        const loadInitialData = async () => {
+            if (!user?.empresaId) return;
+            
+            let d = new Date(desde);
+            let h = new Date(hasta);
+
+            d = dayjs(d.setHours(0, 0, 0)).valueOf()
+            h = dayjs(h.setHours(23, 59, 59)).valueOf()
+
+            const query = [
+                { field: "empresaId", condition: "==", value: user.empresaId },
+                { field: "fechaCreacion", condition: ">=", value: d }
+            ]
+
+            const data = await TransactionDetailService.getQueryMultiple(query);
+            const filteredData = data.filter(i => i.fechaCreacion < h)
+
+            const data_graph = getTotalsByName(filteredData);
+            
+            setDetalleVentas(data_graph)
+            setDetalleVentasFiltradas(filteredData);
+        };
+        
+        loadInitialData();
+    }, [desde, hasta, user?.empresaId]);
 
     useEffect(() => {
         if (desde > hasta)
@@ -172,14 +165,14 @@ const Reportes = () => {
         <>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2}>
 
-                <Grid item sm={12}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Reportes</Typography>
+                <Grid item xs={12}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Reportes</Typography>
                 </Grid>
 
-                <Grid item sm={12}>
+                <Grid item xs={12}>
                     <Card sx={{ p: 1 }} >
                         <Grid container columnSpacing={{ xs: 1, sm: 1, md: 1 }} sx={{ my: 2 }} >
-                            <Grid item xs={3} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <DatePicker
                                     id="date-desde"
                                     label="Desde"
@@ -189,7 +182,7 @@ const Reportes = () => {
                                     renderInput={(props) => <TextField variant="standard" {...props} />}
                                 />
                             </Grid>
-                            <Grid item xs={3} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <DatePicker
                                     id="date-hasta"
                                     label="Hasta"
@@ -206,20 +199,20 @@ const Reportes = () => {
                                     getDetalleVenta();
                                 }}  >Buscar</Button>
                             </Grid>
-                            <Grid item xs={3} sm={2}>
-                                <ExportToExcel apiData={ventas} fileName={"Ventas"} label={"Exp. Ventas"} />
+                            <Grid item xs={6} sm={2}>
+                                <ExportToExcel apiData={queryVentas.data ?? []} fileName={"Ventas"} label={"Exp. Ventas"} />
                             </Grid>
-                            <Grid item xs={3} sm={2}>
-                                <ExportToExcel apiData={pagos} fileName={"Pagos"} label={"Exp. Pagos"} />
+                            <Grid item xs={6} sm={2}>
+                                <ExportToExcel apiData={queryPayments.data ?? []} fileName={"Pagos"} label={"Exp. Pagos"} />
                             </Grid>
-                            <Grid item xs={4} sm={2}>
+                            <Grid item xs={6} sm={2}>
                                 <ExportToExcel apiData={detalleVentasFiltradas} fileName={"Detalle ventas"} label={"Exp. Detalle"} />
                             </Grid>
                         </Grid>
                     </Card>
                 </Grid>
 
-                <Grid item sm={12}>
+                <Grid item xs={12}>
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={1} >
                         <Grid item xs={12} sm={4}>
                             <Card sx={{ p: 1 }} >
@@ -258,9 +251,9 @@ const Reportes = () => {
                     </Grid>
                 </Grid>
 
-                <Grid item sm={12}>
-                    <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 440 } }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Fecha</TableCell>
@@ -272,7 +265,7 @@ const Reportes = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventas.map((item) => (
+                                {(queryVentas.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

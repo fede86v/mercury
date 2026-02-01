@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink } from "react-router-dom";
 import AgregarPersona from '../components/modules/AgregarPersona'
 import {
@@ -11,7 +11,6 @@ import { ClientService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 
 const Clientes = () => {
-    const [clientes, setClientes] = useState([]);
     const [open, setOpen] = useState(false);
     const { user } = useContext(UserContext);
 
@@ -26,15 +25,10 @@ const Clientes = () => {
             }
             return 0;
         });
-        setClientes(sortedData)
         return sortedData;
     };
 
     const query = useQuery(['clientes'], getClientList);
-
-    useEffect(() => {
-        query.refetch();
-    }, []);
 
     const handleNewClient = () => {
         setOpen(true);
@@ -48,15 +42,15 @@ const Clientes = () => {
         <>
             {open ? <AgregarPersona open={open} handleClose={handleClose} tipoPersona="cliente" /> : null}
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={2}>
-                    <Button color="primary" variant="contained" onClick={() => { handleNewClient(); }}>Crear</Button>
+                <Grid item xs={12} sm={2}>
+                    <Button color="primary" variant="contained" fullWidth sx={{ mb: { xs: 1, sm: 0 } }} onClick={() => { handleNewClient(); }}>Crear</Button>
                 </Grid>
-                <Grid item sm={10}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Clientes</Typography>
+                <Grid item xs={12} sm={10}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Clientes</Typography>
                 </Grid>
-                <Grid item sm={12}>
-                    <TableContainer component={Paper} sx={{ maxHeight: 640 }}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table"  stickyHeader>
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 }, maxHeight: { xs: 'none', sm: 640 } }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Nombre</TableCell>
@@ -67,7 +61,7 @@ const Clientes = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {clientes.map((item) => (
+                                {(query.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

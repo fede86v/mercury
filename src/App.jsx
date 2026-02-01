@@ -28,7 +28,8 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-      retry: 3
+      retry: 3,
+      staleTime: 2 * 60 * 1000, // 2 minutos: evita refetch innecesarios al navegar
     },
   },
 });

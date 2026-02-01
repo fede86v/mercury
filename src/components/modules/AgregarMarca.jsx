@@ -38,9 +38,9 @@ const AgregarMarca = (props) => {
     }, [success]);
 
     return (
-        <Dialog open={props.open} >
+        <Dialog open={props.open} fullWidth maxWidth="sm" PaperProps={{ sx: { m: { xs: 1 } } }}>
             <DialogTitle>Marca</DialogTitle>
-            <DialogContent>
+            <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
                 {alert || error ? <Alerts alert={alert} error={error} /> : null}
                 <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                     {/* descripcion */}

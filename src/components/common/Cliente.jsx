@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react'
+import React, { useEffect, useContext, useState, useMemo } from 'react'
 import { Grid, Typography, TextField, Button, Box } from '@mui/material'
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types'
@@ -11,46 +11,37 @@ import AgregarPersona from '../modules/AgregarPersona'
 const Cliente = ({ persona, setPersona }) => {
     const { nombre, apellido, numeroDocumento } = persona;
     const { user } = useContext(UserContext);
-    const [clientes, setClientes] = useState([]);
     const [alert, setAlert] = useState(null)
     const [error, setError] = useState(null)
     const [open, setOpen] = useState(false);
 
     const getClientList = async () => {
         const data = await ClientService.getQuery("empresaId", "==", user.empresaId);
-        setClientes(data)
         return data;
     };
-    const query = useQuery(['client'], getClientList);
+    const query = useQuery(['clientes'], getClientList);
 
     const handleNewClient = () => {
         setOpen(true);
     };
     const handleClose = async () => {
-        await getClientList();
-        
+        await query.refetch();
         setAlert(null);
         setOpen(false);
     };
 
-    useEffect(() => {
-        if (numeroDocumento) {
-            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
-            if (client) {
-                setPersona(client);
-            }
-        }
-    }, [numeroDocumento]);
+    // Memoizar clientesList para evitar recrear el array en cada render
+    const clientesList = useMemo(() => query.data ?? [], [query.data]);
 
     useEffect(() => {
-        query.refetch();
-        if (numeroDocumento) {
-            const client = clientes.find(c => c.numeroDocumento === numeroDocumento);
+        if (numeroDocumento && clientesList?.length) {
+            const client = clientesList.find(c => c.numeroDocumento === numeroDocumento);
             if (client) {
                 setPersona(client);
             }
         }
-    }, []);
+    }, [numeroDocumento, clientesList, setPersona]);
+
 
     return (
         <>

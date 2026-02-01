@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
@@ -15,20 +15,13 @@ import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { useLoading } from '../utils/LoadingContext';
 
 const Ventas = () => {
-    const [ventas, setVentas] = useState([]);
     const [itemAeliminar, setItemAeliminar] = useState(null);
-    const [totalHoy, setTotalHoy] = useState(0);
-    const [debito, setDebito] = useState(0);
-    const [transferencia, setTransferencia] = useState(0);
-    const [credito, setCredito] = useState(0);
-    const [efectivo, setEfectivo] = useState(0);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
     const { setIsLoading } = useLoading();
 
     const getTransactionList = async () => {
-        setIsLoading(true);
         let desde = new Date();
         desde = dayjs(desde.setHours(0,0,0)).valueOf();
 
@@ -50,19 +43,10 @@ const Ventas = () => {
             }
             return 0;
         });
-        let total = 0;
-
-        sortedData.forEach(item => {
-            total = total + Number(item.total);
-        });
-
-        setTotalHoy(total);
-        setVentas(sortedData)
         return sortedData;
     };
 
     const getPaymentsForToday = async () => {
-        setIsLoading(true);
         let desde = new Date();
         desde = new Date(desde.setHours(0, 0, 0, 0))
         const query = [
@@ -71,39 +55,21 @@ const Ventas = () => {
 
         const data = await PaymentService.getQueryMultiple(query);
         const filterData = data.filter(i => !i.fechaAnulacion && (i.fechaPago >= desde));
-
-        let eff = 0;
-        let deb = 0;
-        let tra = 0;
-        let cred = 0;
-
-        filterData.forEach(item => {
-            if (item.metodoPago === "Efectivo") {
-                eff = eff + Number(item.monto);
-            }
-            if (item.metodoPago === "Debito") {
-                deb = deb + Number(item.monto);
-            }
-            if (item.metodoPago === "Transferencia") {
-                tra = tra + Number(item.monto);
-            }
-            if (item.metodoPago === "Credito") {
-                cred = cred + Number(item.monto);
-            }
-        });
-        setEfectivo(eff);
-        setDebito(deb);
-        setTransferencia(tra);
-        setCredito(cred);
-        setIsLoading(false);
+        return filterData;
     };
 
     const query = useFirebaseQuery(['ventas'], getTransactionList);
+    const queryPayments = useFirebaseQuery(['paymentsToday'], getPaymentsForToday);
 
-    useEffect(() => {
-        query.refetch();
-        getPaymentsForToday();
-    }, []);
+    // Calcular totales de ventas
+    const totalHoy = (query.data ?? []).reduce((total, item) => total + Number(item.total), 0);
+    
+    // Calcular totales de pagos
+    const pagosHoy = queryPayments.data ?? [];
+    const efectivo = pagosHoy.filter(p => p.metodoPago === "Efectivo").reduce((sum, p) => sum + Number(p.monto), 0);
+    const debito = pagosHoy.filter(p => p.metodoPago === "Debito").reduce((sum, p) => sum + Number(p.monto), 0);
+    const transferencia = pagosHoy.filter(p => p.metodoPago === "Transferencia").reduce((sum, p) => sum + Number(p.monto), 0);
+    const credito = pagosHoy.filter(p => p.metodoPago === "Credito").reduce((sum, p) => sum + Number(p.monto), 0);
 
     const handleDelete = async (itemAeliminar) => {
         setItemAeliminar(itemAeliminar);
@@ -117,6 +83,7 @@ const Ventas = () => {
         setDialogRemoveConfirmOpen(false);
         setItemAeliminar(null);
         query.refetch();
+        queryPayments.refetch();
     };
 
     return (
@@ -129,16 +96,16 @@ const Ventas = () => {
             </Backdrop>
 
             <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} spacing={2} >
-                <Grid item sm={2}>
+                <Grid item xs={12} sm={2}>
                     <Button
                         component={NavLink}
-                        to={"/DetalleVenta/"} color="primary" variant="contained" >Crear</Button>
+                        to={"/DetalleVenta/"} color="primary" variant="contained" fullWidth sx={{ mb: { xs: 1, sm: 0 } }}>Crear</Button>
                 </Grid>
-                <Grid item sm={10}>
-                    <Typography variant="h4" padding={3} textAlign="center" >Ventas</Typography>
+                <Grid item xs={12} sm={10}>
+                    <Typography variant="h4" sx={{ py: { xs: 1, sm: 2 }, px: { xs: 1, sm: 3 }, textAlign: 'center', fontSize: { xs: '1.5rem', sm: '2rem' } }}>Ventas</Typography>
                 </Grid>
 
-                <Grid item sm={12}> 
+                <Grid item xs={12}>
                     <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ my: 2 }} spacing={2} >
                         <Grid item xs={12} sm={4}>
                             <Card sx={{ p: 1 }} >
@@ -178,8 +145,8 @@ const Ventas = () => {
                     </Grid>
                 </Grid>
                 <Grid item sm={12}>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Total</TableCell>
@@ -190,7 +157,7 @@ const Ventas = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {ventas && ventas.map((item) => (
+                                {(query.data ?? []).map((item) => (
                                     <TableRow
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
