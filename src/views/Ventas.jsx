@@ -8,18 +8,15 @@ import dayjs from 'dayjs';
 import CircularProgress from '@mui/material/CircularProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useQuery } from '@tanstack/react-query';
 import { TransactionService, useTransaction, PaymentService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { useFirebaseQuery } from './../utils/useFirebaseQuery';
-import { useLoading } from '../utils/LoadingContext';
 
 const Ventas = () => {
     const [itemAeliminar, setItemAeliminar] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
     const { user } = useContext(UserContext);
     const { onSave, mutation } = useTransaction();
-    const { setIsLoading } = useLoading();
 
     const getTransactionList = async () => {
         let desde = new Date();
@@ -144,16 +141,16 @@ const Ventas = () => {
 
                     </Grid>
                 </Grid>
-                <Grid item sm={12}>
-                    <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
-                        <Table sx={{ minWidth: { xs: 300, sm: 650 } }} aria-label="simple table" size="small" stickyHeader>
+                <Grid item xs={12}>
+                    <TableContainer component={Paper} sx={{ width: '100%', overflowX: 'auto', minHeight: { xs: 260 } }}>
+                        <Table sx={{ width: '100%', minWidth: { xs: 300, sm: 650 } }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="left">Total</TableCell>
+                                    <TableCell align="left" sx={{ width: { xs: '70%', sm: 'auto' } }}>Total</TableCell>
                                     <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Subtotal</TableCell>
                                     <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Descuento</TableCell>
                                     <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Vendedor</TableCell>
-                                    <TableCell align="right">Acción</TableCell>
+                                    <TableCell align="right" sx={{ width: { xs: '30%', sm: 'auto' } }}>Acción</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -162,11 +159,11 @@ const Ventas = () => {
                                         key={item.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell align="left">{"$" + item.total}</TableCell>
+                                        <TableCell align="left" sx={{ width: { xs: '70%', sm: 'auto' } }}>{"$" + item.total}</TableCell>
                                         <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{"$" + item.descuento}</TableCell>
                                         <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{item.vendedor}</TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="right" sx={{ width: { xs: '30%', sm: 'auto' } }}>
                                             <>
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Ventas/" + item.id} >
                                                     <ModeEditIcon color="secondary" />
