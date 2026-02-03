@@ -10,7 +10,6 @@ import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 import { TransactionService, PaymentService, TransactionDetailService } from '../utils';
 import { UserContext } from '../context/UserProvider';
 import { ExportToExcel } from './../utils/exportToExcel';
-import { useLoading } from '../utils/LoadingContext';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const Reportes = () => {
@@ -20,7 +19,6 @@ const Reportes = () => {
     const [desde, setDesde] = useState(new Date());
     const [hasta, setHasta] = useState(new Date());
     const { user } = useContext(UserContext);
-    const { setIsLoading } = useLoading();
     
 
     // Normalizar fechas para usar en query keys
@@ -260,7 +258,6 @@ const Reportes = () => {
                                     <TableCell align="left">Subtotal</TableCell>
                                     <TableCell align="left">Descuento</TableCell>
                                     <TableCell align="left">Total</TableCell>
-                                    <TableCell align="left">Vendedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -274,7 +271,6 @@ const Reportes = () => {
                                         <TableCell align="left">{"$" + item.subtotal}</TableCell>
                                         <TableCell align="left">{"$" + item.descuento}</TableCell>
                                         <TableCell align="left">{"$" + item.total}</TableCell>
-                                        <TableCell align="left">{item.vendedor}</TableCell>
                                         <TableCell align="right">
                                             <>
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Ventas/" + item.id} >
