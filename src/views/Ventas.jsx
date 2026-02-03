@@ -146,13 +146,13 @@ const Ventas = () => {
                 </Grid>
                 <Grid item sm={12}>
                     <TableContainer component={Paper} sx={{ overflowX: 'auto', minHeight: { xs: 260 } }}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small" stickyHeader>
+                        <Table sx={{ minWidth: { xs: 300, sm: 650 } }} aria-label="simple table" size="small" stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="left">Total</TableCell>
-                                    <TableCell align="left">Subtotal</TableCell>
-                                    <TableCell align="left">Descuento</TableCell>
-                                    <TableCell align="left">Vendedor</TableCell>
+                                    <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Subtotal</TableCell>
+                                    <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Descuento</TableCell>
+                                    <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Vendedor</TableCell>
                                     <TableCell align="right">Acción</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -163,9 +163,9 @@ const Ventas = () => {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell align="left">{"$" + item.total}</TableCell>
-                                        <TableCell align="left">{"$" + item.subtotal}</TableCell>
-                                        <TableCell align="left">{"$" + item.descuento}</TableCell>
-                                        <TableCell align="left">{item.vendedor}</TableCell>
+                                        <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{"$" + item.subtotal}</TableCell>
+                                        <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{"$" + item.descuento}</TableCell>
+                                        <TableCell align="left" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{item.vendedor}</TableCell>
                                         <TableCell align="right">
                                             <>
                                                 <IconButton aria-label="edit" component={NavLink} to={"/Ventas/" + item.id} >
