@@ -23,6 +23,7 @@ const updateGlobalLoading = () => {
 export const useFirebaseQuery = (queryKey, queryFn, options = {}) => {
   const { setIsLoading } = useLoading();
   const queryIdRef = useRef(Symbol('query-id'));
+  const enabled = options.enabled !== false;
 
   const query = useQuery(queryKey, queryFn, {
     ...options,
@@ -38,6 +39,8 @@ export const useFirebaseQuery = (queryKey, queryFn, options = {}) => {
   });
 
   // Registrar callback y manejar el estado de loading
+  // Solo considerar loading las queries que están habilitadas; las disabled nunca llaman onSettled
+  // y no deben sumar al indicador global para evitar que el BusyIndicator quede bloqueado (ej. nueva venta)
   useEffect(() => {
     // Capturar el ID de la query para el cleanup
     const queryId = queryIdRef.current;
@@ -46,8 +49,8 @@ export const useFirebaseQuery = (queryKey, queryFn, options = {}) => {
     const currentCount = loadingCallbacks.get(setIsLoading) || 0;
     loadingCallbacks.set(setIsLoading, currentCount + 1);
 
-    // Agregar esta query al conjunto de queries activas si está cargando
-    if (query.isLoading) {
+    const isActuallyLoading = enabled && query.isLoading;
+    if (isActuallyLoading) {
       activeQueries.add(queryId);
       updateGlobalLoading();
     }
@@ -63,7 +66,7 @@ export const useFirebaseQuery = (queryKey, queryFn, options = {}) => {
       }
       updateGlobalLoading();
     };
-  }, [query.isLoading, setIsLoading]);
+  }, [enabled, query.isLoading, setIsLoading]);
 
   return query;
 };
