@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { TransactionService, TransactionDetailService, PaymentService, ProductService } from './databaseService'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserContext } from '../context/UserProvider';
 import dayjs from 'dayjs';
 
@@ -9,6 +9,7 @@ export const useTransaction = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const { user } = useContext(UserContext);
+    const queryClient = useQueryClient();
 
     const saveData = async (data) => {
         setAlert(null);
@@ -24,7 +25,7 @@ export const useTransaction = () => {
                 vendedor: data.vendedor.nombre,
                 clienteId: data.cliente.id
             };
-            
+
             const newVenta = await TransactionService.create(venta, user);
 
             const { detalleVenta, pagos } = data;
@@ -69,7 +70,15 @@ export const useTransaction = () => {
     // create mutation
     const mutation = useMutation((data) => saveData(data), {
         onError: (error) => setAlert(error.message),
-        onSuccess: () => setSuccess(true)
+        onSuccess: async () => {
+            setSuccess(true);
+            // Invalidar y refetch queries relacionadas para actualizar la lista de ventas
+            await Promise.all([
+                queryClient.invalidateQueries(['ventas'], { refetchType: 'active' }),
+                queryClient.invalidateQueries(['paymentsToday'], { refetchType: 'active' }),
+                queryClient.invalidateQueries(['products'], { refetchType: 'active' }) // También invalidar productos porque se actualiza el stock
+            ]);
+        }
     })
 
     const onSave = (data) => {
@@ -88,7 +97,7 @@ export const useTransaction = () => {
             setAlert(`No ha ingresado el pago para esta compra.`);
             return;
         }
-        const totalPago = data.pagos.map(i=>Number(i.monto)).reduce((a,b)=>a+b);
+        const totalPago = data.pagos.map(i => Number(i.monto)).reduce((a, b) => a + b);
         validation = (totalPago !== data.total);
         if (validation) {
             setAlert(`El monto del pago no coincide con el total de la compra.`);

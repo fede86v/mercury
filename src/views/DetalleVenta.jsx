@@ -10,7 +10,6 @@ import AlertDialog from '../components/common/AlertDialog';
 import Venta from '../components/common/Venta';
 import Pagos from '../components/common/Pagos';
 import { useNavigate } from "react-router-dom";
-import { useLoading } from '../utils/LoadingContext';
 import { useFirebaseQuery } from './../utils/useFirebaseQuery';
 
 const DEFAULT_VENTA = {
@@ -33,7 +32,6 @@ const DetalleVenta = () => {
     const { user } = useContext(UserContext);
     const { total } = venta;
     const [openDialog, setOpenDialog] = useState(false);
-    const { setIsLoading } = useLoading();
 
     const handleClose = async () => {
         onSetAlert(null);
@@ -67,23 +65,19 @@ const DetalleVenta = () => {
             const detalle1 = await TransactionDetailService.getQuery("ventaId", "==", id);
             const detalle2 = await PaymentService.getQuery("ventaId", "==", id);
             const final = { ...data, detalleVenta: detalle1, pagos: detalle2, vendedor: { nombre: data.vendedor, id: data.vendedorId }, cliente: cliente };
-            setVenta(final);
-            setPagos(detalle2);
+            // No llamar setVenta aquí, el useEffect se encargará
             return final;
         }
         else {
+            // Para nueva venta, retornar un objeto vacío - el useEffect se encargará del reset
             const empleado_caja = await EmployeeService.getQuery("numeroDocumento", "==", "0");
             const empleado_user = await EmployeeService.getQuery("email", "==", user.email);
 
             const v_caja = empleado_caja[0];
             const v_user = empleado_user[0];
 
-            const venta_base = { ...DEFAULT_VENTA, vendedor: v_user ?? v_caja }
-            venta_base.detalleVenta.length = 0;
-
-            setVenta(venta_base);
-            setPagos([]);
-
+            const venta_base = { ...DEFAULT_VENTA, vendedor: v_user ?? v_caja ?? { nombre: "", id: "" }, detalleVenta: [] };
+            // No llamar setVenta aquí, el useEffect se encargará
             return venta_base;
         }
     };
@@ -115,25 +109,74 @@ const DetalleVenta = () => {
     };
 
     const queryProductos = useFirebaseQuery(['products'], getProductList);
-    const queryVenta = useFirebaseQuery(['venta', id], getVenta);
+    const queryVenta = useFirebaseQuery(['venta', id], getVenta, { enabled: !!id }); // Solo ejecutar cuando hay id
     const queryVendedores = useFirebaseQuery(['vendedores'], getEmployeeList);
+
+    // Resetear estado cuando cambia el id a undefined o cuando se monta sin id (nueva venta)
+    useEffect(() => {
+        if (!id) {
+            // Nueva venta: resetear a valores por defecto inmediatamente con detalleVenta vacío
+            const ventaReset = { 
+                ...DEFAULT_VENTA, 
+                detalleVenta: [], // Asegurar que esté vacío
+                total: 0,
+                subtotal: 0,
+                descuento: 0,
+                fechaVenta: new Date() // Asegurar fecha actual
+            };
+            setVenta(ventaReset);
+            setPagos([]);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
+
+    // Sincronizar queryVenta.data con el estado local (solo cuando hay id)
+    useEffect(() => {
+        // Solo sincronizar si hay id Y hay datos (editar venta existente)
+        // Si no hay id, no hacer nada para no sobrescribir el reset
+        if (id && queryVenta.data) {
+            const ventaData = {
+                ...queryVenta.data,
+                detalleVenta: queryVenta.data.detalleVenta ?? []
+            };
+            setVenta(ventaData);
+            if (queryVenta.data.pagos) {
+                setPagos(queryVenta.data.pagos);
+            }
+        }
+    }, [queryVenta.data, id, setVenta, setPagos]);
+
+    // Establecer vendedor por defecto cuando los vendedores estén cargados y es una nueva venta
+    useEffect(() => {
+        if (!id && queryVendedores.data && queryVendedores.data.length > 0) {
+            const empleado_caja = queryVendedores.data.find(v => v.numeroDocumento === "0");
+            const empleado_user = queryVendedores.data.find(v => v.email === user?.email);
+            const vendedor = empleado_user ?? empleado_caja ?? { nombre: "", id: "" };
+            setVenta(prev => ({ ...prev, vendedor }));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, queryVendedores.data, user?.email]);
 
     useEffect(() => {
         return () => {
             setPagos([]);
-            venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         if (success) {
             setPagos([]);
-            venta.detalleVenta.length = 0;
             setVenta(DEFAULT_VENTA);
+            // Resetear success después de un pequeño delay para permitir la navegación
+            setTimeout(() => {
+                // El estado success se reseteará cuando el componente se desmonte
+            }, 100);
             navigate("/Ventas");
         }
-    }, [success]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [success, navigate]);
 
     useEffect(() => {
         if (alert) setOpenDialog(true);

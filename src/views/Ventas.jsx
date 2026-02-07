@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { NavLink } from "react-router-dom";
 import {
     Grid, TableContainer, TableHead, TableRow, TableCell, TableBody, Table, Paper, Typography, IconButton,
@@ -57,6 +57,14 @@ const Ventas = () => {
 
     const query = useFirebaseQuery(['ventas'], getTransactionList);
     const queryPayments = useFirebaseQuery(['paymentsToday'], getPaymentsForToday);
+
+    // Refetch cuando se monta el componente (útil después de crear una venta)
+    useEffect(() => {
+        // Refetch al montar para asegurar datos actualizados
+        query.refetch();
+        queryPayments.refetch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Calcular totales de ventas
     const totalHoy = (query.data ?? []).reduce((total, item) => total + Number(item.total), 0);

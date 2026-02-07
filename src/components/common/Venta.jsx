@@ -13,7 +13,7 @@ import ItemVenta from './ItemVenta';
 import Alerts from './Alerts';
 
 const Venta = ({ venta, setVenta, productos, vendedores, onInputDateChange }) => {
-    const { total, subtotal, descuento, cliente, vendedor, detalleVenta, fechaVenta } = venta;
+    const { total, subtotal, descuento, cliente, vendedor, detalleVenta = [], fechaVenta } = venta;
     const [alert, setAlert] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [dialogRemoveConfirmOpen, setDialogRemoveConfirmOpen] = useState(false);
